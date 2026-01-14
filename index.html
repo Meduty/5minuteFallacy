@@ -1,1 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 5-Minute Surrender Fallacy: Big Data Analysis</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Annotation Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <!-- Boxplot Plugin -->
+    <script src="https://unpkg.com/@sgratzl/chartjs-chart-boxplot@4.2.4/build/index.umd.min.js"></script>
 
+    <style>
+        /* General Layout */
+        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        
+        /* Chart Containers */
+        .chart-box {
+            position: relative;
+            width: 100%;
+            height: 450px; 
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
+
+        /* Range Sliders */
+        input[type=range] { -webkit-appearance: none; background: transparent; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #22d3ee; margin-top: -8px; box-shadow: 0 0 10px rgba(34,211,238,0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; background: #475569; border-radius: 2px;
+        }
+        
+        /* Panels */
+        .glass-panel { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(148, 163, 184, 0.1); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            transition: all 0.2s;
+        }
+        .stat-card:hover {
+            border-color: #fbbf24;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-white pb-20">
+
+    <!-- HEADER -->
+    <div class="w-full max-w-5xl mx-auto pt-16 pb-12 text-center px-4">
+        <div class="inline-block px-4 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-bold tracking-[0.2em] uppercase mb-4">
+            Game Theory Analysis
+        </div>
+        <h1 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
+            THE 5-MINUTE <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">SURRENDER FALLACY</span>
+        </h1>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            Mathematical proof that "Snowballing" is temporary. <br>
+            A study of <span class="text-cyan-400 font-bold">Logistic Advantage</span> vs. <span class="text-pink-400 font-bold">Linear Skill</span>.
+        </p>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="max-w-5xl mx-auto px-4 space-y-24">
+
+        <!-- SECTION 1: MODEL -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">01. The Math Model</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900 p-6 rounded-xl border-t-4 border-cyan-500 shadow-lg">
+                    <div class="text-cyan-400 font-bold text-xl mb-2">&alpha; Skill</div>
+                    <p class="text-sm text-slate-400">Your inherent mechanics and game sense. Constant value.</p>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-xl border-t-4 border-pink-500 shadow-lg">
+                    <div class="text-pink-400 font-bold text-xl mb-2">A(S) Advantage</div>
+                    <p class="text-sm text-slate-400">Gold/XP lead. Grows with score, but has a hard limit.</p>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-xl border-t-4 border-purple-500 shadow-lg">
+                    <div class="text-purple-400 font-bold text-xl mb-2">W Weight</div>
+                    <p class="text-sm text-slate-400">Total Power = Skill + Advantage. Determines win prob.</p>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-10 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
+                    <div class="space-y-6">
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-2">The Win Condition</p>
+                            <div class="text-xl md:text-2xl font-serif text-white">
+                                P(Win) = <span class="text-cyan-400">Weight<sub>A</sub></span> / Total Weight
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-2">The Logistic Cap (S-Curve)</p>
+                            <div class="bg-slate-950/50 p-4 rounded border border-slate-700 font-mono text-xs md:text-sm text-slate-400">
+                                A(S) = Max_Adv / (1 + e<sup>-k(Score - Mid)</sup>)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/80 rounded-xl p-2 border border-slate-700 h-64 w-full relative">
+                        <canvas id="logisticChart"></canvas>
+                        <p class="absolute bottom-2 left-0 right-0 text-center text-[10px] text-slate-500 uppercase">Advantage Saturation Curve</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: 10 GAME SIMULATION -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">02. Volatility Analysis</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-purple-500/20">
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-white mb-4">Monte Carlo Configuration</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-cyan-400 text-xs font-bold uppercase">Your Skill</label>
+                                <span id="mcValA" class="text-white font-mono font-bold text-xs">11</span>
+                            </div>
+                            <input type="range" id="mcInputA" min="1" max="20" value="11" class="w-full">
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-pink-400 text-xs font-bold uppercase">Enemy Skill</label>
+                                <span id="mcValB" class="text-white font-mono font-bold text-xs">10</span>
+                            </div>
+                            <input type="range" id="mcInputB" min="1" max="20" value="10" class="w-full">
+                        </div>
+                        <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                            <div class="flex justify-between mb-2">
+                                <label class="text-yellow-400 text-xs font-bold uppercase">Score Deficit</label>
+                                <span id="mcValDeficit" class="text-white font-mono font-bold text-xs">2</span>
+                            </div>
+                            <input type="range" id="mcInputDeficit" min="0" max="15" value="2" class="w-full">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 shadow-inner">
+                    <div class="mb-4 flex justify-between items-center">
+                        <h4 class="text-sm font-bold text-white">10 Simulated Timelines</h4>
+                        <button id="rerunMCBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500 text-xs text-white font-bold uppercase tracking-wider rounded transition flex items-center gap-2 shadow-lg active:scale-95">
+                            Rerun Simulation
+                        </button>
+                    </div>
+                    <div class="chart-box" style="height: 300px;">
+                        <canvas id="monteCarloChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: INTERACTIVE LAB -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">03. Interactive Lab</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-cyan-500/20">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
+                        <div class="flex justify-between mb-4">
+                            <label class="text-cyan-400 font-bold text-xs uppercase tracking-wider">Your Skill</label>
+                            <span id="valA" class="text-white font-mono font-bold">12</span>
+                        </div>
+                        <input type="range" id="inputSkillA" min="1" max="20" value="12" class="w-full">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
+                        <div class="flex justify-between mb-4">
+                            <label class="text-pink-400 font-bold text-xs uppercase tracking-wider">Enemy Skill</label>
+                            <span id="valB" class="text-white font-mono font-bold">10</span>
+                        </div>
+                        <input type="range" id="inputSkillB" min="1" max="20" value="10" class="w-full">
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
+                        <div class="flex justify-between mb-4">
+                            <label class="text-yellow-400 font-bold text-xs uppercase tracking-wider">Enemy Head Start</label>
+                            <span id="valStartB" class="text-white font-mono font-bold">2</span>
+                        </div>
+                        <input type="range" id="inputStartB" min="0" max="20" value="2" class="w-full">
+                    </div>
+                </div>
+
+                <button id="runSimBtn" class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg shadow-cyan-500/20 transition transform active:scale-95 mb-12 uppercase tracking-widest text-sm">
+                    Run Simulation Frame
+                </button>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Score Trajectories</h4>
+                        <div class="chart-box" style="height: 300px;"><canvas id="interactiveScoreChart"></canvas></div>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Weight Analysis</h4>
+                        <div class="chart-box" style="height: 300px;"><canvas id="interactiveWeightChart"></canvas></div>
+                    </div>
+                    <div class="lg:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 mt-4">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Net Score Difference (Outcome)</h4>
+                        <div class="chart-box" style="height: 300px;"><canvas id="interactiveDiffChart"></canvas></div>
+                        <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> You Won Round</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Enemy Won Round</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: BIG DATA (FIXED AXIS & TOP SCALE) -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">04. Big Data Simulation</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-green-500/20">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <!-- Controls & Stats -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Outcome Distribution</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                <span class="text-cyan-400 font-bold">Blue Boxes:</span> Statistical Range.<br>
+                                <span class="text-yellow-400 font-bold">Yellow Line:</span> Win Probability %.<br>
+                                <span class="text-green-400 font-bold">Dots:</span> Raw Individual Games (Jittered).<br>
+                                <em class="text-[10px] text-purple-400 block mt-2">Top Axis shows Weight Advantage (+ means you are stronger).</em>
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <label class="text-[10px] text-slate-500 uppercase font-bold mb-1 block">Skill Scenario</label>
+                                <select id="bigDataScenario" class="w-full bg-slate-800 text-white text-xs border border-slate-600 rounded p-1 focus:ring-1 focus:ring-cyan-500 focus:outline-none">
+                                    <option value="advantage">Slight Advantage (You 12 vs 10)</option>
+                                    <option value="equal">Equal Skill (10 vs 10)</option>
+                                    <option value="disadvantage">Slight Disadvantage (10 vs 11)</option>
+                                </select>
+                            </div>
+                            <div class="bg-slate-900 p-3 rounded-lg border border-slate-700">
+                                <label class="text-[10px] text-slate-500 uppercase font-bold mb-1 block">Sims per Deficit</label>
+                                <select id="bigDataCount" class="w-full bg-slate-800 text-white text-xs border border-slate-600 rounded p-1 focus:ring-1 focus:ring-cyan-500 focus:outline-none">
+                                    <option value="100">100 (Fast)</option>
+                                    <option value="500" selected>500 (Standard)</option>
+                                    <option value="1000">1,000 (Deep)</option>
+                                </select>
+                            </div>
+                            <!-- Scatter Toggle -->
+                            <div class="flex items-center space-x-2 pt-2">
+                                <input type="checkbox" id="toggleScatter" checked class="accent-cyan-500 h-4 w-4 bg-slate-800 border-slate-600 rounded cursor-pointer">
+                                <label for="toggleScatter" class="text-xs text-slate-400 cursor-pointer select-none">Show Raw Data Points</label>
+                            </div>
+                        </div>
+
+                        <button id="runBigDataBtn" class="w-full py-3 bg-slate-800 hover:bg-green-900/50 border border-green-500/30 text-green-400 font-bold rounded-xl transition shadow-lg active:scale-95 uppercase tracking-wider text-xs flex items-center justify-center gap-2">
+                            <span>Run Simulations</span>
+                        </button>
+                        
+                        <!-- Dynamic Stats Grid -->
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                            <div class="stat-card p-2 rounded text-center" id="card0"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card2"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card5"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card8"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card10"></div>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 h-full">
+                            <div class="chart-box">
+                                <canvas id="bigDataChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: MOTIVATION -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">05. The Mental Game</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-red-500/20">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Text/Logic -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">The Cost of Tilting</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                Assuming the game is lost acts as a <strong class="text-red-400">Self-Fulfilling Prophecy</strong>.
+                                <br><br>
+                                <span class="text-xs text-cyan-400 border border-cyan-500/30 px-2 py-1 rounded">
+                                    Simulating: <span id="motScenario">Skill 12 vs 10</span>
+                                </span>
+                            </p>
+                            <div class="bg-slate-900 p-3 rounded border border-slate-700 mt-4 text-xs font-mono text-slate-400">
+                                Method: Monte Carlo Simulation (2,000 games per deficit level)
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
+                            <label class="block text-red-400 text-xs font-bold uppercase mb-3">
+                                Motivation Factor (M): <span id="valMotivation" class="text-white font-mono">0.8</span>
+                            </label>
+                            <input type="range" id="inputMotivation" min="0.5" max="1.0" step="0.05" value="0.8" class="w-full">
+                            <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                                <span>50% (Gave Up)</span>
+                                <span>100% (Focused)</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-lg">
+                            <p class="text-xs text-red-200">
+                                <strong class="uppercase">Observation:</strong><br>
+                                Even a small drop in motivation (M=0.9) can drop your win probability significantly when already behind.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="lg:col-span-2">
+                        <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 h-full">
+                            <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Probability vs. Deficit</h4>
+                            <div class="chart-box" style="height: 350px;">
+                                <canvas id="motivationChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <div class="text-center py-12 space-y-4">
+            <h3 class="text-3xl font-bold text-white">The Verdict</h3>
+            <p class="text-slate-400 max-w-2xl mx-auto">
+                Game outcomes are not deterministic at 5 minutes. The logistic nature of advantage ensures that skill always remains a relevant factor in the late game.
+            </p>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const MAX_ADVANTAGE = 10;
+        const STEEPNESS = 0.5;
+        const MIDPOINT_SCORE = 8; 
+
+        Chart.register(window['chartjs-plugin-annotation']);
+        Chart.defaults.font.family = "'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+        Chart.defaults.color = '#94a3b8';
+
+        const commonOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                tooltip: { 
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)', 
+                    borderColor: '#334155', borderWidth: 1, padding: 10
+                },
+                legend: { labels: { font: {size: 11} } }
+            },
+            scales: {
+                x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }
+            }
+        };
+
+        // --- 1. LOGISTIC ---
+        const ctxLogistic = document.getElementById('logisticChart');
+        const sScores = Array.from({length: 26}, (_, i) => i);
+        const sAdvantage = sScores.map(S => MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (S - MIDPOINT_SCORE))));
+        new Chart(ctxLogistic, {
+            type: 'line',
+            data: { labels: sScores.map(s => `${s}`), datasets: [{ label: 'Advantage', data: sAdvantage, borderColor: '#22d3ee', borderWidth: 2, pointRadius: 0, fill: true, backgroundColor: 'rgba(34, 211, 238, 0.1)', tension: 0.4 }] },
+            options: { ...commonOptions, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+
+        // --- 2. MONTE CARLO ---
+        const ctxMC = document.getElementById('monteCarloChart');
+        let chartMC;
+        const MC_ROUNDS = 50;
+        const colors = ['#22d3ee', '#f472b6', '#a78bfa', '#fbbf24', '#4ade80', '#ef4444', '#60a5fa', '#fb923c', '#a3e635', '#818cf8'];
+
+        function runMonteCarlo() {
+            const skillA = parseInt(document.getElementById('mcInputA').value, 10);
+            const skillB = parseInt(document.getElementById('mcInputB').value, 10);
+            const startDeficit = parseInt(document.getElementById('mcInputDeficit').value, 10);
+            const mcDatasets = [];
+            
+            for(let t = 0; t < 10; t++) {
+                let sA = 0; let sB = startDeficit;
+                const diffHistory = [sA - sB];
+                for(let r = 1; r < MC_ROUNDS; r++) {
+                    const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                    const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                    const wA = skillA + adA; const wB = skillB + adB;
+                    if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
+                    diffHistory.push(sA - sB);
+                }
+                mcDatasets.push({ label: `G${t+1}`, data: diffHistory, borderColor: colors[t % 10], borderWidth: 1.5, pointRadius: 0, tension: 0.3 });
+            }
+            mcDatasets.push({ label: 'Even', data: Array(MC_ROUNDS).fill(0), borderColor: '#fff', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 });
+
+            if (chartMC) { chartMC.data.datasets = mcDatasets; chartMC.update(); }
+            else { chartMC = new Chart(ctxMC, { type: 'line', data: { labels: Array.from({length: MC_ROUNDS}, (_, i) => `${i+1}`), datasets: mcDatasets }, options: { ...commonOptions, animation: { duration: 1000 } } }); }
+        }
+
+        // --- 3. INTERACTIVE LAB ---
+        const ctxIntScore = document.getElementById('interactiveScoreChart');
+        const ctxIntWeight = document.getElementById('interactiveWeightChart');
+        const ctxIntDiff = document.getElementById('interactiveDiffChart');
+        let chartIntScore, chartIntWeight, chartIntDiff;
+
+        function initInteractiveCharts() {
+            chartIntScore = new Chart(ctxIntScore, {
+                type: 'line', data: { labels: [], datasets: [{ label: 'Your Score', borderColor: '#22d3ee', borderWidth: 3, data: [] }, { label: 'Enemy Score', borderColor: '#f472b6', borderWidth: 3, data: [] }] }, options: commonOptions
+            });
+            chartIntWeight = new Chart(ctxIntWeight, {
+                type: 'line', data: { labels: [], datasets: [{ label: 'Your Weight', borderColor: '#22d3ee', borderWidth: 2, data: [] }, { label: 'Enemy Weight', borderColor: '#f472b6', borderWidth: 2, data: [] }] },
+                options: { ...commonOptions, plugins: { ...commonOptions.plugins, annotation: { annotations: { maxA: { type: 'line', yMin: 0, yMax: 0, borderColor: '#22d3ee', borderWidth: 1, borderDash: [6, 6] }, maxB: { type: 'line', yMin: 0, yMax: 0, borderColor: '#f472b6', borderWidth: 1, borderDash: [6, 6] } }}}}
+            });
+            chartIntDiff = new Chart(ctxIntDiff, {
+                type: 'line', data: { labels: [], datasets: [{ label: 'Net Score Difference', data: [], borderWidth: 2, borderColor: '#fff', tension: 0.2, pointRadius: 4, pointHoverRadius: 6, fill: { target: 'origin', above: 'rgba(74, 222, 128, 0.2)', below: 'rgba(244, 63, 94, 0.2)' } }]},
+                options: {
+                    ...commonOptions, scales: { ...commonOptions.scales, y: { grid: { color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } } },
+                    plugins: { ...commonOptions.plugins, tooltip: { callbacks: { afterLabel: function(context) { const index = context.dataIndex; const dataset = context.dataset; const val = dataset.data[index]; const prev = index > 0 ? dataset.data[index-1] : val; if (index === 0) return 'Start'; return val > prev ? 'Result: You Won Round' : 'Result: Enemy Won Round'; }}}}
+                }
+            });
+        }
+
+        function runUserSim() {
+            const skillA = parseInt(document.getElementById('inputSkillA').value, 10);
+            const skillB = parseInt(document.getElementById('inputSkillB').value, 10);
+            const startB = parseInt(document.getElementById('inputStartB').value, 10);
+            let sA = 0; let sB = startB; const rounds = 50; const labels = ['Start'];
+            const dScoreA = [sA]; const dScoreB = [sB]; const dDiff = [sA - sB]; const dPointColors = ['#94a3b8'];
+            let adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE))); let adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+            const dWeightA = [skillA + adA]; const dWeightB = [skillB + adB];
+
+            for(let r = 1; r <= rounds; r++) {
+                labels.push(`${r}`);
+                adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE))); adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                const wA = skillA + adA; const wB = skillB + adB; dWeightA.push(wA); dWeightB.push(wB);
+                if (Math.random() < wA / (wA + wB)) { sA++; dPointColors.push('#4ade80'); } else { sB++; dPointColors.push('#f43f5e'); }
+                dScoreA.push(sA); dScoreB.push(sB); dDiff.push(sA - sB);
+            }
+            chartIntScore.data.labels = labels; chartIntScore.data.datasets[0].data = dScoreA; chartIntScore.data.datasets[1].data = dScoreB; chartIntScore.update();
+            chartIntWeight.data.labels = labels; chartIntWeight.data.datasets[0].data = dWeightA; chartIntWeight.data.datasets[1].data = dWeightB;
+            chartIntWeight.options.plugins.annotation.annotations.maxA.yMin = skillA + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxA.yMax = skillA + MAX_ADVANTAGE;
+            chartIntWeight.options.plugins.annotation.annotations.maxB.yMin = skillB + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxB.yMax = skillB + MAX_ADVANTAGE;
+            chartIntWeight.update();
+            chartIntDiff.data.labels = labels; chartIntDiff.data.datasets[0].data = dDiff; chartIntDiff.data.datasets[0].pointBackgroundColor = dPointColors; chartIntDiff.data.datasets[0].pointBorderColor = dPointColors; chartIntDiff.update();
+        }
+
+        // --- 4. BIG DATA SIMULATION ---
+        const ctxBigData = document.getElementById('bigDataChart');
+        let chartBigData;
+
+        // HELPER: Sort numeric array
+        const sortAsc = (arr) => arr.sort((a, b) => a - b);
+        
+        // HELPER: Calculate Quartiles
+        const calcStats = (data) => {
+            const sorted = sortAsc([...data]);
+            const q1 = sorted[Math.floor(sorted.length * 0.25)];
+            const median = sorted[Math.floor(sorted.length * 0.5)];
+            const q3 = sorted[Math.floor(sorted.length * 0.75)];
+            const min = sorted[0];
+            const max = sorted[sorted.length - 1];
+            return { min, q1, median, q3, max };
+        };
+
+        function updateStatCard(id, deficit, winRate, advPercent) {
+            const card = document.getElementById(id);
+            if(!card) return;
+            const advColor = parseFloat(advPercent) >= 0 ? 'text-green-400' : 'text-red-400';
+            const sign = parseFloat(advPercent) > 0 ? '+' : '';
+            card.innerHTML = `
+                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Deficit ${deficit}</div>
+                <div class="text-xl font-black text-white mb-1">${winRate}% <span class="text-[10px] font-normal text-slate-400">Win Rate</span></div>
+                <div class="text-xs ${advColor} font-bold">${sign}${advPercent} <span class="text-[9px] text-slate-500">Weight Adv.</span></div>
+            `;
+        }
+
+        function runBigDataSim() {
+            const scenario = document.getElementById('bigDataScenario').value;
+            const simCount = parseInt(document.getElementById('bigDataCount').value, 10);
+            const showScatter = document.getElementById('toggleScatter').checked;
+            
+            let skillA = 12; let skillB = 10;
+            if (scenario === 'equal') { skillA = 10; skillB = 10; }
+            if (scenario === 'disadvantage') { skillA = 10; skillB = 11; }
+
+            const boxplotData = [];
+            const winRateData = [];
+            const scatterWins = [];
+            const scatterLosses = [];
+            const advantageLabels = [];
+            
+            let absoluteMaxScore = 0;
+
+            for (let def = 0; def <= 15; def++) {
+                
+                const sA_init = 0; 
+                const sB_init = def;
+                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA_init - MIDPOINT_SCORE)));
+                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB_init - MIDPOINT_SCORE)));
+                const wA_init = skillA + adA_init;
+                const wB_init = skillB + adB_init;
+                
+                const advPercentRaw = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
+                const advPercent = advPercentRaw.toFixed(1) + '%';
+                advantageLabels.push(advPercent);
+
+                let wins = 0;
+                const finalDiffs = [];
+                
+                for (let game = 0; game < simCount; game++) {
+                    let sA = 0; let sB = def;
+                    for (let r = 0; r < 50; r++) {
+                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                        const wA = skillA + adA; const wB = skillB + adB;
+                        if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
+                    }
+                    const finalDiff = sA - sB;
+                    finalDiffs.push(finalDiff);
+                    if (finalDiff > 0) wins++;
+                    if (Math.abs(finalDiff) > absoluteMaxScore) absoluteMaxScore = Math.abs(finalDiff);
+
+                    const jitterX = def + (Math.random() * 0.7 - 0.35); 
+                    const jitterY = finalDiff + (Math.random() * 1.2 - 0.6); 
+                    const point = { x: jitterX, y: jitterY };
+                    if (finalDiff > 0) scatterWins.push(point); else scatterLosses.push(point);
+                }
+                
+                const wr = Math.round((wins / simCount) * 100);
+                winRateData.push({ x: def, y: wr });
+                
+                const stats = calcStats(finalDiffs);
+                boxplotData.push({ x: def, ...stats });
+
+                if ([0, 2, 5, 8, 10].includes(def)) {
+                    updateStatCard(`card${def}`, def, wr, advPercent);
+                }
+            }
+
+            const symmetricLimit = Math.ceil(absoluteMaxScore * 1.1);
+
+            const config = {
+                data: {
+                    datasets: [
+                        { 
+                            type: 'line', label: 'Win Probability %', data: winRateData, borderColor: '#fbbf24', borderWidth: 3, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#fbbf24', yAxisID: 'yWinRate', order: 0
+                        },
+                        { 
+                            type: 'boxplot', label: 'Score Spread', data: boxplotData, backgroundColor: 'rgba(34, 211, 238, 0.2)', borderColor: '#22d3ee', borderWidth: 2, outlierColor: 'transparent', itemRadius: 0, yAxisID: 'yScore', order: 1
+                        },
+                        {
+                            type: 'scatter', label: 'Raw Wins', data: scatterWins, hidden: !showScatter, backgroundColor: 'rgba(74, 222, 128, 0.15)', 
+                            pointRadius: 1.5, borderWidth: 0, 
+                            yAxisID: 'yScore', order: 2,
+                            pointHoverRadius: 0, pointHitRadius: 0 // Disable interaction
+                        },
+                        {
+                            type: 'scatter', label: 'Raw Losses', data: scatterLosses, hidden: !showScatter, backgroundColor: 'rgba(244, 63, 94, 0.15)', 
+                            pointRadius: 1.5, borderWidth: 0, 
+                            yAxisID: 'yScore', order: 2,
+                            pointHoverRadius: 0, pointHitRadius: 0 // Disable interaction
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: { type: 'linear', title: { display: true, text: 'Initial Score Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, min: -1, max: 16, ticks: { color: '#64748b', stepSize: 1 } },
+                        xAdvantage: {
+                            type: 'linear', position: 'top', title: { display: true, text: 'Relative Weight Advantage (You - Enemy) %', color: '#c084fc' }, grid: { display: false }, min: -1, max: 16,
+                            ticks: { stepSize: 1, color: (ctx) => parseFloat(advantageLabels[ctx.index]) >= 0 ? '#4ade80' : '#f43f5e', callback: (value, index) => advantageLabels[value] || '' }
+                        },
+                        yScore: { type: 'linear', position: 'left', min: -symmetricLimit, max: symmetricLimit, title: { display: true, text: 'Final Score Difference', color: '#22d3ee' }, grid: { color: (ctx) => ctx.tick.value === 0 ? '#475569' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } },
+                        yWinRate: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: true, text: 'Win Probability %', color: '#fbbf24' }, grid: { display: false }, ticks: { color: '#fbbf24' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e2e8f0' } },
+                        tooltip: {
+                            filter: function(tooltipItem) { return tooltipItem.dataset.type !== 'scatter'; },
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.dataset.type === 'line') return `Win Probability: ${context.raw.y}%`;
+                                    if (context.dataset.type === 'boxplot') {
+                                        const stats = context.raw;
+                                        if (!stats.median) return '';
+                                        return [`Median Diff: ${stats.median}`, `Range: ${stats.min} to ${stats.max}`];
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (chartBigData) { chartBigData.destroy(); }
+            chartBigData = new Chart(ctxBigData, config);
+        }
+
+        // --- 5. MOTIVATION ANALYSIS (REVERTED TO MONTE CARLO) ---
+        const ctxMotivation = document.getElementById('motivationChart');
+        let chartMotivation;
+        const MOTIVATION_SIM_COUNT = 2000;
+
+        function runMotivationAnalysis() {
+            const motivationFactor = parseFloat(document.getElementById('inputMotivation').value);
+            // Use Section 3 Values
+            const baseSkill = parseInt(document.getElementById('inputSkillA').value);
+            const enemySkill = parseInt(document.getElementById('inputSkillB').value);
+            
+            document.getElementById('motScenario').innerText = `Skill ${baseSkill} vs ${enemySkill}`;
+            
+            const dataBase = [];
+            const dataTilted = [];
+            const labels = [];
+
+            for (let def = 0; def <= 15; def++) {
+                labels.push(def);
+                
+                // Run Sim 1: Base Skill
+                let winsBase = 0;
+                for(let i=0; i<MOTIVATION_SIM_COUNT; i++) {
+                    let sA = 0; let sB = def;
+                    for (let r = 0; r < 50; r++) {
+                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                        const wA = baseSkill + adA; const wB = enemySkill + adB;
+                        if (Math.random() < wA / (wA + wB)) sA++; else sB++;
+                    }
+                    if ((sA - sB) > 0) winsBase++;
+                }
+                dataBase.push((winsBase/MOTIVATION_SIM_COUNT)*100);
+
+                // Run Sim 2: Tilted Skill
+                let winsTilted = 0;
+                const tiltedSkill = baseSkill * motivationFactor;
+                for(let i=0; i<MOTIVATION_SIM_COUNT; i++) {
+                    let sA = 0; let sB = def;
+                    for (let r = 0; r < 50; r++) {
+                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                        const wA = tiltedSkill + adA; const wB = enemySkill + adB;
+                        if (Math.random() < wA / (wA + wB)) sA++; else sB++;
+                    }
+                    if ((sA - sB) > 0) winsTilted++;
+                }
+                dataTilted.push((winsTilted/MOTIVATION_SIM_COUNT)*100);
+            }
+
+            const config = {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: `Full Focus (Skill ${baseSkill})`, data: dataBase, borderColor: '#4ade80', borderWidth: 3, tension: 0.3, pointBackgroundColor: '#4ade80' },
+                        { label: `Tilted (Skill ${(baseSkill*motivationFactor).toFixed(1)})`, data: dataTilted, borderColor: '#f43f5e', borderWidth: 3, tension: 0.3, pointBackgroundColor: '#f43f5e' }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: { title: { display: true, text: 'Initial Score Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        y: { min: 0, max: 100, title: { display: true, text: 'Win Probability %', color: '#94a3b8' }, grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }
+                    },
+                    plugins: {
+                        ...commonOptions.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Win Chance: ${context.raw.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (chartMotivation) { chartMotivation.destroy(); }
+            chartMotivation = new Chart(ctxMotivation, config);
+        }
+
+        // LISTENERS
+        const updateAll = () => {
+            document.getElementById('valA').innerText = document.getElementById('inputSkillA').value;
+            document.getElementById('valB').innerText = document.getElementById('inputSkillB').value;
+            document.getElementById('valStartB').innerText = document.getElementById('inputStartB').value;
+            
+            runUserSim();
+            runMotivationAnalysis(); // Update Motivation when lab skills change
+        };
+
+        document.getElementById('inputSkillA').addEventListener('input', updateAll);
+        document.getElementById('inputSkillB').addEventListener('input', updateAll);
+        document.getElementById('inputStartB').addEventListener('input', updateAll);
+        document.getElementById('runSimBtn').addEventListener('click', runUserSim);
+        
+        document.getElementById('mcInputA').addEventListener('input', (e) => { document.getElementById('mcValA').innerText = e.target.value; });
+        document.getElementById('mcInputB').addEventListener('input', (e) => { document.getElementById('mcValB').innerText = e.target.value; });
+        document.getElementById('mcInputDeficit').addEventListener('input', (e) => { document.getElementById('mcValDeficit').innerText = e.target.value; });
+        document.getElementById('rerunMCBtn').addEventListener('click', runMonteCarlo);
+        
+        // Big Data Listeners
+        document.getElementById('runBigDataBtn').addEventListener('click', runBigDataSim);
+        document.getElementById('toggleScatter').addEventListener('change', runBigDataSim);
+
+        // Motivation Listeners
+        document.getElementById('inputMotivation').addEventListener('input', (e) => { 
+            document.getElementById('valMotivation').innerText = e.target.value;
+            runMotivationAnalysis(); 
+        });
+
+        initInteractiveCharts();
+        runUserSim();
+        runMonteCarlo();
+        runBigDataSim();
+        runMotivationAnalysis();
+    });
+    </script>
+</body>
+</html>
