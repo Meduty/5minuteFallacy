@@ -466,6 +466,512 @@
             </div>
         </section>
 
+        <!-- SECTION 6: RELEVANCE TO SMITE -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">06. Application to SMITE</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-orange-500/20">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="prose prose-invert prose-sm">
+                            <h3 class="text-white text-lg font-bold">Why Does This Matter for SMITE?</h3>
+                            <p class="text-slate-400">
+                                SMITE, like other MOBAs, exhibits the exact mechanics our model captures: <strong class="text-orange-400">logistic item scaling</strong>, <strong class="text-cyan-400">skill-based combat</strong>, and <strong class="text-purple-400">emergent randomness</strong> from human decision-making.
+                            </p>
+                            <p class="text-slate-400">
+                                The "5-minute fallacy" is especially prevalent in SMITE due to its fast-paced early game and visible gold/level differences. Players see a 2-level lead and assume inevitability, ignoring that:
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="bg-orange-500/10 p-2 rounded text-orange-400 text-xl mr-3 font-serif">1.</div>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Item Caps Are Real</h4>
+                                    <p class="text-xs text-slate-500">Full build in SMITE is 6 items. Once both teams reach this ceiling, the early gold lead becomes <strong>irrelevant</strong>. The logistic S-curve flattens.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-orange-500/10 p-2 rounded text-orange-400 text-xl mr-3 font-serif">2.</div>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Team Fights Reset Outcomes</h4>
+                                    <p class="text-xs text-slate-500">A single late-game team fight can swing thousands of gold. Objectives like Fire Giant and Gold Fury provide catch-up mechanics by design.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-orange-500/10 p-2 rounded text-orange-400 text-xl mr-3 font-serif">3.</div>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Skill Expression Remains Constant</h4>
+                                    <p class="text-xs text-slate-500">Your ability to land abilities, position correctly, and make macro decisions doesn't diminish because of a score deficit. &alpha; remains constant.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="text-xs text-slate-500 uppercase tracking-widest mb-4">SMITE-Specific Factors</div>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-sm text-slate-300">Gold Fury</span>
+                                    <span class="text-orange-400 font-bold text-xs">+600-1500g team</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-sm text-slate-300">Fire Giant</span>
+                                    <span class="text-orange-400 font-bold text-xs">+200g + Buff</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-sm text-slate-300">Kill Bounty (Spree)</span>
+                                    <span class="text-orange-400 font-bold text-xs">+500-1000g</span>
+                                </div>
+                                <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                                    <span class="text-sm text-slate-300">Full Build (6 items)</span>
+                                    <span class="text-cyan-400 font-bold text-xs">Hard Ceiling</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 border border-orange-500/30 rounded-xl p-6">
+                            <div class="text-center">
+                                <div class="text-[10px] text-orange-400 uppercase tracking-widest mb-2">Key Insight</div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    SMITE's design <strong class="text-white">intentionally</strong> includes comeback mechanics. The game is not designed to be decided at 5 minutes. Surrendering early contradicts the very architecture of the game.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: LUCK ARGUMENT -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">07. "It's Just Luck, Bro!"</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-emerald-500/20">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="prose prose-invert prose-sm">
+                            <h3 class="text-white text-lg font-bold">Emergent Randomness ≠ Luck</h3>
+                            <p class="text-slate-400">
+                                A common dismissal of comeback victories is: <em class="text-emerald-400">"You just got lucky."</em> This argument fundamentally misunderstands the nature of probabilistic outcomes in skill-based systems.
+                            </p>
+                            <p class="text-slate-400">
+                                <strong class="text-white">Emergent randomness</strong> arises from the composite of countless decision points and skill checks. It is not "random" in the way a coin flip is random—it is the aggregate result of <strong class="text-cyan-400">deterministic choices</strong> made under uncertainty.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="text-xs text-emerald-400 uppercase tracking-widest mb-4">The Logical Problem</div>
+                            <div class="space-y-4 text-sm text-slate-400">
+                                <p>
+                                    If we grant that a comeback win from a <span class="text-pink-400 font-bold">98%/2%</span> disadvantage is "luck," then we must logically extend this:
+                                </p>
+                                <ul class="list-disc list-inside space-y-2 pl-4">
+                                    <li>A win from <span class="text-yellow-400">70%/30%</span> is also luck (just more likely luck)</li>
+                                    <li>A win from <span class="text-cyan-400">50%/50%</span> is also luck (coin flip luck)</li>
+                                    <li>A win from <span class="text-emerald-400">30%/70%</span> is <em>expected</em> luck?</li>
+                                </ul>
+                                <p class="text-white font-medium mt-4">
+                                    This reasoning leads to an absurd conclusion: <strong>all wins are luck</strong>, because all wins involve some probability less than 100%.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 border border-emerald-500/30 rounded-xl p-6">
+                            <div class="text-xs text-slate-500 uppercase tracking-widest mb-4">The Threshold Problem</div>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                To avoid this, one might propose a threshold: <em>"Below X% win chance, it's luck."</em> But this is <strong class="text-white">entirely arbitrary</strong>. 
+                            </p>
+                            <p class="text-slate-400 text-sm leading-relaxed mt-2">
+                                The <span class="text-emerald-400 font-bold">weight factor of luck does not increase</span> just because the likelihood of winning decreases. The contribution of skill, decision-making, and execution remains constant across all probability states. A 2% win still required the same mechanical precision as a 60% win—perhaps even more.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="text-center mb-4">
+                                <div class="text-4xl mb-2">🎲</div>
+                                <div class="text-xs text-slate-500 uppercase tracking-widest">True Randomness</div>
+                            </div>
+                            <p class="text-slate-400 text-xs text-center">
+                                Outcome determined by chance alone. No skill input affects probability.
+                            </p>
+                            <div class="text-center mt-3 text-emerald-400 font-bold text-sm">NOT applicable to SMITE</div>
+                        </div>
+
+                        <div class="bg-slate-900 border border-emerald-500/30 rounded-xl p-6">
+                            <div class="text-center mb-4">
+                                <div class="text-4xl mb-2">🧠</div>
+                                <div class="text-xs text-slate-500 uppercase tracking-widest">Emergent Randomness</div>
+                            </div>
+                            <p class="text-slate-400 text-xs text-center">
+                                Unpredictable outcomes from the interaction of many skill-based decisions.
+                            </p>
+                            <div class="text-center mt-3 text-cyan-400 font-bold text-sm">This is SMITE</div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-emerald-900/30 to-slate-900 border border-emerald-500/20 rounded-xl p-6">
+                            <div class="text-center">
+                                <div class="text-[10px] text-emerald-400 uppercase tracking-widest mb-2">Core Argument</div>
+                                <p class="text-white text-sm font-medium">
+                                    Variance due to <strong class="text-emerald-400">unpredictability</strong> is not the same as variance due to <strong class="text-pink-400">randomness</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: INUS -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. INUS Conditions</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-violet-500/20">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="prose prose-invert prose-sm">
+                            <h3 class="text-white text-lg font-bold">Insufficient but Necessary Parts</h3>
+                            <p class="text-slate-400">
+                                Even if we grant that non-deterministic behavior could be called "luck," we have <strong class="text-violet-400">no reason to believe</strong> this luck factor is the most important contributor to the outcome.
+                            </p>
+                            <p class="text-slate-400">
+                                In philosophy of causation, an <strong class="text-white">INUS condition</strong> is an <em>Insufficient but Necessary part of an Unnecessary but Sufficient condition</em>. Game outcomes are caused by multiple INUS factors working together.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="text-xs text-violet-400 uppercase tracking-widest mb-4">Performance Function</div>
+                            <div class="text-center text-white math-block text-lg mb-4">
+                                <span class="text-slate-400">Outcome</span> = <span class="math-serif">f</span>(<span class="text-cyan-400">Skill</span>, <span class="text-pink-400">Motivation</span>, <span class="text-yellow-400">Form</span>, <span class="text-emerald-400">Adaptation</span>, <span class="text-violet-400">Variance</span>)
+                            </div>
+                            <p class="text-slate-400 text-xs text-center">
+                                Why should we privilege "luck" (variance) over these other equally necessary factors?
+                            </p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-cyan-400 mr-3"></div>
+                                <span class="text-sm text-slate-300 flex-1">Mechanical Skill</span>
+                                <span class="text-xs text-slate-500">Aiming, timing, combos</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-pink-400 mr-3"></div>
+                                <span class="text-sm text-slate-300 flex-1">Motivation</span>
+                                <span class="text-xs text-slate-500">Mental focus, willingness</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-yellow-400 mr-3"></div>
+                                <span class="text-sm text-slate-300 flex-1">Form (Good/Bad Day)</span>
+                                <span class="text-xs text-slate-500">Physical state, fatigue</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-emerald-400 mr-3"></div>
+                                <span class="text-sm text-slate-300 flex-1">Adaptation</span>
+                                <span class="text-xs text-slate-500">Reading opponents, adjusting</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+                                <div class="w-3 h-3 rounded-full bg-violet-400 mr-3"></div>
+                                <span class="text-sm text-slate-300 flex-1">Variance ("Luck")</span>
+                                <span class="text-xs text-slate-500">Emergent unpredictability</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-900 border border-violet-500/30 rounded-xl p-6">
+                            <div class="text-xs text-slate-500 uppercase tracking-widest mb-4">The 98%/2% Scenario</div>
+                            <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                                Consider winning a comeback from a <span class="text-pink-400 font-bold">98%/2%</span> predicted loss state. Rather than calling this "lucky," it could be attributed to:
+                            </p>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-slate-800/50 rounded-lg border-l-4 border-cyan-400">
+                                    <div class="text-white font-bold text-sm">Resilience</div>
+                                    <p class="text-xs text-slate-500 mt-1">Refusing to give up, maintaining focus under pressure</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg border-l-4 border-emerald-400">
+                                    <div class="text-white font-bold text-sm">Skill Expression</div>
+                                    <p class="text-xs text-slate-500 mt-1">Outplaying opponents through superior mechanics</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg border-l-4 border-yellow-400">
+                                    <div class="text-white font-bold text-sm">Strategic Adaptation</div>
+                                    <p class="text-xs text-slate-500 mt-1">Finding and exploiting weaknesses in the enemy team</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg border-l-4 border-pink-400">
+                                    <div class="text-white font-bold text-sm">Team Coordination</div>
+                                    <p class="text-xs text-slate-500 mt-1">Perfect execution of a high-risk play</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-violet-900/30 to-slate-900 border border-violet-500/20 rounded-xl p-6">
+                            <div class="text-center">
+                                <div class="text-[10px] text-violet-400 uppercase tracking-widest mb-2">Reframing the Narrative</div>
+                                <p class="text-white text-sm font-medium leading-relaxed">
+                                    A comeback from 98%/2% is not simply <strong class="text-pink-400">"lucky"</strong>—it is a <strong class="text-violet-400">great feat</strong> of resilience, skill, adaptation, and determination. Attributing it solely to luck dismisses genuine achievement.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: CASE STUDY -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">09. Case Study: Skill or Luck?</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-amber-500/20">
+                <div class="space-y-8">
+                    <!-- Scenario Setup -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest mb-4 text-center">The Scenario</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div class="p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">🎯</div>
+                                <div class="text-white font-bold">Player A</div>
+                                <p class="text-xs text-slate-400 mt-1">Predicts B will move right. Aims and fires ability at that spot.</p>
+                            </div>
+                            <div class="p-4 bg-slate-800/50 rounded-lg flex items-center justify-center">
+                                <div class="text-amber-400 text-2xl">→</div>
+                            </div>
+                            <div class="p-4 bg-slate-800/50 rounded-lg">
+                                <div class="text-3xl mb-2">🏃</div>
+                                <div class="text-white font-bold">Player B</div>
+                                <p class="text-xs text-slate-400 mt-1">Moves slightly to the right. Gets hit by the ability.</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <span class="text-slate-400 text-sm">Was this hit a feat of <span class="text-cyan-400 font-bold">skill</span> or was it <span class="text-pink-400 font-bold">luck</span>?</span>
+                        </div>
+                    </div>
+
+                    <!-- Analysis Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- 90/100 Scenario -->
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-xs text-emerald-400 uppercase tracking-widest">Scenario A: 90/100 Hits</div>
+                                <div class="text-emerald-400 font-bold">90%</div>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-4">
+                                Create this exact scenario 100 times. Player A hits <span class="text-white font-bold">90 times</span>.
+                            </p>
+                            <div class="space-y-2">
+                                <div class="flex justify-between p-2 bg-slate-800/50 rounded">
+                                    <span class="text-slate-300 text-sm">Hits (90)</span>
+                                    <span class="text-emerald-400 text-sm font-bold">Skill</span>
+                                </div>
+                                <div class="flex justify-between p-2 bg-slate-800/50 rounded">
+                                    <span class="text-slate-300 text-sm">Misses (10)</span>
+                                    <span class="text-pink-400 text-sm font-bold">Bad Luck?</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-3">
+                                If they can "normally" hit, are the misses bad luck? Or skill variance?
+                            </p>
+                        </div>
+
+                        <!-- 50/100 Scenario -->
+                        <div class="bg-slate-900 border border-amber-500/30 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="text-xs text-amber-400 uppercase tracking-widest">Scenario B: 50/100 Hits</div>
+                                <div class="text-amber-400 font-bold">50%</div>
+                            </div>
+                            <p class="text-slate-400 text-sm mb-4">
+                                Exact same scenario, but now Player A hits exactly <span class="text-white font-bold">50 times</span>.
+                            </p>
+                            <div class="p-4 bg-slate-800/50 rounded-lg text-center">
+                                <div class="text-amber-400 font-bold text-lg">Surely now it's luck?</div>
+                                <p class="text-xs text-slate-500 mt-2">It's a coin flip, right?</p>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-3">
+                                But wait—what about Player B's perspective?
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- The Twist -->
+                    <div class="bg-gradient-to-r from-amber-900/20 to-violet-900/20 border border-amber-500/20 rounded-xl p-6">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest mb-4 text-center">The Perspective Shift</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="text-center p-4">
+                                <div class="text-cyan-400 font-bold mb-2">Player A's View</div>
+                                <p class="text-slate-400 text-sm">
+                                    "I predicted correctly 50% of the time. The other 50%? Bad luck—they moved unpredictably."
+                                </p>
+                            </div>
+                            <div class="text-center p-4">
+                                <div class="text-pink-400 font-bold mb-2">Player B's View</div>
+                                <p class="text-slate-400 text-sm">
+                                    "I evaded successfully 50% of the time. Those were <strong class="text-white">skill-based dodges</strong>. The hits? I got unlucky."
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4 p-4 bg-slate-900/50 rounded-lg">
+                            <p class="text-white text-sm font-medium">
+                                Both players are highly skilled. The 50% rate reflects the <strong class="text-amber-400">balance of their skills</strong>, not randomness.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Conclusion -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                            <div class="text-xs text-pink-400 uppercase tracking-widest mb-4">The Inconsistency</div>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                This notion of luck is <strong class="text-white">neither consistent nor helpful</strong>. The variance of these outcomes is due to <strong class="text-amber-400">unpredictability</strong>—the interaction of two skilled decision-makers—not randomness.
+                            </p>
+                            <p class="text-slate-400 text-sm leading-relaxed mt-3">
+                                We could even argue the game is <strong class="text-cyan-400">technically 100% deterministic</strong>: every frame, every input, follows causal physics. "Randomness" and "luck" become non-existent under this view.
+                            </p>
+                        </div>
+
+                        <div class="bg-slate-900 border border-emerald-500/30 rounded-xl p-6">
+                            <div class="text-xs text-emerald-400 uppercase tracking-widest mb-4">Granting "Statistical Luck"</div>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                One might argue they mean "luck" in an emergent or statistical sense—describing a <strong class="text-white">positive and unlikely event</strong>.
+                            </p>
+                            <p class="text-slate-400 text-sm leading-relaxed mt-3">
+                                However, this usage <strong class="text-pink-400">downplays the relevance</strong> of important factors of outcome. It dismisses the prediction, the read, the mechanical precision—all real skills that contributed to the result.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 10: ULTIMA FACIE -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">10. Ultima Facie</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-rose-500/20">
+                <div class="space-y-8">
+                    <!-- Synthesis -->
+                    <div class="prose prose-invert max-w-none">
+                        <h3 class="text-white text-xl font-bold text-center mb-6">Complete Synthesis</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-cyan-400 font-bold text-sm mb-2">The Mathematical Model</div>
+                                <p class="text-xs text-slate-400">
+                                    We established that MOBA advantages follow a <strong class="text-white">logistic S-curve</strong>, not exponential growth. This means snowballing has a <strong class="text-white">hard ceiling</strong>.
+                                </p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-pink-400 font-bold text-sm mb-2">Volatility & Variance</div>
+                                <p class="text-xs text-slate-400">
+                                    Monte Carlo simulations revealed <strong class="text-white">high outcome variance</strong> even with significant deficits. Individual timelines frequently reverse.
+                                </p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-yellow-400 font-bold text-sm mb-2">Skill Remains Constant</div>
+                                <p class="text-xs text-slate-400">
+                                    Your base skill (&alpha;) <strong class="text-white">never diminishes</strong>. It contributes equally to every round, regardless of score differential.
+                                </p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-emerald-400 font-bold text-sm mb-2">Mental State Matters</div>
+                                <p class="text-xs text-slate-400">
+                                    Tilting and giving up <strong class="text-white">actively reduces</strong> your effective skill. The prophecy becomes self-fulfilling.
+                                </p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-violet-400 font-bold text-sm mb-2">Luck ≠ Variance</div>
+                                <p class="text-xs text-slate-400">
+                                    Emergent randomness from skill interactions is <strong class="text-white">not luck</strong>. Calling comebacks "lucky" is inconsistent and arbitrary.
+                                </p>
+                            </div>
+                            <div class="bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                                <div class="text-amber-400 font-bold text-sm mb-2">INUS Factors</div>
+                                <p class="text-xs text-slate-400">
+                                    Outcomes are multi-causal. Privileging "luck" over skill, resilience, and adaptation is <strong class="text-white">unjustified</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- The Argument -->
+                    <div class="bg-gradient-to-r from-rose-900/20 to-purple-900/20 border border-rose-500/30 rounded-xl p-6">
+                        <div class="text-xs text-rose-400 uppercase tracking-widest mb-4 text-center">Against the 5-Minute Fallacy</div>
+                        <div class="space-y-4 text-slate-300 leading-relaxed">
+                            <p>
+                                The claim <em>"This game is over at 5 minutes"</em> commits several errors:
+                            </p>
+                            <ol class="list-decimal list-inside space-y-2 pl-4 text-sm">
+                                <li><strong class="text-white">It ignores logistic scaling</strong>—early leads don't compound indefinitely</li>
+                                <li><strong class="text-white">It conflates probability with certainty</strong>—even 70% is not 100%</li>
+                                <li><strong class="text-white">It causes the very outcome it predicts</strong>—tilting reduces skill expression</li>
+                                <li><strong class="text-white">It mislabels variance as luck</strong>—dismissing genuine skill-based comebacks</li>
+                                <li><strong class="text-white">It privileges one INUS factor arbitrarily</strong>—ignoring resilience, adaptation, etc.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Better Language -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-4 text-center">Toward Better Language</div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+                                <div class="text-red-400 font-bold text-sm mb-2">❌ Unhelpful</div>
+                                <p class="text-slate-400 text-sm italic">"Game is over. FF at 10."</p>
+                                <p class="text-xs text-slate-500 mt-2">Deterministic, defeatist, causes tilt</p>
+                            </div>
+                            <div class="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
+                                <div class="text-emerald-400 font-bold text-sm mb-2">✓ More Accurate</div>
+                                <p class="text-slate-400 text-sm italic">"The expected outcome of this game is a loss."</p>
+                                <p class="text-xs text-slate-500 mt-2">Probabilistic, acknowledges uncertainty</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-6 p-4 bg-slate-800/50 rounded-lg">
+                            <p class="text-slate-400 text-sm">
+                                <strong class="text-white">However</strong>, even this "accurate" phrasing remains <strong class="text-amber-400">unhelpful</strong> due to the circumstances we've discussed:
+                            </p>
+                            <ul class="text-xs text-slate-500 mt-2 space-y-1">
+                                <li>• It still promotes tilt (self-fulfilling prophecy)</li>
+                                <li>• It ignores the high variance of actual outcomes</li>
+                                <li>• It provides no actionable information</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Final Statement -->
+                    <div class="bg-gradient-to-br from-slate-900 to-purple-900/30 border border-purple-500/30 rounded-xl p-8 text-center">
+                        <div class="text-xs text-purple-400 uppercase tracking-widest mb-4">Closing Statement</div>
+                        <blockquote class="text-white text-lg md:text-xl font-medium leading-relaxed mb-6">
+                            "The 5-Minute Surrender Fallacy is not merely a statistical error—it is a <strong class="text-rose-400">self-fulfilling prophecy</strong> that conflates <strong class="text-cyan-400">probability</strong> with <strong class="text-purple-400">certainty</strong>, <strong class="text-amber-400">variance</strong> with <strong class="text-pink-400">luck</strong>, and <strong class="text-emerald-400">difficulty</strong> with <strong class="text-red-400">impossibility</strong>."
+                        </blockquote>
+                        <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                            The game is not decided at 5 minutes. Your skill matters. Your mental state matters. Your resilience matters. The only truly lost game is the one where you stop trying.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- FOOTER -->
         <div class="text-center py-12 space-y-4">
             <h3 class="text-3xl font-bold text-white">The Verdict</h3>
