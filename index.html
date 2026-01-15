@@ -1669,18 +1669,18 @@
             return { min, q1, median, q3, max };
         };
 
-        function updateStatCard(id, deficit, winRate, advPercent, scoreAdv) {
+        function updateStatCard(id, deficit, winRate, advPercent, scoreAdvPercent) {
             const card = document.getElementById(id);
             if(!card) return;
             const advColor = parseFloat(advPercent) >= 0 ? 'text-green-400' : 'text-red-400';
             const sign = parseFloat(advPercent) > 0 ? '+' : '';
-            const scoreAdvColor = parseFloat(scoreAdv) >= 0 ? 'text-green-400' : 'text-red-400';
-            const scoreSign = parseFloat(scoreAdv) > 0 ? '+' : '';
+            const scoreAdvColor = parseFloat(scoreAdvPercent) >= 0 ? 'text-green-400' : 'text-red-400';
+            const scoreSign = parseFloat(scoreAdvPercent) > 0 ? '+' : '';
             card.innerHTML = `
                 <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Deficit ${deficit}</div>
                 <div class="text-xl font-black text-white mb-1">${winRate}% <span class="text-[10px] font-normal text-slate-400">Win Rate</span></div>
                 <div class="text-xs ${advColor} font-bold">${sign}${advPercent} <span class="text-[9px] text-slate-500">Weight Adv.</span></div>
-                <div class="text-xs ${scoreAdvColor} font-bold">${scoreSign}${scoreAdv} <span class="text-[9px] text-slate-500">Score Adv. (A(S))</span></div>
+                <div class="text-xs ${scoreAdvColor} font-bold">${scoreSign}${scoreAdvPercent} <span class="text-[9px] text-slate-500">Score Adv.</span></div>
             `;
         }
 
@@ -1716,9 +1716,10 @@
                 const advPercent = advPercentRaw.toFixed(1) + '%';
                 advantageLabels.push(advPercent);
                 
-                // Calculate pure score advantage A(S)
+                // Calculate pure score advantage as percentage (relative to total weight)
                 const scoreAdvRaw = adA_init - adB_init;
-                const scoreAdv = scoreAdvRaw.toFixed(2);
+                const scoreAdvPercentRaw = (scoreAdvRaw / (wA_init + wB_init) * 100);
+                const scoreAdvPercent = scoreAdvPercentRaw.toFixed(1) + '%';
 
                 let wins = 0;
                 const finalDiffs = [];
@@ -1749,7 +1750,7 @@
                 boxplotData.push({ x: def, ...stats });
 
                 if ([0, 2, 5, 8, 10].includes(def)) {
-                    updateStatCard(`card${def}`, def, wr, advPercent, scoreAdv);
+                    updateStatCard(`card${def}`, def, wr, advPercent, scoreAdvPercent);
                 }
             }
 
