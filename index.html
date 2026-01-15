@@ -580,11 +580,198 @@
             </div>
         </section>
 
-        <!-- SECTION 7: LUCK ARGUMENT -->
+        <!-- SECTION 7: EMPIRICAL DATA FROM PRO PLAY -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">07. "It's Just Luck, Bro!"</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">07. Real-World Evidence</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-indigo-500/20">
+                <div class="space-y-8">
+                    <!-- Introduction -->
+                    <div class="prose prose-invert max-w-none">
+                        <h3 class="text-white text-xl font-bold mb-4">Data from Professional League of Legends</h3>
+                        <p class="text-slate-400 leading-relaxed">
+                            Our mathematical model predicts that gold leads follow a <strong class="text-cyan-400">logistic advantage curve</strong> with high variance in outcomes. But does this hold up in real competitive play?
+                        </p>
+                        <p class="text-slate-400 leading-relaxed">
+                            <strong class="text-white">GameSpot's analysis of League of Legends Worlds tournament data</strong> provides empirical validation of our model. Their findings reveal critical insights about how gold leads actually play out at the highest level of competition.
+                        </p>
+                    </div>
+
+                    <!-- Graph 1: Win Rate Over Time -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-indigo-400 font-bold text-sm uppercase tracking-widest mb-4 text-center">Win Rate of Teams With Gold Lead</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <img src="3043786-ogImport-18446-win%.jpg" alt="Win % of teams with the lead at any given minute" class="w-full h-auto">
+                        </div>
+                        <div class="mt-4 space-y-3">
+                            <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-indigo-400">
+                                <div class="text-xs text-indigo-400 uppercase tracking-widest mb-2">Key Finding</div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    Teams with a gold lead win <strong class="text-white">80-85%</strong> of games from 11-40 minutes. Notice: This is <strong class="text-indigo-400">not 100%</strong>. Even in professional play, 15-20% of games with gold leads result in comebacks.
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-3 bg-slate-800/50 rounded-lg">
+                                    <div class="text-[10px] text-slate-500 uppercase mb-1">Early Game (8-11 min)</div>
+                                    <div class="text-white font-bold">70-85% Win Rate</div>
+                                    <p class="text-xs text-slate-400 mt-1">Lead is building but not decisive</p>
+                                </div>
+                                <div class="p-3 bg-slate-800/50 rounded-lg">
+                                    <div class="text-[10px] text-slate-500 uppercase mb-1">Late Game (40+ min)</div>
+                                    <div class="text-white font-bold">Decreases to ~60-70%</div>
+                                    <p class="text-xs text-slate-400 mt-1">Advantage diminishes over time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Graph 2: Gold Lead Threshold -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-indigo-400 font-bold text-sm uppercase tracking-widest mb-4 text-center">Gold Lead Required for 90% Win Rate</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <img src="3043788-ogImport-18448-%goldsignificant.png" alt="% gold lead needed to have a significant lead (90% win rate)" class="w-full h-auto">
+                        </div>
+                        <div class="mt-4 space-y-3">
+                            <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-emerald-400">
+                                <div class="text-xs text-emerald-400 uppercase tracking-widest mb-2">The 10% Threshold</div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    The article identifies that a <strong class="text-white">~10% gold advantage</strong> corresponds to approximately 90% win rate. This aligns with our model's prediction that advantage follows a <strong class="text-emerald-400">diminishing returns curve</strong>.
+                                </p>
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg">
+                                <p class="text-xs text-slate-400 leading-relaxed">
+                                    <strong class="text-white">Critical Insight:</strong> The percentage lead needed decreases over time because total gold increases. A 1000g lead at 10 minutes (when teams have 5000g) is 20%, but at 30 minutes (when teams have 15000g) the same 1000g is only 6.7%.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Graph 3: Frequency of Significant Leads -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-indigo-400 font-bold text-sm uppercase tracking-widest mb-4 text-center">Games With "Significant" Lead Over Time</h4>
+                        <div class="bg-white rounded-lg p-4">
+                            <img src="3043789-ogImport-18449-%gamessignificant.png" alt="Percent of games that one team has a significant lead" class="w-full h-auto">
+                        </div>
+                        <div class="mt-4 space-y-3">
+                            <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-pink-400">
+                                <div class="text-xs text-pink-400 uppercase tracking-widest mb-2">Game State Evolution</div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    By 20 minutes, <strong class="text-white">80-90%</strong> of professional games have developed a "significant" lead. However, this doesn't mean 90% of games are decided—it means most games have <em>diverged from perfect equality</em>.
+                                </p>
+                            </div>
+                            <div class="p-3 bg-slate-800/50 rounded-lg">
+                                <p class="text-xs text-slate-400 leading-relaxed">
+                                    The sharp drop after 35 minutes suggests that late-game scenarios often involve throws, team fight swings, or successful comeback mechanics that equalize the gold difference.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analysis: Connection to Model -->
+                    <div class="bg-gradient-to-r from-indigo-900/20 to-purple-900/20 border border-indigo-500/30 rounded-xl p-6">
+                        <div class="text-xs text-indigo-400 uppercase tracking-widest mb-4 text-center">How This Validates Our Model</div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-indigo-500/10 p-2 rounded text-indigo-400 text-xl mr-3">✓</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Logistic Scaling Confirmed</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            Win rates plateau at 80-85%, not 100%. This matches our S-curve prediction: advantages have diminishing returns and hit a ceiling.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-indigo-500/10 p-2 rounded text-indigo-400 text-xl mr-3">✓</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">High Variance Demonstrated</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            15-20% comeback rate even at professional level proves that leads are <strong>probabilistic, not deterministic</strong>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-indigo-500/10 p-2 rounded text-indigo-400 text-xl mr-3">✓</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Late Game Equalization</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            Win rate decreases after 40 minutes, consistent with our model's prediction that item caps flatten the advantage curve.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-indigo-500/10 p-2 rounded text-indigo-400 text-xl mr-3">✓</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Skill Matters Throughout</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            The 15-20% comeback rate in professional games demonstrates that team skill expression remains relevant even when behind, proving that deficits are not insurmountable.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Implications -->
+                    <div class="bg-slate-900 border border-indigo-500/30 rounded-xl p-6">
+                        <div class="text-xs text-indigo-400 uppercase tracking-widest mb-4 text-center">Implications for Ranked Play</div>
+                        <div class="space-y-4 text-slate-300 text-sm leading-relaxed">
+                            <p>
+                                This professional data is from <strong class="text-white">Worlds tournament</strong>—the highest skill level in League of Legends. If even these elite teams lose 15-20% of games when ahead, what does that mean for ranked play?
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <div class="text-emerald-400 font-bold text-sm mb-2">At Pro Level</div>
+                                    <ul class="space-y-1 text-xs text-slate-400">
+                                        <li>• Perfect communication</li>
+                                        <li>• Optimal macro play</li>
+                                        <li>• Coordinated team fights</li>
+                                        <li>• Still 15-20% comeback rate</li>
+                                    </ul>
+                                </div>
+                                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                                    <div class="text-pink-400 font-bold text-sm mb-2">In Ranked Solo Queue</div>
+                                    <ul class="space-y-1 text-xs text-slate-400">
+                                        <li>• Imperfect coordination</li>
+                                        <li>• Macro mistakes common</li>
+                                        <li>• Unforced errors frequent</li>
+                                        <li>• <strong class="text-white">Higher comeback probability</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-br from-indigo-900/30 to-slate-900 border border-indigo-500/20 rounded-lg p-4 mt-4">
+                                <p class="text-center text-white font-medium">
+                                    If professional teams with perfect execution still lose 1 in 5 games when ahead, surrendering at 5 minutes in solo queue is <strong class="text-indigo-400">statistically unjustified</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Source Attribution -->
+                    <div class="border-t border-slate-700 pt-4">
+                        <p class="text-xs text-slate-500 text-center">
+                            <strong class="text-slate-400">Data Source:</strong> GameSpot Analysis of League of Legends Worlds Tournament
+                            <br>
+                            <a href="https://www.gamespot.com/articles/how-much-do-gold-leads-matter/1100-6438520/" class="text-indigo-400 hover:text-indigo-300" target="_blank" rel="noopener noreferrer">
+                                "How Much Do Gold Leads Matter?" — GameSpot
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: LUCK ARGUMENT -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. "It's Just Luck, Bro!"</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -677,11 +864,11 @@
             </div>
         </section>
 
-        <!-- SECTION 8: INUS -->
+        <!-- SECTION 9: INUS -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. INUS Conditions</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">09. INUS Conditions</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -788,11 +975,11 @@
             </div>
         </section>
 
-        <!-- SECTION 9: CASE STUDY -->
+        <!-- SECTION 10: CASE STUDY -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">09. Case Study: Skill or Luck?</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">10. Case Study: Skill or Luck?</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -916,11 +1103,11 @@
             </div>
         </section>
 
-        <!-- SECTION 10: ULTIMA FACIE -->
+        <!-- SECTION 11: ULTIMA FACIE -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">10. Ultima Facie</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">11. Ultima Facie</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -1028,11 +1215,11 @@
             </div>
         </section>
 
-        <!-- SECTION 11: REFERENCES -->
+        <!-- SECTION 12: REFERENCES -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">11. References</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">12. References</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -1041,6 +1228,13 @@
                     <h3 class="text-white text-lg font-bold mb-6">Scientific Sources</h3>
                     
                     <div class="space-y-4 text-sm text-slate-300">
+                        <div class="bg-slate-900/50 p-4 rounded-lg border-l-4 border-indigo-500">
+                            <p class="leading-relaxed">
+                                <strong class="text-white">GameSpot (2016).</strong> How much do gold leads matter? Analysis of League of Legends Worlds tournament data examining the relationship between gold advantages and win rates across game time.
+                                <a href="https://www.gamespot.com/articles/how-much-do-gold-leads-matter/1100-6438520/" class="text-cyan-400 hover:text-cyan-300 ml-2" target="_blank">https://www.gamespot.com/articles/how-much-do-gold-leads-matter/1100-6438520/</a>
+                            </p>
+                        </div>
+
                         <div class="bg-slate-900/50 p-4 rounded-lg border-l-4 border-cyan-500">
                             <p class="leading-relaxed">
                                 <strong class="text-white">Beato, M., Latinjak, A., Bertollo, M., & Boullosa, D. (2025).</strong> Confirmation Bias in Sport Science: Understanding and Mitigating Its Impact. <em>International Journal of Sports Physiology and Performance</em>, 1-6.
