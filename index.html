@@ -767,11 +767,147 @@
             </div>
         </section>
 
-        <!-- SECTION 8: LUCK ARGUMENT -->
+        <!-- SECTION 8: ADVANTAGE FLATTENING -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. "It's Just Luck, Bro!"</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. Advantage Flattening Over Time</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-teal-500/20">
+                <div class="space-y-8">
+                    <!-- Introduction -->
+                    <div class="prose prose-invert max-w-none">
+                        <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
+                        <p class="text-slate-400 leading-relaxed">
+                            Real-world MOBA data shows that the impact of gold leads <strong class="text-teal-400">decreases over time</strong>. 
+                            A 2-kill lead at 5 minutes is more impactful than the same 2-kill lead at 25 minutes. 
+                            But why does this happen mathematically?
+                        </p>
+                        <p class="text-slate-400 leading-relaxed">
+                            Using our model, we can simulate games where <strong class="text-white">both teams start with scores</strong>, 
+                            representing different stages of the game. By maintaining a <strong class="text-cyan-400">fixed score difference</strong> 
+                            but varying the total score level, we can observe how the same numerical advantage produces 
+                            <strong class="text-pink-400">diminishing win rate differences</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Simulation Configuration</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-cyan-400 text-xs font-bold uppercase">Your Skill</label>
+                                    <span id="flattenSkillAVal" class="text-white font-mono font-bold text-xs">12</span>
+                                </div>
+                                <input type="range" id="flattenSkillA" min="1" max="20" value="12" class="w-full">
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-pink-400 text-xs font-bold uppercase">Enemy Skill</label>
+                                    <span id="flattenSkillBVal" class="text-white font-mono font-bold text-xs">10</span>
+                                </div>
+                                <input type="range" id="flattenSkillB" min="1" max="20" value="10" class="w-full">
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-yellow-400 text-xs font-bold uppercase">Score Difference</label>
+                                    <span id="flattenDiffVal" class="text-white font-mono font-bold text-xs">2</span>
+                                </div>
+                                <input type="range" id="flattenDiff" min="1" max="8" value="2" class="w-full">
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
+                            <p class="text-xs text-slate-400">
+                                <strong class="text-white">Simulation:</strong> For each game progression level (starting score), 
+                                we run <strong class="text-teal-400">1,000 games</strong> where the higher-skilled player starts with 
+                                the specified advantage. We then plot how win rate changes as the game progresses.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression</h4>
+                        <div class="chart-box" style="height: 400px;">
+                            <canvas id="flatteningChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center text-xs text-slate-500">
+                            X-axis represents the starting score of the leading player (game progression). 
+                            Y-axis shows win probability for the higher-skilled player.
+                        </div>
+                    </div>
+
+                    <!-- Analysis -->
+                    <div class="bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border border-teal-500/30 rounded-xl p-6">
+                        <div class="text-xs text-teal-400 uppercase tracking-widest mb-4 text-center">Key Insight</div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Early Game: High Impact</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            When both teams have low scores (early game), the same numerical advantage creates 
+                                            a <strong class="text-white">large win rate difference</strong> because the 
+                                            logistic advantage function is steeper at lower score values.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Mid Game: Peak Impact</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            As scores increase, the advantage function reaches its steepest point 
+                                            (inflection point around score ~8), creating maximum differentiation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Late Game: Flattening</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            At high scores (late game), both teams approach the <strong class="text-white">advantage ceiling</strong>. 
+                                            The same numerical difference produces <strong class="text-pink-400">diminishing impact</strong> 
+                                            on win probability.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Full Build: Equalization</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            When both teams reach full builds, skill becomes the dominant factor again, 
+                                            as advantage contribution has plateaued for both sides.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
+                            <p class="text-white text-sm font-medium">
+                                This bell-shaped curve demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
+                                the impact of your deficit will naturally <strong class="text-pink-400">diminish over time</strong>, 
+                                giving you more chances to comeback as the game progresses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: LUCK ARGUMENT -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">09. "It's Just Luck, Bro!"</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -864,11 +1000,11 @@
             </div>
         </section>
 
-        <!-- SECTION 9: INUS -->
+        <!-- SECTION 10: INUS -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">09. INUS Conditions</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">10. INUS Conditions</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -975,11 +1111,11 @@
             </div>
         </section>
 
-        <!-- SECTION 10: CASE STUDY -->
+        <!-- SECTION 11: CASE STUDY -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">10. Case Study: Skill or Luck?</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">11. Case Study: Skill or Luck?</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -1103,11 +1239,11 @@
             </div>
         </section>
 
-        <!-- SECTION 11: ULTIMA FACIE -->
+        <!-- SECTION 12: ULTIMA FACIE -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">11. Ultima Facie</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">12. Ultima Facie</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -1215,11 +1351,11 @@
             </div>
         </section>
 
-        <!-- SECTION 12: REFERENCES -->
+        <!-- SECTION 13: REFERENCES -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">12. References</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">13. References</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -1732,11 +1868,193 @@
             runMotivationAnalysis(); 
         });
 
+        // --- 6. ADVANTAGE FLATTENING OVER TIME ---
+        let chartFlattening;
+        const FLATTEN_SIM_COUNT = 1000;
+
+        function runFlatteningAnalysis() {
+            if(!safeGet('flatteningChart')) return;
+            const ctxFlatten = document.getElementById('flatteningChart');
+            const skillA = parseInt(document.getElementById('flattenSkillA').value, 10);
+            const skillB = parseInt(document.getElementById('flattenSkillB').value, 10);
+            const fixedDiff = parseInt(document.getElementById('flattenDiff').value, 10);
+
+            const winRateData = [];
+            const labels = [];
+            const advantageData = [];
+
+            // Simulate for different starting scores (game progression levels)
+            // Starting from 0 to 20 (representing different game stages)
+            for (let startScore = 0; startScore <= 20; startScore++) {
+                labels.push(startScore);
+                
+                // Higher skilled player (A) starts with advantage
+                const startA = startScore;
+                const startB = Math.max(0, startScore - fixedDiff);
+                
+                // Remaining rounds = 50 - startScore (as we progress, fewer rounds remain)
+                const remainingRounds = Math.max(10, 50 - startScore);
+                
+                let wins = 0;
+                
+                // Run simulations
+                for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
+                    let sA = startA;
+                    let sB = startB;
+                    
+                    for (let r = 0; r < remainingRounds; r++) {
+                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                        const wA = skillA + adA;
+                        const wB = skillB + adB;
+                        
+                        if (Math.random() < wA / (wA + wB)) {
+                            sA++;
+                        } else {
+                            sB++;
+                        }
+                    }
+                    
+                    if (sA > sB) wins++;
+                }
+                
+                const winRate = (wins / FLATTEN_SIM_COUNT) * 100;
+                winRateData.push(winRate);
+                
+                // Calculate advantage percentage at start of this game state
+                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startA - MIDPOINT_SCORE)));
+                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startB - MIDPOINT_SCORE)));
+                const wA_init = skillA + adA_init;
+                const wB_init = skillB + adB_init;
+                const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100).toFixed(1);
+                advantageData.push(parseFloat(advPercent));
+            }
+
+            const config = {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Win Rate %',
+                            data: winRateData,
+                            borderColor: '#14b8a6',
+                            backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            pointBackgroundColor: '#14b8a6',
+                            fill: true,
+                            yAxisID: 'yWinRate'
+                        },
+                        {
+                            label: 'Initial Weight Advantage %',
+                            data: advantageData,
+                            borderColor: '#a78bfa',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#a78bfa',
+                            yAxisID: 'yAdvantage'
+                        }
+                    ]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Starting Score of Leading Player (Game Progression)', color: '#94a3b8' },
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#64748b' }
+                        },
+                        yWinRate: {
+                            type: 'linear',
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            title: { display: true, text: 'Win Probability %', color: '#14b8a6' },
+                            grid: { color: '#1e293b' },
+                            ticks: { color: '#14b8a6' }
+                        },
+                        yAdvantage: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'Weight Advantage %', color: '#a78bfa' },
+                            grid: { display: false },
+                            ticks: { color: '#a78bfa' }
+                        }
+                    },
+                    plugins: {
+                        ...commonOptions.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y.toFixed(1);
+                                    return `${label}: ${value}%`;
+                                },
+                                afterLabel: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const startScore = context.parsed.x;
+                                        const remainingRounds = Math.max(10, 50 - startScore);
+                                        return `Rounds remaining: ${remainingRounds}`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                midpoint: {
+                                    type: 'line',
+                                    xMin: MIDPOINT_SCORE,
+                                    xMax: MIDPOINT_SCORE,
+                                    borderColor: '#fbbf24',
+                                    borderWidth: 2,
+                                    borderDash: [8, 4],
+                                    label: {
+                                        display: true,
+                                        content: 'S-Curve Inflection',
+                                        position: 'start',
+                                        backgroundColor: 'rgba(251, 191, 36, 0.8)',
+                                        color: '#0f172a',
+                                        font: { size: 10 }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            if (chartFlattening) {
+                chartFlattening.destroy();
+            }
+            chartFlattening = new Chart(ctxFlatten, config);
+        }
+
+        // Flattening Listeners
+        document.getElementById('flattenSkillA').addEventListener('input', (e) => {
+            document.getElementById('flattenSkillAVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenSkillB').addEventListener('input', (e) => {
+            document.getElementById('flattenSkillBVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenDiff').addEventListener('input', (e) => {
+            document.getElementById('flattenDiffVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+
         initInteractiveCharts();
         runUserSim();
         runMonteCarlo();
         runBigDataSim();
         runMotivationAnalysis();
+        runFlatteningAnalysis();
     });
     </script>
 </body>
