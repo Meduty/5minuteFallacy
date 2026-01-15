@@ -236,12 +236,12 @@
                         <h3 class="text-white text-xl font-bold mb-4">What Should a Good MOBA Model Do?</h3>
                         <p class="text-slate-400 leading-relaxed">
                             Before trusting any mathematical model, we should verify it actually captures the phenomena we care about. 
-                            For a MOBA game, we want a model that satisfies three key properties:
+                            For a MOBA game, we want a model that satisfies four key properties:
                         </p>
                     </div>
 
                     <!-- Property Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-slate-900 border border-amber-500/30 rounded-xl p-6">
                             <div class="text-amber-400 font-bold text-sm uppercase tracking-widest mb-3">Property 1</div>
                             <h4 class="text-white font-bold text-lg mb-2">Skill-Based but Not Deterministic</h4>
@@ -266,6 +266,15 @@
                                 Advantage should have diminishing returns and eventually cap. 
                                 You can't buy more than 6 items; you can't be more than 5 levels ahead. 
                                 At full build, skill becomes the dominant factor again.
+                            </p>
+                        </div>
+                        <div class="bg-slate-900 border border-amber-500/30 rounded-xl p-6">
+                            <div class="text-amber-400 font-bold text-sm uppercase tracking-widest mb-3">Property 4</div>
+                            <h4 class="text-white font-bold text-lg mb-2">Skill Monotonicity</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Greater skill should always imply greater win probability. 
+                                If player A is more skilled than player B (α<sub>A</sub> &gt; α<sub>B</sub>), 
+                                then A should have a higher chance of winning any given round.
                             </p>
                         </div>
                     </div>
@@ -405,6 +414,32 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Proof 4 -->
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-amber-500/10 p-2 rounded text-amber-400 text-xl mr-3 font-serif">4</div>
+                                    <div class="flex-1">
+                                        <h5 class="text-white font-bold text-sm mb-2">Proof: Skill Monotonicity</h5>
+                                        <div class="bg-slate-900/50 p-4 rounded-lg text-sm text-slate-300 space-y-3">
+                                            <p><strong class="text-cyan-400">Claim:</strong> Greater skill implies greater win probability (∂P/∂α &gt; 0).</p>
+                                            
+                                            <p><strong class="text-white">Proof:</strong></p>
+                                            <p>The win probability for player A is:</p>
+                                            <div class="text-center my-2 text-white math-block">
+                                                P(A) = W<sub>A</sub>/(W<sub>A</sub> + W<sub>B</sub>) = (α<sub>A</sub> + A(S<sub>A</sub>))/(α<sub>A</sub> + A(S<sub>A</sub>) + α<sub>B</sub> + A(S<sub>B</sub>))
+                                            </div>
+                                            <p>Taking the partial derivative with respect to α<sub>A</sub>:</p>
+                                            <div class="text-center my-2 text-white math-block">
+                                                ∂P/∂α<sub>A</sub> = W<sub>B</sub>/(W<sub>A</sub> + W<sub>B</sub>)²
+                                            </div>
+                                            <p>Since W<sub>B</sub> = α<sub>B</sub> + A(S<sub>B</sub>) &gt; 0 (skill and advantage are positive),</p>
+                                            <p>we have ∂P/∂α<sub>A</sub> &gt; 0 for all valid inputs.</p>
+                                            <p class="text-emerald-400">∴ Increasing skill always increases win probability. ∎</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -473,9 +508,14 @@
                                     <td class="py-3 px-4">lim<sub>S→∞</sub> A(S) = L &lt; ∞</td>
                                     <td class="py-3 px-4 text-emerald-400">✓ Yes</td>
                                 </tr>
-                                <tr>
+                                <tr class="border-b border-slate-800">
                                     <td class="py-3 px-4">Diminishing Returns</td>
                                     <td class="py-3 px-4">d²A/dS² &lt; 0 for S &gt; S₀</td>
+                                    <td class="py-3 px-4 text-emerald-400">✓ Yes</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">Skill Monotonicity</td>
+                                    <td class="py-3 px-4">α<sub>A</sub> &gt; α<sub>B</sub> ⟹ P(A) &gt; P(B)</td>
                                     <td class="py-3 px-4 text-emerald-400">✓ Yes</td>
                                 </tr>
                             </tbody>
