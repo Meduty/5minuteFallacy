@@ -1669,15 +1669,21 @@
             return { min, q1, median, q3, max };
         };
 
-        function updateStatCard(id, deficit, winRate, advPercent) {
+        function updateStatCard(id, deficit, winRate, advPercent, scoreAdvPercent, scoreDiff) {
             const card = document.getElementById(id);
             if(!card) return;
             const advColor = parseFloat(advPercent) >= 0 ? 'text-green-400' : 'text-red-400';
             const sign = parseFloat(advPercent) > 0 ? '+' : '';
+            const scoreAdvColor = parseFloat(scoreAdvPercent) >= 0 ? 'text-green-400' : 'text-red-400';
+            const scoreSign = parseFloat(scoreAdvPercent) > 0 ? '+' : '';
+            const scoreDiffColor = parseInt(scoreDiff) >= 0 ? 'text-green-400' : 'text-red-400';
+            const scoreDiffSign = parseInt(scoreDiff) > 0 ? '+' : '';
             card.innerHTML = `
                 <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Deficit ${deficit}</div>
                 <div class="text-xl font-black text-white mb-1">${winRate}% <span class="text-[10px] font-normal text-slate-400">Win Rate</span></div>
                 <div class="text-xs ${advColor} font-bold">${sign}${advPercent} <span class="text-[9px] text-slate-500">Weight Adv.</span></div>
+                <div class="text-xs ${scoreDiffColor} font-bold">${scoreDiffSign}${scoreDiff} <span class="text-[9px] text-slate-500">Score (S)</span></div>
+                <div class="text-xs ${scoreAdvColor} font-bold">${scoreSign}${scoreAdvPercent} <span class="text-[9px] text-slate-500">Adv. A(S)</span></div>
             `;
         }
 
@@ -1712,6 +1718,16 @@
                 const advPercentRaw = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
                 const advPercent = advPercentRaw.toFixed(1) + '%';
                 advantageLabels.push(advPercent);
+                
+                // Calculate raw score difference (S)
+                const scoreDiff = sA_init - sB_init;
+                
+                // Calculate A(S) advantage as percentage
+                // A(S) is the logistic advantage function value based on score
+                // Showing as percentage relative to total weight for intuition
+                const scoreAdvRaw = adA_init - adB_init;
+                const scoreAdvPercentRaw = (scoreAdvRaw / (wA_init + wB_init) * 100);
+                const scoreAdvPercent = scoreAdvPercentRaw.toFixed(1) + '%';
 
                 let wins = 0;
                 const finalDiffs = [];
@@ -1742,7 +1758,7 @@
                 boxplotData.push({ x: def, ...stats });
 
                 if ([0, 2, 5, 8, 10].includes(def)) {
-                    updateStatCard(`card${def}`, def, wr, advPercent);
+                    updateStatCard(`card${def}`, def, wr, advPercent, scoreAdvPercent, scoreDiff);
                 }
             }
 
