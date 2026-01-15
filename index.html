@@ -580,11 +580,147 @@
             </div>
         </section>
 
-        <!-- SECTION 7: EMPIRICAL DATA FROM PRO PLAY -->
+        <!-- SECTION 7: ADVANTAGE FLATTENING -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">07. Real-World Evidence</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">07. Advantage Flattening Over Time</h2>
+                <div class="h-px bg-slate-700 flex-1"></div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-teal-500/20">
+                <div class="space-y-8">
+                    <!-- Introduction -->
+                    <div class="prose prose-invert max-w-none">
+                        <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
+                        <p class="text-slate-400 leading-relaxed">
+                            Our mathematical model predicts that the impact of advantages <strong class="text-teal-400">decreases over time</strong>. 
+                            A 2-kill lead at 5 minutes should be more impactful than the same 2-kill lead at 25 minutes. 
+                            But why does this happen mathematically?
+                        </p>
+                        <p class="text-slate-400 leading-relaxed">
+                            Using our model, we can simulate games where <strong class="text-white">both teams start with scores</strong>, 
+                            representing different stages of the game. By maintaining a <strong class="text-cyan-400">fixed score difference</strong> 
+                            but varying the total score level, we can observe how the same numerical advantage produces 
+                            <strong class="text-pink-400">diminishing win rate differences</strong>.
+                        </p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Simulation Configuration</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-cyan-400 text-xs font-bold uppercase">Your Skill</label>
+                                    <span id="flattenSkillAVal" class="text-white font-mono font-bold text-xs">12</span>
+                                </div>
+                                <input type="range" id="flattenSkillA" min="1" max="20" value="12" class="w-full">
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-pink-400 text-xs font-bold uppercase">Enemy Skill</label>
+                                    <span id="flattenSkillBVal" class="text-white font-mono font-bold text-xs">10</span>
+                                </div>
+                                <input type="range" id="flattenSkillB" min="1" max="20" value="10" class="w-full">
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-yellow-400 text-xs font-bold uppercase">Score Difference</label>
+                                    <span id="flattenDiffVal" class="text-white font-mono font-bold text-xs">2</span>
+                                </div>
+                                <input type="range" id="flattenDiff" min="1" max="8" value="2" class="w-full">
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
+                            <p class="text-xs text-slate-400">
+                                <strong class="text-white">Simulation:</strong> For each game progression level (starting score), 
+                                we run <strong class="text-teal-400">1,000 games</strong> where the higher-skilled player starts with 
+                                the specified advantage. We then plot how win rate changes as the game progresses.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Chart -->
+                    <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression</h4>
+                        <div class="chart-box" style="height: 400px;">
+                            <canvas id="flatteningChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center text-xs text-slate-500">
+                            X-axis represents the starting score of the leading player (game progression). 
+                            Y-axis shows win probability for the higher-skilled player.
+                        </div>
+                    </div>
+
+                    <!-- Analysis -->
+                    <div class="bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border border-teal-500/30 rounded-xl p-6">
+                        <div class="text-xs text-teal-400 uppercase tracking-widest mb-4 text-center">Key Insight</div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Early Game: High Impact</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            When both teams have low scores (early game), the same numerical advantage creates 
+                                            a <strong class="text-white">large win rate difference</strong> because the 
+                                            logistic advantage function is steeper at lower score values.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Mid Game: Peak Impact</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            As scores increase, the advantage function reaches its steepest point 
+                                            (inflection point around score ~8), creating maximum differentiation.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Late Game: Flattening</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            At high scores (late game), both teams approach the <strong class="text-white">advantage ceiling</strong>. 
+                                            The same numerical difference produces <strong class="text-pink-400">diminishing impact</strong> 
+                                            on win probability.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
+                                    <div>
+                                        <h5 class="text-white font-bold text-sm">Full Build: Equalization</h5>
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            When both teams reach full builds, skill becomes the dominant factor again, 
+                                            as advantage contribution has plateaued for both sides.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
+                            <p class="text-white text-sm font-medium">
+                                This bell-shaped curve demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
+                                the impact of your deficit will naturally <strong class="text-pink-400">diminish over time</strong>, 
+                                giving you more chances to comeback as the game progresses.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: EMPIRICAL DATA FROM PRO PLAY -->
+        <section class="space-y-8">
+            <div class="flex items-center space-x-4 mb-8">
+                <div class="h-px bg-slate-700 flex-1"></div>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. Real-World Evidence</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
@@ -594,7 +730,7 @@
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">Data from Professional League of Legends</h3>
                         <p class="text-slate-400 leading-relaxed">
-                            Our mathematical model predicts that gold leads follow a <strong class="text-cyan-400">logistic advantage curve</strong> with high variance in outcomes. But does this hold up in real competitive play?
+                            Our mathematical model predicts that gold leads follow a <strong class="text-cyan-400">logistic advantage curve</strong> with high variance in outcomes, and that advantage impact diminishes over time. But does this hold up in real competitive play?
                         </p>
                         <p class="text-slate-400 leading-relaxed">
                             <strong class="text-white">GameSpot's analysis of League of Legends Worlds tournament data</strong> provides empirical validation of our model. Their findings reveal critical insights about how gold leads actually play out at the highest level of competition.
@@ -762,142 +898,6 @@
                                 "How Much Do Gold Leads Matter?" — GameSpot
                             </a>
                         </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 8: ADVANTAGE FLATTENING -->
-        <section class="space-y-8">
-            <div class="flex items-center space-x-4 mb-8">
-                <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">08. Advantage Flattening Over Time</h2>
-                <div class="h-px bg-slate-700 flex-1"></div>
-            </div>
-
-            <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-teal-500/20">
-                <div class="space-y-8">
-                    <!-- Introduction -->
-                    <div class="prose prose-invert max-w-none">
-                        <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
-                        <p class="text-slate-400 leading-relaxed">
-                            Real-world MOBA data shows that the impact of gold leads <strong class="text-teal-400">decreases over time</strong>. 
-                            A 2-kill lead at 5 minutes is more impactful than the same 2-kill lead at 25 minutes. 
-                            But why does this happen mathematically?
-                        </p>
-                        <p class="text-slate-400 leading-relaxed">
-                            Using our model, we can simulate games where <strong class="text-white">both teams start with scores</strong>, 
-                            representing different stages of the game. By maintaining a <strong class="text-cyan-400">fixed score difference</strong> 
-                            but varying the total score level, we can observe how the same numerical advantage produces 
-                            <strong class="text-pink-400">diminishing win rate differences</strong>.
-                        </p>
-                    </div>
-
-                    <!-- Controls -->
-                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
-                        <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Simulation Configuration</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-cyan-400 text-xs font-bold uppercase">Your Skill</label>
-                                    <span id="flattenSkillAVal" class="text-white font-mono font-bold text-xs">12</span>
-                                </div>
-                                <input type="range" id="flattenSkillA" min="1" max="20" value="12" class="w-full">
-                            </div>
-                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-pink-400 text-xs font-bold uppercase">Enemy Skill</label>
-                                    <span id="flattenSkillBVal" class="text-white font-mono font-bold text-xs">10</span>
-                                </div>
-                                <input type="range" id="flattenSkillB" min="1" max="20" value="10" class="w-full">
-                            </div>
-                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-yellow-400 text-xs font-bold uppercase">Score Difference</label>
-                                    <span id="flattenDiffVal" class="text-white font-mono font-bold text-xs">2</span>
-                                </div>
-                                <input type="range" id="flattenDiff" min="1" max="8" value="2" class="w-full">
-                            </div>
-                        </div>
-                        <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
-                            <p class="text-xs text-slate-400">
-                                <strong class="text-white">Simulation:</strong> For each game progression level (starting score), 
-                                we run <strong class="text-teal-400">1,000 games</strong> where the higher-skilled player starts with 
-                                the specified advantage. We then plot how win rate changes as the game progresses.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Chart -->
-                    <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression</h4>
-                        <div class="chart-box" style="height: 400px;">
-                            <canvas id="flatteningChart"></canvas>
-                        </div>
-                        <div class="mt-4 text-center text-xs text-slate-500">
-                            X-axis represents the starting score of the leading player (game progression). 
-                            Y-axis shows win probability for the higher-skilled player.
-                        </div>
-                    </div>
-
-                    <!-- Analysis -->
-                    <div class="bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border border-teal-500/30 rounded-xl p-6">
-                        <div class="text-xs text-teal-400 uppercase tracking-widest mb-4 text-center">Key Insight</div>
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="space-y-4">
-                                <div class="flex items-start">
-                                    <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
-                                    <div>
-                                        <h5 class="text-white font-bold text-sm">Early Game: High Impact</h5>
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            When both teams have low scores (early game), the same numerical advantage creates 
-                                            a <strong class="text-white">large win rate difference</strong> because the 
-                                            logistic advantage function is steeper at lower score values.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
-                                    <div>
-                                        <h5 class="text-white font-bold text-sm">Mid Game: Peak Impact</h5>
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            As scores increase, the advantage function reaches its steepest point 
-                                            (inflection point around score ~8), creating maximum differentiation.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                <div class="flex items-start">
-                                    <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
-                                    <div>
-                                        <h5 class="text-white font-bold text-sm">Late Game: Flattening</h5>
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            At high scores (late game), both teams approach the <strong class="text-white">advantage ceiling</strong>. 
-                                            The same numerical difference produces <strong class="text-pink-400">diminishing impact</strong> 
-                                            on win probability.
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
-                                    <div>
-                                        <h5 class="text-white font-bold text-sm">Full Build: Equalization</h5>
-                                        <p class="text-xs text-slate-400 mt-1">
-                                            When both teams reach full builds, skill becomes the dominant factor again, 
-                                            as advantage contribution has plateaued for both sides.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
-                            <p class="text-white text-sm font-medium">
-                                This bell-shaped curve demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
-                                the impact of your deficit will naturally <strong class="text-pink-400">diminish over time</strong>, 
-                                giving you more chances to comeback as the game progresses.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
