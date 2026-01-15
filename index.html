@@ -1722,7 +1722,9 @@
                 // Calculate raw score difference (S)
                 const scoreDiff = sA_init - sB_init;
                 
-                // Calculate A(S) advantage as percentage (relative to total weight)
+                // Calculate A(S) advantage as percentage
+                // A(S) is the logistic advantage function value based on score
+                // Showing as percentage relative to total weight for intuition
                 const scoreAdvRaw = adA_init - adB_init;
                 const scoreAdvPercentRaw = (scoreAdvRaw / (wA_init + wB_init) * 100);
                 const scoreAdvPercent = scoreAdvPercentRaw.toFixed(1) + '%';
