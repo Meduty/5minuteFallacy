@@ -1723,9 +1723,9 @@
                 options: {
                     ...commonOptions,
                     scales: {
-                        x: { type: 'linear', title: { display: true, text: 'Initial Score Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, min: -1, max: 16, ticks: { color: '#64748b', stepSize: 1 } },
+                        x: { type: 'linear', title: { display: true, text: 'Initial Score Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, min: 0, max: 15, ticks: { color: '#64748b', stepSize: 1 } },
                         xAdvantage: {
-                            type: 'linear', position: 'top', title: { display: true, text: 'Relative Weight Advantage (You - Enemy) %', color: '#c084fc' }, grid: { display: false }, min: -1, max: 16,
+                            type: 'linear', position: 'top', title: { display: true, text: 'Relative Weight Advantage (You - Enemy) %', color: '#c084fc' }, grid: { display: false }, min: 0, max: 15,
                             ticks: { stepSize: 1, color: (ctx) => parseFloat(advantageLabels[ctx.index]) >= 0 ? '#4ade80' : '#f43f5e', callback: (value, index) => advantageLabels[value] || '' }
                         },
                         yScore: { type: 'linear', position: 'left', min: -symmetricLimit, max: symmetricLimit, title: { display: true, text: 'Final Score Difference', color: '#22d3ee' }, grid: { color: (ctx) => ctx.tick.value === 0 ? '#475569' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } },
