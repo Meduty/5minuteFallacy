@@ -2299,13 +2299,15 @@
                     if (Math.abs(finalDiff) > 0 && Math.random() < 0.1) {
                         gameWinner = Math.random() < 0.5 ? 'A' : 'B';
                     } else {
+                        // Ties treated as neither player winning (rare edge case)
                         gameWinner = sA > sB ? 'A' : (sB > sA ? 'B' : 'tie');
                     }
                 }
                 
                 const aWonGame = gameWinner === 'A';
                 
-                // For each round, check if A had the specified lead at that point
+                // For each round that was played, check if A had the specified lead
+                // Note: Games ending early won't contribute to later rounds (intentional)
                 for (let r = 1; r < scoreHistory.length; r++) {
                     const diff = scoreHistory[r].sA - scoreHistory[r].sB;
                     if (diff >= leadThreshold) {
