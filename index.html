@@ -2239,6 +2239,7 @@
         let chartFlattening;
         const FLATTEN_SIM_COUNT = 3000;
         const TOTAL_ROUNDS = 50;
+        const MIN_SAMPLE_SIZE = 10; // Minimum games needed to calculate reliable win rate
 
         function runFlatteningAnalysis() {
             if(!safeGet('flatteningChart')) return;
@@ -2293,14 +2294,15 @@
                 
                 // Win rate when A had the lead at this round
                 const data = leadsAtRound[r];
-                const winRate = data.count >= 10 ? (data.wins / data.count) * 100 : null;
+                const winRate = data.count >= MIN_SAMPLE_SIZE ? (data.wins / data.count) * 100 : null;
                 winRateData.push(winRate);
                 
                 // Calculate theoretical weight advantage at typical scores for this round
-                // If A has a lead of leadThreshold at round r, typical scores might be:
-                // A: (r + leadThreshold) / 2, B: (r - leadThreshold) / 2
+                // At round r, r total points have been scored between both players
+                // If A leads by leadThreshold, then: scoreA - scoreB = leadThreshold and scoreA + scoreB = r
+                // Solving: scoreA = (r + leadThreshold) / 2, scoreB = (r - leadThreshold) / 2
                 const typicalScoreA = (r + leadThreshold) / 2;
-                const typicalScoreB = (r - leadThreshold) / 2;
+                const typicalScoreB = Math.max(0, (r - leadThreshold) / 2);
                 const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreA - MIDPOINT_SCORE)));
                 const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreB - MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
@@ -2389,8 +2391,8 @@
                             annotations: {
                                 midpoint: {
                                     type: 'line',
-                                    xMin: 20,
-                                    xMax: 20,
+                                    xMin: TOTAL_ROUNDS / 2,
+                                    xMax: TOTAL_ROUNDS / 2,
                                     borderColor: '#fbbf24',
                                     borderWidth: 2,
                                     borderDash: [8, 4],
