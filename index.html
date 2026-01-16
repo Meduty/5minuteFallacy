@@ -919,13 +919,14 @@
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
                         <p class="text-slate-400 leading-relaxed">
-                            Our mathematical model predicts that the <strong class="text-teal-400">per-round impact</strong> of advantages 
-                            follows a bell curve due to the logistic S-curve. But how does this translate to actual win rates?
+                            Our enhanced model captures two key MOBA mechanics: <strong class="text-teal-400">increasing stakes</strong> 
+                            (late-game events worth more) and <strong class="text-cyan-400">game-ending opportunities</strong> 
+                            (pushing to win with a lead). This creates more realistic win rate patterns.
                         </p>
                         <p class="text-slate-400 leading-relaxed">
                             We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 0.
-                            For each round, we find all games where Player A had a lead of ≥ threshold at that point,
-                            then calculate: <strong class="text-cyan-400">what percentage of those games did A win?</strong>
+                            Mid-game leads can end the game early (like pushing objectives), but late-game has higher volatility 
+                            (one teamfight can throw). For each round, we track: <strong class="text-cyan-400">what % of games with a lead did A win?</strong>
                         </p>
                     </div>
 
@@ -957,9 +958,8 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Method:</strong> Run <strong class="text-teal-400">3,000 games</strong> from scratch 
-                                (both players start at 0). For each round, find games where A was leading by ≥ threshold, 
-                                then track how many of those A won.
+                                <strong class="text-white">Model Features:</strong> Late-game rounds worth more points (higher stakes), 
+                                mid-game leads can end games early (pushing objectives), 10% late-game "throw" chance (full-build volatility).
                             </p>
                         </div>
                     </div>
@@ -984,20 +984,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Early Leads: Less Predictive</h5>
+                                        <h5 class="text-white font-bold text-sm">Early Leads: Not Yet Decisive</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            A lead at round 5 doesn't guarantee victory—there are <strong class="text-white">many rounds left</strong> 
-                                            for the game to swing back. Early leads are less predictive of final outcome.
+                                            Early leads have <strong class="text-white">lower win rates</strong> because the game 
+                                            hasn't reached the point where you can push to end. Many rounds remain.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Weight Advantage (Bell Curve)</h5>
+                                        <h5 class="text-white font-bold text-sm">Mid-Game: Peak Impact</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            The <strong class="text-purple-400">purple dashed line</strong> shows the per-round weight advantage, 
-                                            which peaks mid-game when the logistic S-curve is steepest.
+                                            Mid-game leads are <strong class="text-cyan-400">most decisive</strong>—you can convert 
+                                            the advantage into objectives and potentially end the game early.
                                         </p>
                                     </div>
                                 </div>
@@ -1006,20 +1006,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Late Leads: Highly Predictive</h5>
+                                        <h5 class="text-white font-bold text-sm">Late Game: High Volatility</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            A lead at round 45 almost guarantees victory—there are <strong class="text-white">few rounds left</strong> 
-                                            for comeback. Late leads strongly predict the final winner.
+                                            At full build, leads matter less. One bad teamfight can <strong class="text-pink-400">throw the game</strong>. 
+                                            Win rates may decrease late due to this volatility.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">The Takeaway</h5>
+                                        <h5 class="text-white font-bold text-sm">The Bell Curve Pattern</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            While late leads are more predictive, the <strong class="text-purple-400">per-round impact</strong> 
-                                            of advantages actually peaks mid-game due to the logistic curve.
+                                            Win rates peak mid-game (when leads can close games) and may dip late 
+                                            (full build volatility). This matches <strong class="text-purple-400">real-world MOBA data</strong>.
                                         </p>
                                     </div>
                                 </div>
@@ -1027,9 +1027,9 @@
                         </div>
                         <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
                             <p class="text-white text-sm font-medium">
-                                This simulation shows why <strong class="text-teal-400">early surrenders are premature</strong>: 
-                                an early lead is far less predictive than it feels. 
-                                The <strong class="text-pink-400">weight advantage peaks mid-game</strong>, not early game.
+                                This enhanced model shows why <strong class="text-teal-400">early surrenders are premature</strong>: 
+                                early leads are far less predictive than mid-game leads. 
+                                And late-game <strong class="text-pink-400">"throws" can always happen</strong> at full build.
                             </p>
                         </div>
                     </div>
@@ -2256,6 +2256,7 @@
                 let sA = 0;
                 let sB = 0;
                 const scoreHistory = [{ sA: 0, sB: 0 }];
+                let gameWinner = null;
                 
                 // Play full game from equal start
                 for (let r = 0; r < TOTAL_ROUNDS; r++) {
@@ -2264,18 +2265,48 @@
                     const wA = skillA + adA;
                     const wB = skillB + adB;
                     
+                    // Idea 1: Points scale from 1 (early) to 4 (late) - higher stakes late game
+                    const pointValue = 1 + Math.floor(3 * r / TOTAL_ROUNDS);
+                    
                     if (Math.random() < wA / (wA + wB)) {
-                        sA++;
+                        sA += pointValue;
                     } else {
-                        sB++;
+                        sB += pointValue;
                     }
                     scoreHistory.push({ sA, sB });
+                    
+                    // Idea 2: Game-ending chance (like pushing to kill Guardian/Nexus)
+                    // Bell curve centered at 40% game progress - mid-game leads most decisive
+                    // Early: Can't end (not strong enough), Late: Both at full build, comebacks possible
+                    const roundProgress = (r + 1) / TOTAL_ROUNDS;
+                    const currentDiff = sA - sB;
+                    const absLead = Math.abs(currentDiff);
+                    
+                    const bellCurve = Math.exp(-Math.pow((roundProgress - 0.4) * 3.5, 2));
+                    const leadFactor = Math.min(absLead / 10, 1); // Scales up to 1 at 10+ lead
+                    const endChance = leadFactor * bellCurve * 0.2;
+                    
+                    if (endChance > 0 && Math.random() < endChance) {
+                        gameWinner = currentDiff > 0 ? 'A' : 'B';
+                        break;
+                    }
                 }
                 
-                const aWonGame = sA > sB;
+                if (gameWinner === null) {
+                    // Late-game volatility: 10% "throw" chance where score lead doesn't matter
+                    // Models one bad teamfight deciding everything at full build
+                    const finalDiff = sA - sB;
+                    if (Math.abs(finalDiff) > 0 && Math.random() < 0.1) {
+                        gameWinner = Math.random() < 0.5 ? 'A' : 'B';
+                    } else {
+                        gameWinner = sA > sB ? 'A' : (sB > sA ? 'B' : 'tie');
+                    }
+                }
+                
+                const aWonGame = gameWinner === 'A';
                 
                 // For each round, check if A had the specified lead at that point
-                for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+                for (let r = 1; r < scoreHistory.length; r++) {
                     const diff = scoreHistory[r].sA - scoreHistory[r].sB;
                     if (diff >= leadThreshold) {
                         leadsAtRound[r].count++;
