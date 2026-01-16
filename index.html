@@ -968,13 +968,13 @@
 
                     <!-- Chart -->
                     <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression (Fixed Score Difference)</h4>
                         <div class="chart-box" style="height: 400px;">
                             <canvas id="flatteningChart"></canvas>
                         </div>
                         <div class="mt-4 text-center text-xs text-slate-500">
-                            X-axis represents the starting score of the leading player (game progression). 
-                            Y-axis shows win probability for the higher-skilled player.
+                            X-axis represents the base score (game progression stage). Player A always has the fixed score advantage. 
+                            The teal line shows cumulative win rate; the purple dashed line shows per-round weight advantage.
                         </div>
                     </div>
 
@@ -986,21 +986,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Early Game: High Impact</h5>
+                                        <h5 class="text-white font-bold text-sm">Early Game: Compounding Effect</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            When both teams have low scores (early game), the same numerical advantage creates 
-                                            a <strong class="text-white">large win rate difference</strong> because the 
-                                            logistic advantage function is steeper at lower score values.
+                                            Early score leads have <strong class="text-white">more rounds to compound</strong>, 
+                                            resulting in higher win probabilities. The advantage snowballs over time.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Mid Game: Peak Impact</h5>
+                                        <h5 class="text-white font-bold text-sm">Instantaneous Advantage (Bell Curve)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            As scores increase, the advantage function reaches its steepest point 
-                                            (inflection point around score ~8), creating maximum differentiation.
+                                            The <strong class="text-purple-400">purple dashed line</strong> shows the 
+                                            per-round weight advantage, which peaks mid-game at the logistic inflection point.
                                         </p>
                                     </div>
                                 </div>
@@ -1009,11 +1008,10 @@
                                 <div class="flex items-start">
                                     <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Late Game: Flattening</h5>
+                                        <h5 class="text-white font-bold text-sm">Late Game: Diminishing Impact</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            At high scores (late game), both teams approach the <strong class="text-white">advantage ceiling</strong>. 
-                                            The same numerical difference produces <strong class="text-pink-400">diminishing impact</strong> 
-                                            on win probability.
+                                            At high scores, both teams approach the <strong class="text-white">advantage ceiling</strong>. 
+                                            Combined with fewer remaining rounds, win rates <strong class="text-pink-400">converge toward 50%</strong>.
                                         </p>
                                     </div>
                                 </div>
@@ -1031,8 +1029,9 @@
                         </div>
                         <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
                             <p class="text-white text-sm font-medium">
-                                This bell-shaped curve demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
-                                the impact of your deficit will naturally <strong class="text-pink-400">diminish over time</strong>, 
+                                This chart demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
+                                while early leads have high win rates due to compounding, the <strong class="text-purple-400">per-round impact</strong> 
+                                of your deficit naturally <strong class="text-pink-400">diminishes over time</strong>, 
                                 giving you more chances to comeback as the game progresses.
                             </p>
                         </div>
@@ -2256,12 +2255,14 @@
 
             // Simulate for different starting scores (game progression levels)
             // Starting from 0 to 20 (representing different game stages)
+            // Both players start at the same base score, with A having an additional fixedDiff advantage
             for (let startScore = 0; startScore <= 20; startScore++) {
                 labels.push(startScore);
                 
-                // Higher skilled player (A) starts with advantage
-                const startA = startScore;
-                const startB = Math.max(0, startScore - fixedDiff);
+                // Player A starts with the fixed score advantage over B
+                // This ensures the score difference is always exactly fixedDiff
+                const startA = startScore + fixedDiff;
+                const startB = startScore;
                 
                 // Remaining rounds = 50 - startScore (as we progress, fewer rounds remain)
                 const remainingRounds = Math.max(10, 50 - startScore);
@@ -2293,6 +2294,7 @@
                 winRateData.push(winRate);
                 
                 // Calculate advantage percentage at start of this game state
+                // This measures the logistic advantage difference from the fixed score gap
                 const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startA - MIDPOINT_SCORE)));
                 const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startB - MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
@@ -2336,7 +2338,7 @@
                     ...commonOptions,
                     scales: {
                         x: {
-                            title: { display: true, text: 'Starting Score of Leading Player (Game Progression)', color: '#94a3b8' },
+                            title: { display: true, text: 'Base Score (Game Progression Stage)', color: '#94a3b8' },
                             grid: { color: '#1e293b' },
                             ticks: { color: '#64748b' }
                         },
