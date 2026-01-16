@@ -1858,13 +1858,13 @@
         const MIDPOINT_SCORE = 10;
         
         // Section 8 specific parameters (only used in runFlatteningAnalysis)
-        // Restored to last optimized values with slightly decreased steepness
-        const SEC8_MAX_ADVANTAGE = 280;     // Original optimized value
+        // Tuned for: skill relevance, fewer generic triggers, more lead-based triggers
+        const SEC8_MAX_ADVANTAGE = 100;     // Decreased from 280: skill more significant relative to A(S)
         const SEC8_STEEPNESS = 0.4;         // Slightly decreased from 0.5 for better lead differentiation
         const SEC8_MIDPOINT_SCORE = 50;     // Mid-game inflection point
         const SEC8_POINT_SCALING = 30;      // Late rounds worth up to 30x (dilutes early leads)
-        const SEC8_TRIGGER_POWER = 1.2;     // Reduced from 2: allows more mid-game triggers for leaders
-        const SEC8_TRIGGER_SCALE = 0.5;     // Increased from 0.25: more game-ending opportunities
+        const SEC8_TRIGGER_POWER = 2.5;     // Increased from 1.2: generic/time-based triggers much rarer
+        const SEC8_TRIGGER_SCALE = 1.5;     // Increased from 0.5: lead-based triggers more frequent
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
