@@ -919,15 +919,13 @@
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
                         <p class="text-slate-400 leading-relaxed">
-                            Our mathematical model predicts that the impact of advantages <strong class="text-teal-400">decreases over time</strong>. 
-                            A 2-kill lead at 5 minutes should be more impactful than the same 2-kill lead at 25 minutes. 
-                            But why does this happen mathematically?
+                            Our mathematical model predicts that the <strong class="text-teal-400">per-round impact</strong> of advantages 
+                            follows a bell curve due to the logistic S-curve. But how does this translate to actual win rates?
                         </p>
                         <p class="text-slate-400 leading-relaxed">
-                            Using our model, we can simulate games where <strong class="text-white">both teams start with scores</strong>, 
-                            representing different stages of the game. By maintaining a <strong class="text-cyan-400">fixed score difference</strong> 
-                            but varying the total score level, we can observe how the same numerical advantage produces 
-                            <strong class="text-pink-400">diminishing win rate differences</strong>.
+                            We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 0.
+                            For each round, we find all games where Player A had a lead of ≥ threshold at that point,
+                            then calculate: <strong class="text-cyan-400">what percentage of those games did A win?</strong>
                         </p>
                     </div>
 
@@ -951,7 +949,7 @@
                             </div>
                             <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
                                 <div class="flex justify-between mb-2">
-                                    <label class="text-yellow-400 text-xs font-bold uppercase">Score Difference</label>
+                                    <label class="text-yellow-400 text-xs font-bold uppercase">Lead Threshold</label>
                                     <span id="flattenDiffVal" class="text-white font-mono font-bold text-xs">2</span>
                                 </div>
                                 <input type="range" id="flattenDiff" min="1" max="8" value="2" class="w-full">
@@ -959,22 +957,22 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Simulation:</strong> For each game progression level (starting score), 
-                                we run <strong class="text-teal-400">1,000 games</strong> where the higher-skilled player starts with 
-                                the specified advantage. We then plot how win rate changes as the game progresses.
+                                <strong class="text-white">Method:</strong> Run <strong class="text-teal-400">3,000 games</strong> from scratch 
+                                (both players start at 0). For each round, find games where A was leading by ≥ threshold, 
+                                then track how many of those A won.
                             </p>
                         </div>
                     </div>
 
                     <!-- Chart -->
                     <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate vs Game Progression (Fixed Score Difference)</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate When Leading at Each Round</h4>
                         <div class="chart-box" style="height: 400px;">
                             <canvas id="flatteningChart"></canvas>
                         </div>
                         <div class="mt-4 text-center text-xs text-slate-500">
-                            X-axis represents the base score (game progression stage). Player A always has the fixed score advantage. 
-                            The teal line shows cumulative win rate; the purple dashed line shows per-round weight advantage.
+                            X-axis: Round number. Teal line: "If A was leading by ≥ threshold at this round, what % did A win?"
+                            Purple dashed line: Theoretical weight advantage from the logistic S-curve.
                         </div>
                     </div>
 
@@ -986,20 +984,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Early Game: Compounding Effect</h5>
+                                        <h5 class="text-white font-bold text-sm">Early Leads: Less Predictive</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            Early score leads have <strong class="text-white">more rounds to compound</strong>, 
-                                            resulting in higher win probabilities. The advantage snowballs over time.
+                                            A lead at round 5 doesn't guarantee victory—there are <strong class="text-white">many rounds left</strong> 
+                                            for the game to swing back. Early leads are less predictive of final outcome.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Instantaneous Advantage (Bell Curve)</h5>
+                                        <h5 class="text-white font-bold text-sm">Weight Advantage (Bell Curve)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            The <strong class="text-purple-400">purple dashed line</strong> shows the 
-                                            per-round weight advantage, which peaks mid-game at the logistic inflection point.
+                                            The <strong class="text-purple-400">purple dashed line</strong> shows the per-round weight advantage, 
+                                            which peaks mid-game when the logistic S-curve is steepest.
                                         </p>
                                     </div>
                                 </div>
@@ -1008,20 +1006,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Late Game: Diminishing Impact</h5>
+                                        <h5 class="text-white font-bold text-sm">Late Leads: Highly Predictive</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            At high scores, both teams approach the <strong class="text-white">advantage ceiling</strong>. 
-                                            Combined with fewer remaining rounds, win rates <strong class="text-pink-400">converge toward 50%</strong>.
+                                            A lead at round 45 almost guarantees victory—there are <strong class="text-white">few rounds left</strong> 
+                                            for comeback. Late leads strongly predict the final winner.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Full Build: Equalization</h5>
+                                        <h5 class="text-white font-bold text-sm">The Takeaway</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            When both teams reach full builds, skill becomes the dominant factor again, 
-                                            as advantage contribution has plateaued for both sides.
+                                            While late leads are more predictive, the <strong class="text-purple-400">per-round impact</strong> 
+                                            of advantages actually peaks mid-game due to the logistic curve.
                                         </p>
                                     </div>
                                 </div>
@@ -1029,10 +1027,9 @@
                         </div>
                         <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
                             <p class="text-white text-sm font-medium">
-                                This chart demonstrates why <strong class="text-teal-400">early surrenders are premature</strong>: 
-                                while early leads have high win rates due to compounding, the <strong class="text-purple-400">per-round impact</strong> 
-                                of your deficit naturally <strong class="text-pink-400">diminishes over time</strong>, 
-                                giving you more chances to comeback as the game progresses.
+                                This simulation shows why <strong class="text-teal-400">early surrenders are premature</strong>: 
+                                an early lead is far less predictive than it feels. 
+                                The <strong class="text-pink-400">weight advantage peaks mid-game</strong>, not early game.
                             </p>
                         </div>
                     </div>
@@ -2240,67 +2237,76 @@
 
         // --- 6. ADVANTAGE FLATTENING OVER TIME ---
         let chartFlattening;
-        const FLATTEN_SIM_COUNT = 1000;
+        const FLATTEN_SIM_COUNT = 3000;
+        const TOTAL_ROUNDS = 50;
 
         function runFlatteningAnalysis() {
             if(!safeGet('flatteningChart')) return;
             const ctxFlatten = document.getElementById('flatteningChart');
             const skillA = parseInt(document.getElementById('flattenSkillA').value, 10);
             const skillB = parseInt(document.getElementById('flattenSkillB').value, 10);
-            const fixedDiff = parseInt(document.getElementById('flattenDiff').value, 10);
+            const leadThreshold = parseInt(document.getElementById('flattenDiff').value, 10);
 
+            // For each round, track: games where A was leading by >= leadThreshold, and how many A won
+            const leadsAtRound = Array(TOTAL_ROUNDS + 1).fill(0).map(() => ({ count: 0, wins: 0 }));
+            
+            // Run many full games from scratch - NO initial advantage, both start at 0
+            for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
+                let sA = 0;
+                let sB = 0;
+                const scoreHistory = [{ sA: 0, sB: 0 }];
+                
+                // Play full game from equal start
+                for (let r = 0; r < TOTAL_ROUNDS; r++) {
+                    const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
+                    const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                    const wA = skillA + adA;
+                    const wB = skillB + adB;
+                    
+                    if (Math.random() < wA / (wA + wB)) {
+                        sA++;
+                    } else {
+                        sB++;
+                    }
+                    scoreHistory.push({ sA, sB });
+                }
+                
+                const aWonGame = sA > sB;
+                
+                // For each round, check if A had the specified lead at that point
+                for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+                    const diff = scoreHistory[r].sA - scoreHistory[r].sB;
+                    if (diff >= leadThreshold) {
+                        leadsAtRound[r].count++;
+                        if (aWonGame) leadsAtRound[r].wins++;
+                    }
+                }
+            }
+            
+            // Calculate win rates for each round
             const winRateData = [];
             const labels = [];
             const advantageData = [];
-
-            // Simulate for different starting scores (game progression levels)
-            // Starting from 0 to 20 (representing different game stages)
-            // Both players start at the same base score, with A having an additional fixedDiff advantage
-            for (let baseScore = 0; baseScore <= 20; baseScore++) {
-                labels.push(baseScore);
+            
+            for (let r = 1; r <= TOTAL_ROUNDS; r++) {
+                labels.push(r);
                 
-                // Player A starts with the fixed score advantage over B
-                // This ensures the score difference is always exactly fixedDiff
-                const scoreA = baseScore + fixedDiff;
-                const scoreB = baseScore;
-                
-                // Remaining rounds = 50 - baseScore (as we progress, fewer rounds remain)
-                const remainingRounds = Math.max(10, 50 - baseScore);
-                
-                let wins = 0;
-                
-                // Run simulations
-                for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
-                    let sA = scoreA;
-                    let sB = scoreB;
-                    
-                    for (let r = 0; r < remainingRounds; r++) {
-                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                        const wA = skillA + adA;
-                        const wB = skillB + adB;
-                        
-                        if (Math.random() < wA / (wA + wB)) {
-                            sA++;
-                        } else {
-                            sB++;
-                        }
-                    }
-                    
-                    if (sA > sB) wins++;
-                }
-                
-                const winRate = (wins / FLATTEN_SIM_COUNT) * 100;
+                // Win rate when A had the lead at this round
+                const data = leadsAtRound[r];
+                const winRate = data.count >= 10 ? (data.wins / data.count) * 100 : null;
                 winRateData.push(winRate);
                 
-                // Calculate advantage percentage at start of this game state
-                // This measures the logistic advantage difference from the fixed score gap
-                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (scoreA - MIDPOINT_SCORE)));
-                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (scoreB - MIDPOINT_SCORE)));
+                // Calculate theoretical weight advantage at typical scores for this round
+                // If A has a lead of leadThreshold at round r, typical scores might be:
+                // A: (r + leadThreshold) / 2, B: (r - leadThreshold) / 2
+                const typicalScoreA = (r + leadThreshold) / 2;
+                const typicalScoreB = (r - leadThreshold) / 2;
+                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreA - MIDPOINT_SCORE)));
+                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreB - MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
                 const wB_init = skillB + adB_init;
-                const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100).toFixed(1);
-                advantageData.push(parseFloat(advPercent));
+                const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
+                advantageData.push(advPercent);
             }
 
             const config = {
@@ -2309,26 +2315,27 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Win Rate %',
+                            label: 'Win Rate % (when leading)',
                             data: winRateData,
                             borderColor: '#14b8a6',
                             backgroundColor: 'rgba(20, 184, 166, 0.1)',
                             borderWidth: 3,
                             tension: 0.4,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
+                            pointRadius: 2,
+                            pointHoverRadius: 5,
                             pointBackgroundColor: '#14b8a6',
                             fill: true,
-                            yAxisID: 'yWinRate'
+                            yAxisID: 'yWinRate',
+                            spanGaps: true
                         },
                         {
-                            label: 'Initial Weight Advantage %',
+                            label: 'Weight Advantage %',
                             data: advantageData,
                             borderColor: '#a78bfa',
                             borderWidth: 2,
                             borderDash: [5, 5],
                             tension: 0.4,
-                            pointRadius: 3,
+                            pointRadius: 1,
                             pointBackgroundColor: '#a78bfa',
                             yAxisID: 'yAdvantage'
                         }
@@ -2338,7 +2345,7 @@
                     ...commonOptions,
                     scales: {
                         x: {
-                            title: { display: true, text: 'Base Score (Game Progression Stage)', color: '#94a3b8' },
+                            title: { display: true, text: 'Round Number', color: '#94a3b8' },
                             grid: { color: '#1e293b' },
                             ticks: { color: '#64748b' }
                         },
@@ -2365,13 +2372,13 @@
                             callbacks: {
                                 label: function(context) {
                                     const label = context.dataset.label || '';
-                                    const value = context.parsed.y.toFixed(1);
+                                    const value = context.parsed.y !== null ? context.parsed.y.toFixed(1) : 'N/A';
                                     return `${label}: ${value}%`;
                                 },
                                 afterLabel: function(context) {
                                     if (context.datasetIndex === 0) {
-                                        const baseScore = context.parsed.x;
-                                        const remainingRounds = Math.max(10, 50 - baseScore);
+                                        const round = context.parsed.x;
+                                        const remainingRounds = TOTAL_ROUNDS - round;
                                         return `Rounds remaining: ${remainingRounds}`;
                                     }
                                     return '';
@@ -2382,14 +2389,14 @@
                             annotations: {
                                 midpoint: {
                                     type: 'line',
-                                    xMin: MIDPOINT_SCORE,
-                                    xMax: MIDPOINT_SCORE,
+                                    xMin: 20,
+                                    xMax: 20,
                                     borderColor: '#fbbf24',
                                     borderWidth: 2,
                                     borderDash: [8, 4],
                                     label: {
                                         display: true,
-                                        content: 'S-Curve Inflection',
+                                        content: 'Mid-Game',
                                         position: 'start',
                                         backgroundColor: 'rgba(251, 191, 36, 0.8)',
                                         color: '#0f172a',
