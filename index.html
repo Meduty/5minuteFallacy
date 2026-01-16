@@ -972,6 +972,21 @@
                         </button>
                     </div>
 
+                    <!-- Stats Card -->
+                    <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
+                        <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider text-center">Simulation Results</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-br from-cyan-900/30 to-teal-900/30 border border-cyan-500/30 rounded-lg p-4 text-center">
+                                <div class="text-xs text-cyan-400 uppercase tracking-wider mb-1">Player A Total Win Rate</div>
+                                <div id="flattenWinRateA" class="text-3xl font-black text-cyan-400">--</div>
+                            </div>
+                            <div class="bg-gradient-to-br from-pink-900/30 to-purple-900/30 border border-pink-500/30 rounded-lg p-4 text-center">
+                                <div class="text-xs text-pink-400 uppercase tracking-wider mb-1">Player B Total Win Rate</div>
+                                <div id="flattenWinRateB" class="text-3xl font-black text-pink-400">--</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Chart -->
                     <div class="bg-slate-900 rounded-xl p-4 border border-slate-800">
                         <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Win Rate When Leading at Each Round</h4>
@@ -980,7 +995,7 @@
                         </div>
                         <div class="mt-4 text-center text-xs text-slate-500">
                             X-axis: Round number. Teal line: "If A was leading at this round, what % did A win?"
-                            Purple dashed line: Theoretical weight advantage from the logistic S-curve.
+                            Purple dashed line: Avg weight advantage. Yellow: Games active. Orange: % of active games where A leads.
                         </div>
                     </div>
 
@@ -2273,6 +2288,11 @@
                 skillContribSum: 0, advantageContribSum: 0 
             }));
             const gamesActiveAtRound = Array(TOTAL_ROUNDS + 1).fill(0);
+            const aLeadingAtRound = Array(TOTAL_ROUNDS + 1).fill(0); // Track how many games A is leading (any lead)
+            
+            // Track total wins for overall stats
+            let totalWinsA = 0;
+            let totalWinsB = 0;
             
             // Run many full games from scratch - NO initial advantage, both start at 0
             for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
@@ -2321,6 +2341,13 @@
                 const aWonGame = gameWinner === 'A';
                 const gameEndRound = scoreHistory.length - 1; // The round when game ended
                 
+                // Track total wins for overall stats
+                if (aWonGame) {
+                    totalWinsA++;
+                } else {
+                    totalWinsB++;
+                }
+                
                 // For each round that was played, check if A had the specified lead percentage
                 // Also track actual weight advantages from simulation data
                 for (let r = 1; r < scoreHistory.length; r++) {
@@ -2330,6 +2357,11 @@
                     const sB_r = scoreHistory[r].sB;
                     const totalScore_r = sA_r + sB_r;
                     const diff = sA_r - sB_r;
+                    
+                    // Track if A is leading at this round (any lead > 0)
+                    if (diff > 0) {
+                        aLeadingAtRound[r]++;
+                    }
                     
                     // Check if A has lead >= threshold percentage
                     const relativeLeadAtRound = totalScore_r > 0 ? diff / totalScore_r : 0;
@@ -2358,11 +2390,18 @@
                 }
             }
             
+            // Update stats card with total win rates
+            const winRateAPercent = (totalWinsA / FLATTEN_SIM_COUNT) * 100;
+            const winRateBPercent = (totalWinsB / FLATTEN_SIM_COUNT) * 100;
+            document.getElementById('flattenWinRateA').innerText = winRateAPercent.toFixed(1) + '%';
+            document.getElementById('flattenWinRateB').innerText = winRateBPercent.toFixed(1) + '%';
+            
             // Calculate win rates for each round
             const winRateData = [];
             const labels = [];
             const advantageData = [];
             const gamesActiveData = [];
+            const aLeadingPercentData = [];
             const skillContribData = [];
             const advantageContribData = [];
             
@@ -2381,6 +2420,10 @@
                 // Games still active at this round (as percentage of total games)
                 const gamesActivePercent = (gamesActiveAtRound[r] / FLATTEN_SIM_COUNT) * 100;
                 gamesActiveData.push(gamesActivePercent);
+                
+                // % of active games where A is leading
+                const aLeadingPercent = gamesActiveAtRound[r] > 0 ? (aLeadingAtRound[r] / gamesActiveAtRound[r]) * 100 : null;
+                aLeadingPercentData.push(aLeadingPercent);
                 
                 // Debug mode: skill and A(S) contributions
                 const avgSkillContrib = data.count >= MIN_SAMPLE_SIZE ? data.skillContribSum / data.count : null;
@@ -2427,6 +2470,18 @@
                     pointRadius: 1,
                     pointBackgroundColor: '#fbbf24',
                     yAxisID: 'yWinRate'
+                },
+                {
+                    label: 'A Leading % (of active)',
+                    data: aLeadingPercentData,
+                    borderColor: '#fb923c',
+                    borderWidth: 2,
+                    borderDash: [4, 2],
+                    tension: 0.4,
+                    pointRadius: 1,
+                    pointBackgroundColor: '#fb923c',
+                    yAxisID: 'yWinRate',
+                    spanGaps: true
                 }
             ];
             
