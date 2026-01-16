@@ -1828,15 +1828,18 @@
     <!-- SCRIPT -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Tuned for bell curve: Early ~60%, Mid ~85%, Late ~60%
-        const MAX_ADVANTAGE = 280;
-        const STEEPNESS = 0.5;
-        const MIDPOINT_SCORE = 50;
+        // Global constants for advantage function (used by all sections)
+        const MAX_ADVANTAGE = 10;
+        const STEEPNESS = 0.4;
+        const MIDPOINT_SCORE = 10;
         
-        // Section 8 specific parameters
-        const POINT_SCALING = 30;      // Late-game rounds worth up to 30x more
-        const TRIGGER_POWER = 2;       // Reduces early game triggers
-        const TRIGGER_SCALE = 0.25;    // Controls game-ending frequency
+        // Section 8 specific parameters (only used in runFlatteningAnalysis)
+        const SEC8_MAX_ADVANTAGE = 280;
+        const SEC8_STEEPNESS = 0.5;
+        const SEC8_MIDPOINT_SCORE = 50;
+        const SEC8_POINT_SCALING = 30;      // Late-game rounds worth up to 30x more
+        const SEC8_TRIGGER_POWER = 2;       // Reduces early game triggers
+        const SEC8_TRIGGER_SCALE = 0.25;    // Controls game-ending frequency
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
@@ -2263,14 +2266,15 @@
                 let gameWinner = null;
                 
                 // Play full game from equal start
+                // Section 8 uses its own parameters to achieve bell-shaped curve
                 for (let r = 0; r < TOTAL_ROUNDS; r++) {
-                    const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                    const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
+                    const adA = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sA - SEC8_MIDPOINT_SCORE)));
+                    const adB = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sB - SEC8_MIDPOINT_SCORE)));
                     const wA = skillA + adA;
                     const wB = skillB + adB;
                     
                     // Point value scales with round progress (late-game rounds worth more)
-                    const pointValue = 1 + Math.floor((POINT_SCALING - 1) * r / TOTAL_ROUNDS);
+                    const pointValue = 1 + Math.floor((SEC8_POINT_SCALING - 1) * r / TOTAL_ROUNDS);
                     
                     // Round outcome: Winner gets points
                     if (Math.random() < wA / (wA + wB)) {
@@ -2286,9 +2290,9 @@
                     const totalScore = sA + sB;
                     const relativeLead = totalScore > 0 ? Math.abs(currentDiff) / totalScore : 0; // 0 to 1
                     
-                    // Game-ending chance: roundProgress^TRIGGER_POWER * relativeLead * TRIGGER_SCALE
-                    // TRIGGER_POWER reduces early game triggers
-                    const gameEndChance = Math.pow(roundProgress, TRIGGER_POWER) * relativeLead * TRIGGER_SCALE;
+                    // Game-ending chance: roundProgress^SEC8_TRIGGER_POWER * relativeLead * SEC8_TRIGGER_SCALE
+                    // SEC8_TRIGGER_POWER reduces early game triggers
+                    const gameEndChance = Math.pow(roundProgress, SEC8_TRIGGER_POWER) * relativeLead * SEC8_TRIGGER_SCALE;
                     
                     if (r === TOTAL_ROUNDS - 1 || Math.random() < gameEndChance) {
                         // Game-deciding roll based on TOTAL WEIGHTS only
@@ -2330,8 +2334,8 @@
                 // Solving: scoreA = (r + leadThreshold) / 2, scoreB = (r - leadThreshold) / 2
                 const typicalScoreA = (r + leadThreshold) / 2;
                 const typicalScoreB = Math.max(0, (r - leadThreshold) / 2);
-                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreA - MIDPOINT_SCORE)));
-                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreB - MIDPOINT_SCORE)));
+                const adA_init = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (typicalScoreA - SEC8_MIDPOINT_SCORE)));
+                const adB_init = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (typicalScoreB - SEC8_MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
                 const wB_init = skillB + adB_init;
                 const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
