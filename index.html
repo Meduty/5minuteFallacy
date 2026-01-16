@@ -1858,12 +1858,13 @@
         const MIDPOINT_SCORE = 10;
         
         // Section 8 specific parameters (only used in runFlatteningAnalysis)
-        const SEC8_MAX_ADVANTAGE = 280;
-        const SEC8_STEEPNESS = 0.5;
-        const SEC8_MIDPOINT_SCORE = 50;
-        const SEC8_POINT_SCALING = 30;      // Late-game rounds worth up to 30x more
+        // Tuned so that skill matters more and lead % correlates properly with win rate
+        const SEC8_MAX_ADVANTAGE = 40;      // Reduced from 280 so skill matters (~50% at midpoint)
+        const SEC8_STEEPNESS = 0.15;        // Gentler curve for more gradual advantage
+        const SEC8_MIDPOINT_SCORE = 30;     // Lower midpoint for earlier advantage effect
+        const SEC8_POINT_SCALING = 8;       // Reduced from 30 for more balanced late game
         const SEC8_TRIGGER_POWER = 2;       // Reduces early game triggers
-        const SEC8_TRIGGER_SCALE = 0.25;    // Controls game-ending frequency
+        const SEC8_TRIGGER_SCALE = 0.6;     // Increased for more game-ending chances
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
@@ -2374,17 +2375,19 @@
                         const wB_r = skillB + adB_r;
                         const weightAdvPercent = (wA_r - wB_r) / (wA_r + wB_r) * 100;
                         
-                        // Debug mode: track skill and A(S) contributions separately
-                        const skillDiff = skillA - skillB;
-                        const advantageDiff = adA_r - adB_r;
+                        // Debug mode: track skill and A(S) as % of TOTAL weight (stacked to 100%)
+                        // Skill % = (skillA + skillB) / (wA + wB) * 100
+                        // A(S) % = (adA + adB) / (wA + wB) * 100
                         const totalWeight = wA_r + wB_r;
-                        const skillContrib = (skillDiff / totalWeight) * 100;
-                        const advantageContrib = (advantageDiff / totalWeight) * 100;
+                        const totalSkill = skillA + skillB;
+                        const totalAdvantage = adA_r + adB_r;
+                        const skillPercent = (totalSkill / totalWeight) * 100;
+                        const advantagePercent = (totalAdvantage / totalWeight) * 100;
                         
                         leadsAtRound[r].count++;
                         leadsAtRound[r].weightAdvSum += weightAdvPercent;
-                        leadsAtRound[r].skillContribSum += skillContrib;
-                        leadsAtRound[r].advantageContribSum += advantageContrib;
+                        leadsAtRound[r].skillContribSum += skillPercent;       // Now shows skill % of total
+                        leadsAtRound[r].advantageContribSum += advantagePercent; // Now shows A(S) % of total
                         if (aWonGame) leadsAtRound[r].wins++;
                     }
                 }
@@ -2485,30 +2488,34 @@
                 }
             ];
             
-            // Add debug mode datasets if enabled
+            // Add debug mode datasets if enabled - stacked area chart showing skill % vs A(S) % of total weight
             if (debugMode) {
                 datasets.push({
-                    label: 'Skill Contribution % (S_A - S_B)',
+                    label: 'Skill % of Total Weight',
                     data: skillContribData,
                     borderColor: '#22d3ee',
+                    backgroundColor: 'rgba(34, 211, 238, 0.4)',
                     borderWidth: 2,
-                    borderDash: [8, 4],
                     tension: 0.4,
                     pointRadius: 1,
                     pointBackgroundColor: '#22d3ee',
-                    yAxisID: 'yAdvantage',
+                    yAxisID: 'yDebug',
+                    fill: true,
+                    stack: 'weight-stack',
                     spanGaps: true
                 });
                 datasets.push({
-                    label: 'A(S) Contribution % (A(S_A) - A(S_B))',
+                    label: 'A(S) % of Total Weight',
                     data: advantageContribData,
                     borderColor: '#f472b6',
+                    backgroundColor: 'rgba(244, 114, 182, 0.4)',
                     borderWidth: 2,
-                    borderDash: [8, 4],
                     tension: 0.4,
                     pointRadius: 1,
                     pointBackgroundColor: '#f472b6',
-                    yAxisID: 'yAdvantage',
+                    yAxisID: 'yDebug',
+                    fill: true,
+                    stack: 'weight-stack',
                     spanGaps: true
                 });
             }
@@ -2525,7 +2532,8 @@
                         x: {
                             title: { display: true, text: 'Round Number', color: '#94a3b8' },
                             grid: { color: '#1e293b' },
-                            ticks: { color: '#64748b' }
+                            ticks: { color: '#64748b' },
+                            stacked: debugMode  // Enable stacking for x-axis in debug mode
                         },
                         yWinRate: {
                             type: 'linear',
@@ -2542,6 +2550,17 @@
                             title: { display: true, text: 'Weight Advantage %', color: '#a78bfa' },
                             grid: { display: false },
                             ticks: { color: '#a78bfa' }
+                        },
+                        yDebug: {
+                            type: 'linear',
+                            position: 'right',
+                            min: 0,
+                            max: 100,
+                            title: { display: debugMode, text: 'Weight Composition %', color: '#94a3b8' },
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8' },
+                            display: debugMode,
+                            stacked: true  // Enable stacking for debug axis
                         }
                     },
                     plugins: {
