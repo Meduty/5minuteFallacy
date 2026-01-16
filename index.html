@@ -2319,7 +2319,9 @@
             // - 10%+ leads have ~full impact
             const computeEffectiveLead = (rawLead) => {
                 if (rawLead <= 0) return 0;
-                const sigmoid = 1 / (1 + Math.exp(-(rawLead - impactThreshold) * leadSensitivity / impactThreshold));
+                // Safety check: impactThreshold should never be 0 (UI min is 1), but add protection
+                const safeThreshold = impactThreshold > 0 ? impactThreshold : 0.01;
+                const sigmoid = 1 / (1 + Math.exp(-(rawLead - safeThreshold) * leadSensitivity / safeThreshold));
                 return rawLead * sigmoid;
             };
 
