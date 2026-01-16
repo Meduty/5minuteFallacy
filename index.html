@@ -2256,23 +2256,23 @@
             // Simulate for different starting scores (game progression levels)
             // Starting from 0 to 20 (representing different game stages)
             // Both players start at the same base score, with A having an additional fixedDiff advantage
-            for (let startScore = 0; startScore <= 20; startScore++) {
-                labels.push(startScore);
+            for (let baseScore = 0; baseScore <= 20; baseScore++) {
+                labels.push(baseScore);
                 
                 // Player A starts with the fixed score advantage over B
                 // This ensures the score difference is always exactly fixedDiff
-                const startA = startScore + fixedDiff;
-                const startB = startScore;
+                const scoreA = baseScore + fixedDiff;
+                const scoreB = baseScore;
                 
-                // Remaining rounds = 50 - startScore (as we progress, fewer rounds remain)
-                const remainingRounds = Math.max(10, 50 - startScore);
+                // Remaining rounds = 50 - baseScore (as we progress, fewer rounds remain)
+                const remainingRounds = Math.max(10, 50 - baseScore);
                 
                 let wins = 0;
                 
                 // Run simulations
                 for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
-                    let sA = startA;
-                    let sB = startB;
+                    let sA = scoreA;
+                    let sB = scoreB;
                     
                     for (let r = 0; r < remainingRounds; r++) {
                         const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
@@ -2295,8 +2295,8 @@
                 
                 // Calculate advantage percentage at start of this game state
                 // This measures the logistic advantage difference from the fixed score gap
-                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startA - MIDPOINT_SCORE)));
-                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (startB - MIDPOINT_SCORE)));
+                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (scoreA - MIDPOINT_SCORE)));
+                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (scoreB - MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
                 const wB_init = skillB + adB_init;
                 const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100).toFixed(1);
@@ -2370,8 +2370,8 @@
                                 },
                                 afterLabel: function(context) {
                                     if (context.datasetIndex === 0) {
-                                        const startScore = context.parsed.x;
-                                        const remainingRounds = Math.max(10, 50 - startScore);
+                                        const baseScore = context.parsed.x;
+                                        const remainingRounds = Math.max(10, 50 - baseScore);
                                         return `Rounds remaining: ${remainingRounds}`;
                                     }
                                     return '';
