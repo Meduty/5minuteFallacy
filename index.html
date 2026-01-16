@@ -2329,13 +2329,14 @@
                 winRateData.push(winRate);
                 
                 // Calculate theoretical weight advantage at typical scores for this round
+                // Using GLOBAL advantage function parameters (not SEC8_) to show the expected bell curve
                 // At round r, r total points have been scored between both players
                 // If A leads by leadThreshold, then: scoreA - scoreB = leadThreshold and scoreA + scoreB = r
                 // Solving: scoreA = (r + leadThreshold) / 2, scoreB = (r - leadThreshold) / 2
                 const typicalScoreA = (r + leadThreshold) / 2;
                 const typicalScoreB = Math.max(0, (r - leadThreshold) / 2);
-                const adA_init = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (typicalScoreA - SEC8_MIDPOINT_SCORE)));
-                const adB_init = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (typicalScoreB - SEC8_MIDPOINT_SCORE)));
+                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreA - MIDPOINT_SCORE)));
+                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreB - MIDPOINT_SCORE)));
                 const wA_init = skillA + adA_init;
                 const wB_init = skillB + adB_init;
                 const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
