@@ -919,14 +919,13 @@
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
                         <p class="text-slate-400 leading-relaxed">
-                            Our model captures a key MOBA mechanic: <strong class="text-teal-400">game-winning opportunities</strong> that 
-                            increase with round progression and lead size. Each round has a chance to be a "game-decider" 
-                            (like a crucial teamfight or objective).
+                            Our model captures key MOBA mechanics: <strong class="text-teal-400">scaled point values</strong> (late-game events worth more) 
+                            and <strong class="text-cyan-400">game-winning opportunities</strong> that increase with time and lead size.
                         </p>
                         <p class="text-slate-400 leading-relaxed">
                             We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 0.
-                            The game-ending chance increases as the game progresses and as leads grow larger.
-                            At round 50, there's a guaranteed deciding roll based on <strong class="text-cyan-400">total weights</strong> (skill + advantage).
+                            The result is a <strong class="text-yellow-400">bell-shaped curve</strong>: early leads (~60% win rate), 
+                            mid-game leads (~85% peak), late-game leads (~60% - diluted by scaled points).
                         </p>
                     </div>
 
@@ -937,9 +936,9 @@
                             <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
                                 <div class="flex justify-between mb-2">
                                     <label class="text-cyan-400 text-xs font-bold uppercase">Your Skill</label>
-                                    <span id="flattenSkillAVal" class="text-white font-mono font-bold text-xs">12</span>
+                                    <span id="flattenSkillAVal" class="text-white font-mono font-bold text-xs">10</span>
                                 </div>
-                                <input type="range" id="flattenSkillA" min="1" max="20" value="12" class="w-full">
+                                <input type="range" id="flattenSkillA" min="1" max="20" value="10" class="w-full">
                             </div>
                             <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
                                 <div class="flex justify-between mb-2">
@@ -958,9 +957,8 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Game-Ending Mechanic:</strong> Each round has a chance to end the game, 
-                                scaling with round progression and relative lead. The winner is decided by <strong class="text-cyan-400">total weights</strong> 
-                                (wA / (wA + wB)), which already incorporates score advantage through the logistic curve.
+                                <strong class="text-white">Bell Curve Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
+                                Game-ending triggers scale with time² and relative lead. Winner decided by total weights.
                             </p>
                         </div>
                     </div>
@@ -985,20 +983,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Early Game: Few Game-Deciders</h5>
+                                        <h5 class="text-white font-bold text-sm">Early Game (~60% Win Rate)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
                                             Early leads show <strong class="text-white">moderate win rates</strong> because 
-                                            game-ending chances are low—few opportunities to convert the lead into victory.
+                                            game-ending chances are low (time² scaling) and advantage hasn't built up yet.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Total Weights Matter</h5>
+                                        <h5 class="text-white font-bold text-sm">Mid Game (~85% Peak)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            Game-deciding rolls use <strong class="text-cyan-400">total weights</strong> (skill + advantage), 
-                                            so a lead only helps through the advantage bonus it provides.
+                                            Mid-game leads are <strong class="text-cyan-400">most decisive</strong>—advantage is at peak effectiveness 
+                                            and game-ending triggers are more frequent.
                                         </p>
                                     </div>
                                 </div>
@@ -1007,20 +1005,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Late Game: Guaranteed Decision</h5>
+                                        <h5 class="text-white font-bold text-sm">Late Game (~60% - Diluted)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            At round 50, the game <strong class="text-pink-400">must end</strong>. 
-                                            The deciding roll uses total weights, so the higher-weight player wins more often.
+                                            Late-game rounds are worth <strong class="text-pink-400">up to 30x more points</strong>, 
+                                            diluting earlier leads and bringing win rates back down.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Skill Still Matters</h5>
+                                        <h5 class="text-white font-bold text-sm">The Bell Curve Pattern</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            With equal skills, a lead provides minimal advantage. 
-                                            With <strong class="text-purple-400">skill difference</strong>, the better player's leads are more decisive.
+                                            This creates a <strong class="text-purple-400">bell-shaped curve</strong> matching real-world MOBA data: 
+                                            early leads less predictive, mid-game peak, late-game volatility.
                                         </p>
                                     </div>
                                 </div>
@@ -1028,9 +1026,8 @@
                         </div>
                         <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
                             <p class="text-white text-sm font-medium">
-                                This model shows that <strong class="text-teal-400">leads alone don't guarantee wins</strong>—they improve your 
-                                chances through the advantage mechanic, but the <strong class="text-pink-400">game-deciding roll</strong> 
-                                is based on total weights (skill + advantage).
+                                This model shows why <strong class="text-teal-400">early surrenders are premature</strong>: early leads only give ~60% win rate. 
+                                The <strong class="text-yellow-400">mid-game is most decisive</strong>, and late-game <strong class="text-pink-400">high-stakes fights</strong> can swing the outcome.
                             </p>
                         </div>
                     </div>
@@ -1831,9 +1828,15 @@
     <!-- SCRIPT -->
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const MAX_ADVANTAGE = 50; // Increased to make advantage more significant
-        const STEEPNESS = 0.4;
-        const MIDPOINT_SCORE = 10;
+        // Tuned for bell curve: Early ~60%, Mid ~85%, Late ~60%
+        const MAX_ADVANTAGE = 280;
+        const STEEPNESS = 0.5;
+        const MIDPOINT_SCORE = 50;
+        
+        // Section 8 specific parameters
+        const POINT_SCALING = 30;      // Late-game rounds worth up to 30x more
+        const TRIGGER_POWER = 2;       // Reduces early game triggers
+        const TRIGGER_SCALE = 0.25;    // Controls game-ending frequency
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
@@ -2266,30 +2269,30 @@
                     const wA = skillA + adA;
                     const wB = skillB + adB;
                     
-                    // Round outcome: Winner gets a point
+                    // Point value scales with round progress (late-game rounds worth more)
+                    const pointValue = 1 + Math.floor((POINT_SCALING - 1) * r / TOTAL_ROUNDS);
+                    
+                    // Round outcome: Winner gets points
                     if (Math.random() < wA / (wA + wB)) {
-                        sA++;
+                        sA += pointValue;
                     } else {
-                        sB++;
+                        sB += pointValue;
                     }
                     scoreHistory.push({ sA, sB });
                     
                     // Game-winning roll: Chance increases with round progression and lead
-                    // At round 50, guaranteed roll. Earlier rounds have lower chances.
                     const roundProgress = (r + 1) / TOTAL_ROUNDS; // 0.02 to 1.0
                     const currentDiff = sA - sB; // Can be negative if B is ahead
                     const totalScore = sA + sB;
                     const relativeLead = totalScore > 0 ? Math.abs(currentDiff) / totalScore : 0; // 0 to 1
                     
-                    // Game-ending chance = roundProgress * (0.1 + relativeLead)
-                    // At round 50 (progress=1.0): Always rolls if there's any lead
-                    // Early rounds: Low chance even with big lead
-                    const gameEndChance = roundProgress * (0.1 + relativeLead * 0.9);
+                    // Game-ending chance: roundProgress^TRIGGER_POWER * relativeLead * TRIGGER_SCALE
+                    // TRIGGER_POWER reduces early game triggers
+                    const gameEndChance = Math.pow(roundProgress, TRIGGER_POWER) * relativeLead * TRIGGER_SCALE;
                     
                     if (r === TOTAL_ROUNDS - 1 || Math.random() < gameEndChance) {
                         // Game-deciding roll based on TOTAL WEIGHTS only
                         // The weights already incorporate score advantage through the logistic curve
-                        // wA = skillA + advantage(scoreA), wB = skillB + advantage(scoreB)
                         gameWinner = Math.random() < wA / (wA + wB) ? 'A' : 'B';
                         break;
                     }
