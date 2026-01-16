@@ -955,6 +955,24 @@
                                 <input type="range" id="flattenLeadThreshold" min="1" max="30" value="5" class="w-full">
                             </div>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-emerald-400 text-xs font-bold uppercase">Lead Sensitivity</label>
+                                    <span id="flattenLeadSensitivityVal" class="text-white font-mono font-bold text-xs">10</span>
+                                </div>
+                                <input type="range" id="flattenLeadSensitivity" min="1" max="30" value="10" class="w-full">
+                                <div class="text-[9px] text-slate-500 mt-1">Higher = small leads less impactful, large leads more impactful</div>
+                            </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-orange-400 text-xs font-bold uppercase">Impact Threshold %</label>
+                                    <span id="flattenImpactThresholdVal" class="text-white font-mono font-bold text-xs">5%</span>
+                                </div>
+                                <input type="range" id="flattenImpactThreshold" min="1" max="20" value="5" class="w-full">
+                                <div class="text-[9px] text-slate-500 mt-1">Leads below this % have reduced game-ending impact</div>
+                            </div>
+                        </div>
                         <div class="mt-4 flex items-center gap-4">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" id="flattenDebugToggle" class="w-4 h-4 accent-purple-500">
@@ -965,6 +983,9 @@
                             <p class="text-xs text-slate-400">
                                 <strong class="text-white">Bell Curve Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
                                 Game-ending triggers scale with time² and relative lead. Winner decided by total weights.
+                                <br><br>
+                                <strong class="text-emerald-400">Lead Sensitivity:</strong> Uses a soft-threshold function to make small leads (1-2%) less impactful 
+                                while larger leads (10%+) remain very impactful. This keeps skill relevant even when one player has a slight lead.
                             </p>
                         </div>
                         <button id="rerunFlatteningBtn" class="mt-4 w-full py-2 px-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-cyan-500/20 text-sm">
@@ -1865,6 +1886,11 @@
         const SEC8_POINT_SCALING = 30;      // Late rounds worth up to 30x (dilutes early leads)
         const SEC8_TRIGGER_POWER = 1.2;     // Reduced from 2: allows more mid-game triggers for leaders
         const SEC8_TRIGGER_SCALE = 0.5;     // Increased from 0.25: more game-ending opportunities
+        
+        // Lead Sensitivity parameters: Makes small leads less impactful, large leads more impactful
+        // Uses a sigmoid-like soft threshold: effectiveLead = relativeLead * sigmoid((relativeLead - threshold) * steepness)
+        // Default values: 5% threshold means leads below ~5% have reduced impact
+        const SEC8_LEAD_SENSITIVITY_DEFAULT = 10; // Steepness of the soft threshold transition
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
@@ -2280,6 +2306,22 @@
             const skillB = parseInt(document.getElementById('flattenSkillB').value, 10);
             const leadThresholdPercent = parseInt(document.getElementById('flattenLeadThreshold').value, 10) / 100; // Convert to decimal
             const debugMode = document.getElementById('flattenDebugToggle').checked;
+            
+            // New lead sensitivity parameters
+            const leadSensitivity = parseInt(document.getElementById('flattenLeadSensitivity').value, 10);
+            const impactThreshold = parseInt(document.getElementById('flattenImpactThreshold').value, 10) / 100; // Convert to decimal
+            
+            // Soft-threshold function: transforms relativeLead into effectiveLead
+            // Small leads (below impactThreshold) have reduced impact, larger leads have full/amplified impact
+            // Formula: effectiveLead = relativeLead * sigmoid((relativeLead - impactThreshold) * leadSensitivity)
+            // This creates a smooth transition where:
+            // - 1-2% leads have ~minimal impact (depending on settings)
+            // - 10%+ leads have ~full impact
+            const computeEffectiveLead = (rawLead) => {
+                if (rawLead <= 0) return 0;
+                const sigmoid = 1 / (1 + Math.exp(-(rawLead - impactThreshold) * leadSensitivity / impactThreshold));
+                return rawLead * sigmoid;
+            };
 
             // For each round, track: games where A was leading by >= leadThreshold%, and how many A won
             // Also track: weight advantage sum for averaging, and total games active at each round
@@ -2327,9 +2369,13 @@
                     const totalScore = sA + sB;
                     const relativeLead = totalScore > 0 ? Math.abs(currentDiff) / totalScore : 0; // 0 to 1
                     
-                    // Game-ending chance: roundProgress^SEC8_TRIGGER_POWER * relativeLead * SEC8_TRIGGER_SCALE
+                    // Apply lead sensitivity: small leads have less game-ending impact
+                    const effectiveLead = computeEffectiveLead(relativeLead);
+                    
+                    // Game-ending chance: roundProgress^SEC8_TRIGGER_POWER * effectiveLead * SEC8_TRIGGER_SCALE
                     // SEC8_TRIGGER_POWER reduces early game triggers
-                    const gameEndChance = Math.pow(roundProgress, SEC8_TRIGGER_POWER) * relativeLead * SEC8_TRIGGER_SCALE;
+                    // effectiveLead (instead of relativeLead) ensures small leads don't trigger game-ending as easily
+                    const gameEndChance = Math.pow(roundProgress, SEC8_TRIGGER_POWER) * effectiveLead * SEC8_TRIGGER_SCALE;
                     
                     if (r === TOTAL_ROUNDS - 1 || Math.random() < gameEndChance) {
                         // Game-deciding roll based on TOTAL WEIGHTS only
@@ -2628,6 +2674,14 @@
         });
         document.getElementById('flattenLeadThreshold').addEventListener('input', (e) => {
             document.getElementById('flattenLeadThresholdVal').innerText = e.target.value + '%';
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenLeadSensitivity').addEventListener('input', (e) => {
+            document.getElementById('flattenLeadSensitivityVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenImpactThreshold').addEventListener('input', (e) => {
+            document.getElementById('flattenImpactThresholdVal').innerText = e.target.value + '%';
             runFlatteningAnalysis();
         });
         document.getElementById('flattenDebugToggle').addEventListener('change', () => {
