@@ -919,14 +919,14 @@
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">How Leads Diminish as the Game Progresses</h3>
                         <p class="text-slate-400 leading-relaxed">
-                            Our enhanced model captures two key MOBA mechanics: <strong class="text-teal-400">increasing stakes</strong> 
-                            (late-game events worth more) and <strong class="text-cyan-400">game-ending opportunities</strong> 
-                            (pushing to win with a lead). This creates more realistic win rate patterns.
+                            Our model captures a key MOBA mechanic: <strong class="text-teal-400">game-winning opportunities</strong> that 
+                            increase with round progression and lead size. Each round has a chance to be a "game-decider" 
+                            (like a crucial teamfight or objective).
                         </p>
                         <p class="text-slate-400 leading-relaxed">
                             We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 0.
-                            Mid-game leads can end the game early (like pushing objectives), but late-game has higher volatility 
-                            (one teamfight can throw). For each round, we track: <strong class="text-cyan-400">what % of games with a lead did A win?</strong>
+                            The game-ending chance increases as the game progresses and as leads grow larger.
+                            At round 50, there's a guaranteed deciding roll based on <strong class="text-cyan-400">total weights</strong> (skill + advantage).
                         </p>
                     </div>
 
@@ -958,8 +958,8 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Model Features:</strong> Late-game rounds worth more points (higher stakes), 
-                                mid-game leads can end games early (pushing objectives), 10% late-game "throw" chance (full-build volatility).
+                                <strong class="text-white">Game-Ending Mechanic:</strong> Each round has a chance to end the game, 
+                                scaling with round progression (time) and relative lead. The winner is decided by total weights (skill + score advantage).
                             </p>
                         </div>
                     </div>
@@ -984,20 +984,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-teal-500/10 p-2 rounded text-teal-400 text-xl mr-3">📉</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Early Leads: Not Yet Decisive</h5>
+                                        <h5 class="text-white font-bold text-sm">Early Game: Few Game-Deciders</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            Early leads have <strong class="text-white">lower win rates</strong> because the game 
-                                            hasn't reached the point where you can push to end. Many rounds remain.
+                                            Early leads show <strong class="text-white">moderate win rates</strong> because 
+                                            game-ending chances are low—few opportunities to convert the lead into victory.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-cyan-500/10 p-2 rounded text-cyan-400 text-xl mr-3">📊</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Mid-Game: Peak Impact</h5>
+                                        <h5 class="text-white font-bold text-sm">Total Weights Matter</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            Mid-game leads are <strong class="text-cyan-400">most decisive</strong>—you can convert 
-                                            the advantage into objectives and potentially end the game early.
+                                            Game-deciding rolls use <strong class="text-cyan-400">total weights</strong> (skill + advantage), 
+                                            so a lead only helps through the advantage bonus it provides.
                                         </p>
                                     </div>
                                 </div>
@@ -1006,20 +1006,20 @@
                                 <div class="flex items-start">
                                     <div class="bg-pink-500/10 p-2 rounded text-pink-400 text-xl mr-3">📈</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">Late Game: High Volatility</h5>
+                                        <h5 class="text-white font-bold text-sm">Late Game: Guaranteed Decision</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            At full build, leads matter less. One bad teamfight can <strong class="text-pink-400">throw the game</strong>. 
-                                            Win rates may decrease late due to this volatility.
+                                            At round 50, the game <strong class="text-pink-400">must end</strong>. 
+                                            The deciding roll uses total weights, so the higher-weight player wins more often.
                                         </p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3">⚖️</div>
                                     <div>
-                                        <h5 class="text-white font-bold text-sm">The Bell Curve Pattern</h5>
+                                        <h5 class="text-white font-bold text-sm">Skill Still Matters</h5>
                                         <p class="text-xs text-slate-400 mt-1">
-                                            Win rates peak mid-game (when leads can close games) and may dip late 
-                                            (full build volatility). This matches <strong class="text-purple-400">real-world MOBA data</strong>.
+                                            With equal skills, a lead provides minimal advantage. 
+                                            With <strong class="text-purple-400">skill difference</strong>, the better player's leads are more decisive.
                                         </p>
                                     </div>
                                 </div>
@@ -1027,9 +1027,9 @@
                         </div>
                         <div class="mt-6 p-4 bg-slate-900/50 rounded-lg text-center">
                             <p class="text-white text-sm font-medium">
-                                This enhanced model shows why <strong class="text-teal-400">early surrenders are premature</strong>: 
-                                early leads are far less predictive than mid-game leads. 
-                                And late-game <strong class="text-pink-400">"throws" can always happen</strong> at full build.
+                                This model shows that <strong class="text-teal-400">leads alone don't guarantee wins</strong>—they improve your 
+                                chances through the advantage mechanic, but the <strong class="text-pink-400">game-deciding roll</strong> 
+                                is based on total weights (skill + advantage).
                             </p>
                         </div>
                     </div>
@@ -2265,42 +2265,31 @@
                     const wA = skillA + adA;
                     const wB = skillB + adB;
                     
-                    // Idea 1: Points scale from 1 (early) to 4 (late) - higher stakes late game
-                    const pointValue = 1 + Math.floor(3 * r / TOTAL_ROUNDS);
-                    
+                    // Round outcome: Winner gets a point
                     if (Math.random() < wA / (wA + wB)) {
-                        sA += pointValue;
+                        sA++;
                     } else {
-                        sB += pointValue;
+                        sB++;
                     }
                     scoreHistory.push({ sA, sB });
                     
-                    // Idea 2: Game-ending chance (like pushing to kill Guardian/Nexus)
-                    // Bell curve centered at 40% game progress - mid-game leads most decisive
-                    // Early: Can't end (not strong enough), Late: Both at full build, comebacks possible
-                    const roundProgress = (r + 1) / TOTAL_ROUNDS;
-                    const currentDiff = sA - sB;
-                    const absLead = Math.abs(currentDiff);
+                    // Game-winning roll: Chance increases with round progression and lead
+                    // At round 50, guaranteed roll. Earlier rounds have lower chances.
+                    const roundProgress = (r + 1) / TOTAL_ROUNDS; // 0.02 to 1.0
+                    const currentDiff = Math.abs(sA - sB);
+                    const totalScore = sA + sB;
+                    const relativeLead = totalScore > 0 ? currentDiff / totalScore : 0; // 0 to 1
                     
-                    const bellCurve = Math.exp(-Math.pow((roundProgress - 0.4) * 3.5, 2));
-                    const leadFactor = Math.min(absLead / 10, 1); // Scales up to 1 at 10+ lead
-                    const endChance = leadFactor * bellCurve * 0.2;
+                    // Game-ending chance = roundProgress * (0.1 + relativeLead)
+                    // At round 50 (progress=1.0): Always rolls if there's any lead
+                    // Early rounds: Low chance even with big lead
+                    const gameEndChance = roundProgress * (0.1 + relativeLead * 0.9);
                     
-                    if (endChance > 0 && Math.random() < endChance) {
-                        gameWinner = currentDiff > 0 ? 'A' : 'B';
+                    if (r === TOTAL_ROUNDS - 1 || Math.random() < gameEndChance) {
+                        // Game-deciding roll based on TOTAL WEIGHTS (skill + advantage)
+                        // This means the team with higher weight wins, but it's probabilistic
+                        gameWinner = Math.random() < wA / (wA + wB) ? 'A' : 'B';
                         break;
-                    }
-                }
-                
-                if (gameWinner === null) {
-                    // Late-game volatility: 10% "throw" chance where score lead doesn't matter
-                    // Models one bad teamfight deciding everything at full build
-                    const finalDiff = sA - sB;
-                    if (Math.abs(finalDiff) > 0 && Math.random() < 0.1) {
-                        gameWinner = Math.random() < 0.5 ? 'A' : 'B';
-                    } else {
-                        // Ties treated as neither player winning (rare edge case)
-                        gameWinner = sA > sB ? 'A' : (sB > sA ? 'B' : 'tie');
                     }
                 }
                 
