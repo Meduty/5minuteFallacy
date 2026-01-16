@@ -2256,7 +2256,9 @@
             const leadThreshold = parseInt(document.getElementById('flattenDiff').value, 10);
 
             // For each round, track: games where A was leading by >= leadThreshold, and how many A won
-            const leadsAtRound = Array(TOTAL_ROUNDS + 1).fill(0).map(() => ({ count: 0, wins: 0 }));
+            // Also track: weight advantage sum for averaging, and total games active at each round
+            const leadsAtRound = Array(TOTAL_ROUNDS + 1).fill(0).map(() => ({ count: 0, wins: 0, weightAdvSum: 0 }));
+            const gamesActiveAtRound = Array(TOTAL_ROUNDS + 1).fill(0);
             
             // Run many full games from scratch - NO initial advantage, both start at 0
             for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
@@ -2303,13 +2305,27 @@
                 }
                 
                 const aWonGame = gameWinner === 'A';
+                const gameEndRound = scoreHistory.length - 1; // The round when game ended
                 
                 // For each round that was played, check if A had the specified lead
-                // Note: Games ending early won't contribute to later rounds (intentional)
+                // Also track actual weight advantages from simulation data
                 for (let r = 1; r < scoreHistory.length; r++) {
-                    const diff = scoreHistory[r].sA - scoreHistory[r].sB;
+                    gamesActiveAtRound[r]++; // This game was still active at round r
+                    
+                    const sA_r = scoreHistory[r].sA;
+                    const sB_r = scoreHistory[r].sB;
+                    const diff = sA_r - sB_r;
+                    
                     if (diff >= leadThreshold) {
+                        // Calculate actual weight advantage from simulation at this point
+                        const adA_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sA_r - SEC8_MIDPOINT_SCORE)));
+                        const adB_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sB_r - SEC8_MIDPOINT_SCORE)));
+                        const wA_r = skillA + adA_r;
+                        const wB_r = skillB + adB_r;
+                        const weightAdvPercent = (wA_r - wB_r) / (wA_r + wB_r) * 100;
+                        
                         leadsAtRound[r].count++;
+                        leadsAtRound[r].weightAdvSum += weightAdvPercent;
                         if (aWonGame) leadsAtRound[r].wins++;
                     }
                 }
@@ -2319,6 +2335,7 @@
             const winRateData = [];
             const labels = [];
             const advantageData = [];
+            const gamesActiveData = [];
             
             for (let r = 1; r <= TOTAL_ROUNDS; r++) {
                 labels.push(r);
@@ -2328,19 +2345,13 @@
                 const winRate = data.count >= MIN_SAMPLE_SIZE ? (data.wins / data.count) * 100 : null;
                 winRateData.push(winRate);
                 
-                // Calculate theoretical weight advantage at typical scores for this round
-                // Using GLOBAL advantage function parameters (not SEC8_) to show the expected bell curve
-                // At round r, r total points have been scored between both players
-                // If A leads by leadThreshold, then: scoreA - scoreB = leadThreshold and scoreA + scoreB = r
-                // Solving: scoreA = (r + leadThreshold) / 2, scoreB = (r - leadThreshold) / 2
-                const typicalScoreA = (r + leadThreshold) / 2;
-                const typicalScoreB = Math.max(0, (r - leadThreshold) / 2);
-                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreA - MIDPOINT_SCORE)));
-                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (typicalScoreB - MIDPOINT_SCORE)));
-                const wA_init = skillA + adA_init;
-                const wB_init = skillB + adB_init;
-                const advPercent = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
-                advantageData.push(advPercent);
+                // Average weight advantage from actual simulation data (not theoretical)
+                const avgWeightAdv = data.count >= MIN_SAMPLE_SIZE ? data.weightAdvSum / data.count : null;
+                advantageData.push(avgWeightAdv);
+                
+                // Games still active at this round (as percentage of total games)
+                const gamesActivePercent = (gamesActiveAtRound[r] / FLATTEN_SIM_COUNT) * 100;
+                gamesActiveData.push(gamesActivePercent);
             }
 
             const config = {
@@ -2363,7 +2374,7 @@
                             spanGaps: true
                         },
                         {
-                            label: 'Weight Advantage %',
+                            label: 'Avg Weight Advantage % (simulation)',
                             data: advantageData,
                             borderColor: '#a78bfa',
                             borderWidth: 2,
@@ -2371,7 +2382,19 @@
                             tension: 0.4,
                             pointRadius: 1,
                             pointBackgroundColor: '#a78bfa',
-                            yAxisID: 'yAdvantage'
+                            yAxisID: 'yAdvantage',
+                            spanGaps: true
+                        },
+                        {
+                            label: 'Games Still Active %',
+                            data: gamesActiveData,
+                            borderColor: '#fbbf24',
+                            borderWidth: 2,
+                            borderDash: [2, 2],
+                            tension: 0.4,
+                            pointRadius: 1,
+                            pointBackgroundColor: '#fbbf24',
+                            yAxisID: 'yWinRate'
                         }
                     ]
                 },
