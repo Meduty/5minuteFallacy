@@ -954,6 +954,9 @@
                                 Game-ending triggers scale with time² and relative lead. Winner decided by total weights.
                             </p>
                         </div>
+                        <button id="rerunFlatteningBtn" class="mt-4 w-full py-2 px-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-cyan-500/20 text-sm">
+                            🔄 Re-run Simulation
+                        </button>
                     </div>
 
                     <!-- Chart -->
@@ -2472,6 +2475,9 @@
         });
         document.getElementById('flattenSkillB').addEventListener('input', (e) => {
             document.getElementById('flattenSkillBVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+        document.getElementById('rerunFlatteningBtn').addEventListener('click', () => {
             runFlatteningAnalysis();
         });
 
