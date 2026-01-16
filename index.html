@@ -947,6 +947,19 @@
                                 </div>
                                 <input type="range" id="flattenSkillB" min="1" max="20" value="10" class="w-full">
                             </div>
+                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
+                                <div class="flex justify-between mb-2">
+                                    <label class="text-yellow-400 text-xs font-bold uppercase">Lead Threshold %</label>
+                                    <span id="flattenLeadThresholdVal" class="text-white font-mono font-bold text-xs">5%</span>
+                                </div>
+                                <input type="range" id="flattenLeadThreshold" min="1" max="30" value="5" class="w-full">
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center gap-4">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="flattenDebugToggle" class="w-4 h-4 accent-purple-500">
+                                <span class="text-xs text-slate-400">🔍 <strong class="text-purple-400">Debug Mode:</strong> Show Skill vs A(S) breakdown in chart</span>
+                            </label>
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
@@ -2249,11 +2262,16 @@
             const ctxFlatten = document.getElementById('flatteningChart');
             const skillA = parseInt(document.getElementById('flattenSkillA').value, 10);
             const skillB = parseInt(document.getElementById('flattenSkillB').value, 10);
-            const leadThreshold = 1; // Any lead counts
+            const leadThresholdPercent = parseInt(document.getElementById('flattenLeadThreshold').value, 10) / 100; // Convert to decimal
+            const debugMode = document.getElementById('flattenDebugToggle').checked;
 
-            // For each round, track: games where A was leading by >= leadThreshold, and how many A won
+            // For each round, track: games where A was leading by >= leadThreshold%, and how many A won
             // Also track: weight advantage sum for averaging, and total games active at each round
-            const leadsAtRound = Array(TOTAL_ROUNDS + 1).fill(0).map(() => ({ count: 0, wins: 0, weightAdvSum: 0 }));
+            // Debug mode: track skill contribution and A(S) contribution separately
+            const leadsAtRound = Array(TOTAL_ROUNDS + 1).fill(0).map(() => ({ 
+                count: 0, wins: 0, weightAdvSum: 0, 
+                skillContribSum: 0, advantageContribSum: 0 
+            }));
             const gamesActiveAtRound = Array(TOTAL_ROUNDS + 1).fill(0);
             
             // Run many full games from scratch - NO initial advantage, both start at 0
@@ -2303,16 +2321,20 @@
                 const aWonGame = gameWinner === 'A';
                 const gameEndRound = scoreHistory.length - 1; // The round when game ended
                 
-                // For each round that was played, check if A had the specified lead
+                // For each round that was played, check if A had the specified lead percentage
                 // Also track actual weight advantages from simulation data
                 for (let r = 1; r < scoreHistory.length; r++) {
                     gamesActiveAtRound[r]++; // This game was still active at round r
                     
                     const sA_r = scoreHistory[r].sA;
                     const sB_r = scoreHistory[r].sB;
+                    const totalScore_r = sA_r + sB_r;
                     const diff = sA_r - sB_r;
                     
-                    if (diff >= leadThreshold) {
+                    // Check if A has lead >= threshold percentage
+                    const relativeLeadAtRound = totalScore_r > 0 ? diff / totalScore_r : 0;
+                    
+                    if (relativeLeadAtRound >= leadThresholdPercent) {
                         // Calculate actual weight advantage from simulation at this point
                         const adA_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sA_r - SEC8_MIDPOINT_SCORE)));
                         const adB_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sB_r - SEC8_MIDPOINT_SCORE)));
@@ -2320,8 +2342,17 @@
                         const wB_r = skillB + adB_r;
                         const weightAdvPercent = (wA_r - wB_r) / (wA_r + wB_r) * 100;
                         
+                        // Debug mode: track skill and A(S) contributions separately
+                        const skillDiff = skillA - skillB;
+                        const advantageDiff = adA_r - adB_r;
+                        const totalWeight = wA_r + wB_r;
+                        const skillContrib = (skillDiff / totalWeight) * 100;
+                        const advantageContrib = (advantageDiff / totalWeight) * 100;
+                        
                         leadsAtRound[r].count++;
                         leadsAtRound[r].weightAdvSum += weightAdvPercent;
+                        leadsAtRound[r].skillContribSum += skillContrib;
+                        leadsAtRound[r].advantageContribSum += advantageContrib;
                         if (aWonGame) leadsAtRound[r].wins++;
                     }
                 }
@@ -2332,6 +2363,8 @@
             const labels = [];
             const advantageData = [];
             const gamesActiveData = [];
+            const skillContribData = [];
+            const advantageContribData = [];
             
             for (let r = 1; r <= TOTAL_ROUNDS; r++) {
                 labels.push(r);
@@ -2348,51 +2381,88 @@
                 // Games still active at this round (as percentage of total games)
                 const gamesActivePercent = (gamesActiveAtRound[r] / FLATTEN_SIM_COUNT) * 100;
                 gamesActiveData.push(gamesActivePercent);
+                
+                // Debug mode: skill and A(S) contributions
+                const avgSkillContrib = data.count >= MIN_SAMPLE_SIZE ? data.skillContribSum / data.count : null;
+                const avgAdvantageContrib = data.count >= MIN_SAMPLE_SIZE ? data.advantageContribSum / data.count : null;
+                skillContribData.push(avgSkillContrib);
+                advantageContribData.push(avgAdvantageContrib);
+            }
+            
+            // Build datasets array
+            const datasets = [
+                {
+                    label: 'Win Rate % (when leading)',
+                    data: winRateData,
+                    borderColor: '#14b8a6',
+                    backgroundColor: 'rgba(20, 184, 166, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 2,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: '#14b8a6',
+                    fill: true,
+                    yAxisID: 'yWinRate',
+                    spanGaps: true
+                },
+                {
+                    label: 'Avg Weight Advantage % (simulation)',
+                    data: advantageData,
+                    borderColor: '#a78bfa',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    tension: 0.4,
+                    pointRadius: 1,
+                    pointBackgroundColor: '#a78bfa',
+                    yAxisID: 'yAdvantage',
+                    spanGaps: true
+                },
+                {
+                    label: 'Games Still Active %',
+                    data: gamesActiveData,
+                    borderColor: '#fbbf24',
+                    borderWidth: 2,
+                    borderDash: [2, 2],
+                    tension: 0.4,
+                    pointRadius: 1,
+                    pointBackgroundColor: '#fbbf24',
+                    yAxisID: 'yWinRate'
+                }
+            ];
+            
+            // Add debug mode datasets if enabled
+            if (debugMode) {
+                datasets.push({
+                    label: 'Skill Contribution % (S_A - S_B)',
+                    data: skillContribData,
+                    borderColor: '#22d3ee',
+                    borderWidth: 2,
+                    borderDash: [8, 4],
+                    tension: 0.4,
+                    pointRadius: 1,
+                    pointBackgroundColor: '#22d3ee',
+                    yAxisID: 'yAdvantage',
+                    spanGaps: true
+                });
+                datasets.push({
+                    label: 'A(S) Contribution % (A(S_A) - A(S_B))',
+                    data: advantageContribData,
+                    borderColor: '#f472b6',
+                    borderWidth: 2,
+                    borderDash: [8, 4],
+                    tension: 0.4,
+                    pointRadius: 1,
+                    pointBackgroundColor: '#f472b6',
+                    yAxisID: 'yAdvantage',
+                    spanGaps: true
+                });
             }
 
             const config = {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [
-                        {
-                            label: 'Win Rate % (when leading)',
-                            data: winRateData,
-                            borderColor: '#14b8a6',
-                            backgroundColor: 'rgba(20, 184, 166, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            pointRadius: 2,
-                            pointHoverRadius: 5,
-                            pointBackgroundColor: '#14b8a6',
-                            fill: true,
-                            yAxisID: 'yWinRate',
-                            spanGaps: true
-                        },
-                        {
-                            label: 'Avg Weight Advantage % (simulation)',
-                            data: advantageData,
-                            borderColor: '#a78bfa',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
-                            tension: 0.4,
-                            pointRadius: 1,
-                            pointBackgroundColor: '#a78bfa',
-                            yAxisID: 'yAdvantage',
-                            spanGaps: true
-                        },
-                        {
-                            label: 'Games Still Active %',
-                            data: gamesActiveData,
-                            borderColor: '#fbbf24',
-                            borderWidth: 2,
-                            borderDash: [2, 2],
-                            tension: 0.4,
-                            pointRadius: 1,
-                            pointBackgroundColor: '#fbbf24',
-                            yAxisID: 'yWinRate'
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     ...commonOptions,
@@ -2475,6 +2545,13 @@
         });
         document.getElementById('flattenSkillB').addEventListener('input', (e) => {
             document.getElementById('flattenSkillBVal').innerText = e.target.value;
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenLeadThreshold').addEventListener('input', (e) => {
+            document.getElementById('flattenLeadThresholdVal').innerText = e.target.value + '%';
+            runFlatteningAnalysis();
+        });
+        document.getElementById('flattenDebugToggle').addEventListener('change', () => {
             runFlatteningAnalysis();
         });
         document.getElementById('rerunFlatteningBtn').addEventListener('click', () => {
