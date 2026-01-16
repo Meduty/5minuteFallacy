@@ -959,8 +959,8 @@
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
                                 <strong class="text-white">Game-Ending Mechanic:</strong> Each round has a chance to end the game, 
-                                scaling with round progression and relative lead. The winner is decided by total weights + a <strong class="text-cyan-400">lead bonus</strong> 
-                                (LEAD_BONUS=1.5), so a 10% lead gives ~85% win rate at mid-game.
+                                scaling with round progression and relative lead. The winner is decided by <strong class="text-cyan-400">total weights</strong> 
+                                (wA / (wA + wB)), which already incorporates score advantage through the logistic curve.
                             </p>
                         </div>
                     </div>
@@ -1834,7 +1834,6 @@
         const MAX_ADVANTAGE = 50; // Increased to make advantage more significant
         const STEEPNESS = 0.4;
         const MIDPOINT_SCORE = 10;
-        const LEAD_BONUS = 1.5; // Bonus to win chance based on relative lead (1.5 gives ~85% win rate for 10% lead)
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
@@ -2288,13 +2287,10 @@
                     const gameEndChance = roundProgress * (0.1 + relativeLead * 0.9);
                     
                     if (r === TOTAL_ROUNDS - 1 || Math.random() < gameEndChance) {
-                        // Game-deciding roll based on TOTAL WEIGHTS + LEAD_BONUS
-                        // LEAD_BONUS adds to win probability based on relative lead
-                        // This models: "team with gold lead is more likely to win the deciding fight"
-                        const leadAdjustment = relativeLead * LEAD_BONUS * (currentDiff > 0 ? 1 : -1);
-                        const baseProb = wA / (wA + wB);
-                        const adjustedProb = Math.max(0.05, Math.min(0.95, baseProb + leadAdjustment));
-                        gameWinner = Math.random() < adjustedProb ? 'A' : 'B';
+                        // Game-deciding roll based on TOTAL WEIGHTS only
+                        // The weights already incorporate score advantage through the logistic curve
+                        // wA = skillA + advantage(scoreA), wB = skillB + advantage(scoreB)
+                        gameWinner = Math.random() < wA / (wA + wB) ? 'A' : 'B';
                         break;
                     }
                 }
