@@ -947,13 +947,6 @@
                                 </div>
                                 <input type="range" id="flattenSkillB" min="1" max="20" value="10" class="w-full">
                             </div>
-                            <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-600">
-                                <div class="flex justify-between mb-2">
-                                    <label class="text-yellow-400 text-xs font-bold uppercase">Lead Threshold</label>
-                                    <span id="flattenDiffVal" class="text-white font-mono font-bold text-xs">2</span>
-                                </div>
-                                <input type="range" id="flattenDiff" min="1" max="8" value="2" class="w-full">
-                            </div>
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
@@ -970,7 +963,7 @@
                             <canvas id="flatteningChart"></canvas>
                         </div>
                         <div class="mt-4 text-center text-xs text-slate-500">
-                            X-axis: Round number. Teal line: "If A was leading by ≥ threshold at this round, what % did A win?"
+                            X-axis: Round number. Teal line: "If A was leading at this round, what % did A win?"
                             Purple dashed line: Theoretical weight advantage from the logistic S-curve.
                         </div>
                     </div>
@@ -2253,7 +2246,7 @@
             const ctxFlatten = document.getElementById('flatteningChart');
             const skillA = parseInt(document.getElementById('flattenSkillA').value, 10);
             const skillB = parseInt(document.getElementById('flattenSkillB').value, 10);
-            const leadThreshold = parseInt(document.getElementById('flattenDiff').value, 10);
+            const leadThreshold = 1; // Any lead counts
 
             // For each round, track: games where A was leading by >= leadThreshold, and how many A won
             // Also track: weight advantage sum for averaging, and total games active at each round
@@ -2479,10 +2472,6 @@
         });
         document.getElementById('flattenSkillB').addEventListener('input', (e) => {
             document.getElementById('flattenSkillBVal').innerText = e.target.value;
-            runFlatteningAnalysis();
-        });
-        document.getElementById('flattenDiff').addEventListener('input', (e) => {
-            document.getElementById('flattenDiffVal').innerText = e.target.value;
             runFlatteningAnalysis();
         });
 
