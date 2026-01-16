@@ -1859,7 +1859,7 @@
         
         // Section 8 specific parameters (only used in runFlatteningAnalysis)
         // Tuned for: high leads → high win rates, but small leads should have less impact
-        const SEC8_MAX_ADVANTAGE = 280;     // High ceiling allows large leads to dominate
+        const SEC8_MAX_ADVANTAGE = 500;     // High ceiling allows large leads to dominate
         const SEC8_STEEPNESS = 0.08;        // MUCH gentler: small score diffs = small A(S) diffs
         const SEC8_MIDPOINT_SCORE = 50;     // Mid-game inflection point
         const SEC8_POINT_SCALING = 30;      // Late rounds worth up to 30x (dilutes early leads)
