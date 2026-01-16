@@ -1863,8 +1863,8 @@
         const SEC8_STEEPNESS = 0.4;         // Slightly decreased from 0.5 for better lead differentiation
         const SEC8_MIDPOINT_SCORE = 50;     // Mid-game inflection point
         const SEC8_POINT_SCALING = 30;      // Late rounds worth up to 30x (dilutes early leads)
-        const SEC8_TRIGGER_POWER = 2;       // Reduces early game triggers
-        const SEC8_TRIGGER_SCALE = 0.25;    // Controls game-ending frequency
+        const SEC8_TRIGGER_POWER = 1.2;     // Reduced from 2: allows more mid-game triggers for leaders
+        const SEC8_TRIGGER_SCALE = 0.5;     // Increased from 0.25: more game-ending opportunities
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
