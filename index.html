@@ -929,6 +929,171 @@
                         </p>
                     </div>
 
+                    <!-- Model Disclosure Panel -->
+                    <div class="bg-gradient-to-r from-amber-900/20 to-slate-900 border border-amber-500/30 rounded-xl p-6">
+                        <div class="text-xs text-amber-400 uppercase tracking-widest mb-6 text-center">⚠️ Modified Model Disclosure</div>
+                        
+                        <div class="prose prose-invert max-w-none mb-6">
+                            <p class="text-sm text-slate-300 leading-relaxed">
+                                <strong class="text-white">Important:</strong> This section uses a <strong class="text-amber-400">modified version</strong> of the base model 
+                                (from Sections 1-5) to demonstrate advantage flattening over time. The modifications introduce 
+                                <strong class="text-teal-400">point scaling</strong> and <strong class="text-cyan-400">game-ending triggers</strong> 
+                                to simulate realistic MOBA game progression. These parameters are <em>not</em> tuned to real-world data; 
+                                they are chosen to illustrate theoretical behavior.
+                            </p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Modified Parameters Table -->
+                            <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
+                                <div class="text-[10px] text-amber-400 uppercase tracking-widest mb-3 text-center">Modified Parameters vs. Base Model</div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead>
+                                            <tr class="border-b border-slate-700">
+                                                <th class="text-left text-slate-400 py-2 px-3">Parameter</th>
+                                                <th class="text-center text-slate-400 py-2 px-3">Base Model</th>
+                                                <th class="text-center text-slate-400 py-2 px-3">Section 8</th>
+                                                <th class="text-left text-slate-400 py-2 px-3">Purpose</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-slate-300">
+                                            <tr class="border-b border-slate-800">
+                                                <td class="py-2 px-3 font-mono text-pink-400">L (Max Advantage)</td>
+                                                <td class="py-2 px-3 text-center font-mono">10</td>
+                                                <td class="py-2 px-3 text-center font-mono text-amber-400">100</td>
+                                                <td class="py-2 px-3 text-xs text-slate-400">Higher cap allows greater score differentiation</td>
+                                            </tr>
+                                            <tr class="border-b border-slate-800">
+                                                <td class="py-2 px-3 font-mono text-pink-400">k (Steepness)</td>
+                                                <td class="py-2 px-3 text-center font-mono">0.4</td>
+                                                <td class="py-2 px-3 text-center font-mono">0.4</td>
+                                                <td class="py-2 px-3 text-xs text-slate-400">Unchanged: S-curve slope remains consistent</td>
+                                            </tr>
+                                            <tr class="border-b border-slate-800">
+                                                <td class="py-2 px-3 font-mono text-pink-400">S₀ (Midpoint)</td>
+                                                <td class="py-2 px-3 text-center font-mono">10</td>
+                                                <td class="py-2 px-3 text-center font-mono text-amber-400">50</td>
+                                                <td class="py-2 px-3 text-xs text-slate-400">Shifted for mid-game inflection with scaled points</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- New Features -->
+                            <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
+                                <div class="text-[10px] text-teal-400 uppercase tracking-widest mb-3 text-center">Newly Introduced Features</div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="bg-slate-800/50 p-3 rounded border-l-4 border-teal-500">
+                                        <div class="text-xs text-teal-400 font-bold mb-2">Point Scaling</div>
+                                        <div class="text-[10px] text-slate-300 space-y-1">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-slate-500">Scale Factor:</span>
+                                                <span class="font-mono text-teal-400">30</span>
+                                            </div>
+                                            <p class="text-slate-400 mt-1">Late-game rounds award up to 30× more points than early rounds, diluting early leads.</p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-800/50 p-3 rounded border-l-4 border-cyan-500">
+                                        <div class="text-xs text-cyan-400 font-bold mb-2">Game-Ending Triggers</div>
+                                        <div class="text-[10px] text-slate-300 space-y-1">
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-slate-500">Trigger Power:</span>
+                                                <span class="font-mono text-cyan-400">2.5</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-slate-500">Trigger Scale:</span>
+                                                <span class="font-mono text-cyan-400">1.5</span>
+                                            </div>
+                                            <p class="text-slate-400 mt-1">Games can end early based on time progression and lead size.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mathematical Equations -->
+                            <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
+                                <div class="text-[10px] text-purple-400 uppercase tracking-widest mb-4 text-center">New Mathematical Equations</div>
+                                
+                                <div class="space-y-4">
+                                    <!-- Equation 1: Point Value -->
+                                    <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-teal-500">
+                                        <div class="text-xs text-teal-400 uppercase tracking-widest mb-2">Point Value (per Round)</div>
+                                        <div class="text-center text-white math-block text-lg mb-2">
+                                            P<sub class="text-sm">value</sub>(r) = 1 + ⌊(λ - 1) · <span class="fraction"><span class="fup">r</span><span class="bar">/</span><span class="fdn">R</span></span>⌋
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-2">
+                                            Where <span class="text-teal-400 font-bold">λ = 30</span> is the scale factor, 
+                                            <span class="text-white font-bold">r</span> is the current round (0-indexed), 
+                                            <span class="text-white font-bold">R = 50</span> is total rounds, and
+                                            <span class="text-white font-bold">⌊ ⌋</span> denotes the floor function.
+                                            Round 0 awards 1 point; round 49 awards ~30 points.
+                                        </p>
+                                    </div>
+
+                                    <!-- Equation 2: Relative Lead -->
+                                    <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                        <div class="text-xs text-yellow-400 uppercase tracking-widest mb-2">Relative Lead</div>
+                                        <div class="text-center text-white math-block text-lg mb-2 flex justify-center items-center">
+                                            <span class="mr-2">ρ(S<sub class="text-sm">A</sub>, S<sub class="text-sm">B</sub>)</span> = 
+                                            <div class="fraction ml-2">
+                                                <span class="fup">|S<sub class="text-sm">A</sub> - S<sub class="text-sm">B</sub>|</span>
+                                                <span class="bar">/</span>
+                                                <span class="fdn">S<sub class="text-sm">A</sub> + S<sub class="text-sm">B</sub></span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-2">
+                                            The <span class="text-yellow-400 font-bold">relative lead ρ</span> measures how far ahead the leading player is 
+                                            as a proportion of total score (range: 0 to 1). The <span class="text-white font-bold">| |</span> denotes absolute value.
+                                            A small absolute lead in early game can be a large relative lead.
+                                        </p>
+                                    </div>
+
+                                    <!-- Equation 3: Game-End Chance -->
+                                    <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-cyan-500">
+                                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability</div>
+                                        <div class="text-center text-white math-block text-lg mb-2">
+                                            P<sub class="text-sm">end</sub>(r) = (<span class="fraction"><span class="fup">r + 1</span><span class="bar">/</span><span class="fdn">R</span></span>)<sup class="text-cyan-400">γ</sup> · ρ · σ
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-2">
+                                            Where <span class="text-cyan-400 font-bold">γ = 2.5</span> is the trigger power (suppresses early-game triggers), 
+                                            <span class="text-yellow-400 font-bold">ρ</span> is relative lead, and 
+                                            <span class="text-cyan-400 font-bold">σ = 1.5</span> is the trigger scale.
+                                            Each round, a random roll against P<sub>end</sub> determines if the game can end.
+                                        </p>
+                                    </div>
+
+                                    <!-- Equation 4: Winner Determination -->
+                                    <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-purple-500">
+                                        <div class="text-xs text-purple-400 uppercase tracking-widest mb-2">Winner Determination (on Game End)</div>
+                                        <div class="text-center text-white math-block text-lg mb-2 flex justify-center items-center">
+                                            <span class="mr-2">P(A wins)</span> = 
+                                            <div class="fraction ml-2">
+                                                <span class="fup text-cyan-400">W<sub class="text-sm">A</sub></span>
+                                                <span class="bar">/</span>
+                                                <span class="fdn"><span class="text-cyan-400">W<sub class="text-sm">A</sub></span> + <span class="text-pink-400">W<sub class="text-sm">B</sub></span></span>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mt-2">
+                                            When a game-ending trigger fires, the winner is determined by a <span class="text-purple-400 font-bold">Bradley-Terry roll</span> 
+                                            using total weights <span class="text-white font-bold">W = α + A(S)</span> (skill + advantage). Score advantage is baked into the weights via the logistic curve.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Disclaimer -->
+                            <div class="text-center p-3 bg-slate-900/50 rounded border border-slate-800">
+                                <p class="text-[9px] text-slate-400 italic leading-relaxed">
+                                    <strong class="text-amber-400">Disclaimer:</strong> These parameters (λ=30, γ=2.5, σ=1.5, L=100, S₀=50) are <em>not</em> calibrated to empirical MOBA data. 
+                                    They are chosen to produce a demonstrable bell-curve pattern illustrating how early leads diminish over time. 
+                                    Real-world applications would require parameter tuning against actual game data.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Controls -->
                     <div class="bg-slate-900 border border-slate-700 rounded-xl p-6">
                         <h4 class="text-white font-bold text-sm mb-4 uppercase tracking-wider">Simulation Configuration</h4>
