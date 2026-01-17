@@ -292,7 +292,7 @@
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">
                                     Where <span class="text-cyan-400 font-bold">α ∈ ℝ⁺</span> is base skill (constant), 
-                                    <span class="text-pink-400 font-bold">S ∈ ℕ</span> is score, and 
+                                    <span class="text-pink-400 font-bold">S<sub>A</sub>, S<sub>B</sub> ∈ ℕ</span> are the scores for players A and B, and 
                                     <span class="text-yellow-400 font-bold">A: ℕ → ℝ⁺</span> is the advantage function.
                                     <br><span class="text-emerald-400 mt-1 block">When scores are equal, weights reduce to skill: W<sub>A</sub> = α<sub>A</sub></span>
                                 </p>
@@ -382,7 +382,7 @@
                                             <p>Therefore, if S<sub>A</sub> &gt; S<sub>B</sub>, then A(S<sub>A</sub>) &gt; A(S<sub>B</sub>), giving positive advantage difference.</p>
                                             <p>For equal skills (α<sub>A</sub> = α<sub>B</sub> = α):</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                W<sub>A</sub> = α + (A(S<sub>A</sub>) - A(S<sub>B</sub>)) &gt; α = W<sub>B</sub>
+                                                W<sub>A</sub> = α + max(0, A(S<sub>A</sub>) - A(S<sub>B</sub>)) &gt; α + 0 = W<sub>B</sub>
                                             </div>
                                             <p class="text-emerald-400">∴ Score advantage increases round win probability (snowball). ∎</p>
                                         </div>
@@ -1910,10 +1910,12 @@
         function calcWeights(skillA, skillB, scoreA, scoreB, maxAdv = MAX_ADVANTAGE, steepness = STEEPNESS, midpoint = MIDPOINT_SCORE) {
             const adA = calcAdvantage(scoreA, maxAdv, steepness, midpoint);
             const adB = calcAdvantage(scoreB, maxAdv, steepness, midpoint);
-            const adDiff = adA - adB;
-            // Advantage only contributes to the player who is ahead
-            const wA = skillA + Math.max(0, adDiff);
-            const wB = skillB + Math.max(0, -adDiff);
+            const adDiff = adA - adB; // Raw advantage difference
+            // Only the player with higher A(S) gets the advantage bonus
+            const advForA = Math.max(0, adDiff);   // A gets bonus if ahead
+            const advForB = Math.max(0, -adDiff);  // B gets bonus if ahead
+            const wA = skillA + advForA;
+            const wB = skillB + advForB;
             return { wA, wB, adA, adB, adDiff };
         }
 
@@ -2375,9 +2377,11 @@
                         const { wA: wA_r, wB: wB_r, adA: adA_r, adB: adB_r, adDiff: advantageDiff } = calcWeights(skillA, skillB, sA_r, sB_r, SEC8_MAX_ADVANTAGE, SEC8_STEEPNESS, SEC8_MIDPOINT_SCORE);
                         const weightAdvPercent = (wA_r - wB_r) / (wA_r + wB_r) * 100;
                         
-                        // Debug mode: track skill and A(S) contribution to WEIGHT DIFFERENCE (wA - wB)
-                        // With difference-based model: weight diff = (skillA - skillB) + advantageDiff
-                        // where advantageDiff = max(0, adA - adB) - max(0, adB - adA)
+                        // Debug mode: track skill and advantage contributions to weight difference
+                        // Weight diff = (skillA + advForA) - (skillB + advForB)
+                        //             = (skillA - skillB) + (max(0, adDiff) - max(0, -adDiff))
+                        // advantageDiff here is the raw difference (adA - adB), which equals
+                        // the effective contribution when A is ahead (since max(0,-adDiff) = 0)
                         const weightDiff = wA_r - wB_r;
                         const skillDiff = skillA - skillB;  // Should be 0 for equal skill
                         
