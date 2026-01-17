@@ -36,6 +36,7 @@ jobs:
           ref: main
           path: main
 
+      # Allow failure if sandbox branch doesn't exist yet - this is expected initially
       - name: Checkout sandbox branch
         uses: actions/checkout@v4
         with:
@@ -47,18 +48,31 @@ jobs:
         run: |
           # Create deployment directory with main branch content
           mkdir -p deploy
-          cp -r main/* deploy/ 2>/dev/null || true
-          # Exclude .git directory
-          rm -rf deploy/.git
+          
+          # Copy main branch content (excluding hidden files/directories like .git)
+          if [ -d "main" ] && [ "$(ls -A main 2>/dev/null)" ]; then
+            for item in main/*; do
+              if [ -e "$item" ]; then
+                cp -r "$item" deploy/
+              fi
+            done
+          fi
+          
+          # Exclude .git and .github directories from deployment root
+          rm -rf deploy/.git deploy/.github
 
           # If sandbox branch exists, copy its content to /sandbox/ subdirectory
-          if [ -d "sandbox-src" ]; then
+          if [ -d "sandbox-src" ] && [ "$(ls -A sandbox-src 2>/dev/null)" ]; then
             mkdir -p deploy/sandbox
-            cp -r sandbox-src/* deploy/sandbox/ 2>/dev/null || true
-            rm -rf deploy/sandbox/.git
+            for item in sandbox-src/*; do
+              if [ -e "$item" ]; then
+                cp -r "$item" deploy/sandbox/
+              fi
+            done
+            rm -rf deploy/sandbox/.git deploy/sandbox/.github
             echo "Sandbox branch content deployed to /sandbox/"
           else
-            echo "Sandbox branch not found, skipping sandbox deployment"
+            echo "Sandbox branch not found or empty, skipping sandbox deployment"
           fi
 
       - name: Setup Pages
