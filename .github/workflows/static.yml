@@ -1,10 +1,11 @@
 # Simple workflow for deploying static content to GitHub Pages
+# Deploys main branch to root and sandbox branch to /sandbox/ subdirectory
 name: Deploy static content to Pages
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the main or sandbox branches
   push:
-    branches: ["main"]
+    branches: ["main", "sandbox"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -29,17 +30,48 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout main branch
         uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main
+
+      - name: Checkout sandbox branch
+        uses: actions/checkout@v4
+        with:
+          ref: sandbox
+          path: sandbox-src
+        continue-on-error: true
+
+      - name: Prepare deployment directory
+        run: |
+          # Create deployment directory with main branch content
+          mkdir -p deploy
+          cp -r main/* deploy/ 2>/dev/null || true
+          # Exclude .git directory
+          rm -rf deploy/.git
+
+          # If sandbox branch exists, copy its content to /sandbox/ subdirectory
+          if [ -d "sandbox-src" ]; then
+            mkdir -p deploy/sandbox
+            cp -r sandbox-src/* deploy/sandbox/ 2>/dev/null || true
+            rm -rf deploy/sandbox/.git
+            echo "Sandbox branch content deployed to /sandbox/"
+          else
+            echo "Sandbox branch not found, skipping sandbox deployment"
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload the prepared deployment directory
+          path: 'deploy'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
