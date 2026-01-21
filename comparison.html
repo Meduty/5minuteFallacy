@@ -2,10 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0; url=maintenance.html">
+<meta http-equiv="refresh" content="3; url=maintenance.html">
 <script>
-// Redirect to maintenance page
-window.location.href = "maintenance.html";
+// Redirect to maintenance page after 3 seconds for accessibility
+setTimeout(function() {
+    window.location.href = "maintenance.html";
+}, 3000);
 </script>
 <style>
 body { font-family: Arial, sans-serif; background: #0f172a; color: white; padding: 20px; }
