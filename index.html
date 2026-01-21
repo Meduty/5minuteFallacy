@@ -158,9 +158,9 @@
                         <div class="absolute top-0 right-0 p-2 opacity-10 text-6xl font-serif">W</div>
                         <div class="text-xs text-slate-500 uppercase tracking-widest mb-2">Total Weight Calculation</div>
                         <div class="text-2xl text-white math-block text-center">
-                            W<sub class="text-sm">player</sub> = <span class="text-cyan-400">&alpha;</span> + <span class="text-pink-400">A(S)</span>
+                            W<sub class="text-sm">A</sub> = <span class="text-cyan-400">&alpha;<sub class="text-sm">A</sub></span> + L &middot; max(0, <span class="text-pink-400">(S<sub class="text-sm">A</sub> - S<sub class="text-sm">B</sub>) / (S<sub class="text-sm">A</sub> + S<sub class="text-sm">B</sub>)</span>)
                         </div>
-                        <div class="text-[10px] text-center text-slate-500 mt-2">Skill + Advantage Function</div>
+                        <div class="text-[10px] text-center text-slate-500 mt-2">Skill + Scaled Score Ratio (0 when equal, bounded in [0, L])</div>
                     </div>
 
                     <!-- Formula 2: Logistic Advantage + CHART -->
@@ -286,14 +286,15 @@
                         <div class="space-y-6">
                             <!-- Definition 1 -->
                             <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-cyan-500">
-                                <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Definition: Weight Function</div>
+                                <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Definition: Weight Function (Score Ratio)</div>
                                 <div class="text-center text-white math-block text-xl mb-2">
-                                    W(α, S) = α + A(S)
+                                    W<sub>A</sub>(α<sub>A</sub>, S<sub>A</sub>, S<sub>B</sub>) = α<sub>A</sub> + L · max(0, (S<sub>A</sub> - S<sub>B</sub>) / (S<sub>A</sub> + S<sub>B</sub>))
                                 </div>
                                 <p class="text-xs text-slate-400 mt-2">
                                     Where <span class="text-cyan-400 font-bold">α ∈ ℝ⁺</span> is base skill (constant), 
-                                    <span class="text-pink-400 font-bold">S ∈ ℕ</span> is score, and 
-                                    <span class="text-yellow-400 font-bold">A: ℕ → ℝ⁺</span> is the advantage function.
+                                    <span class="text-pink-400 font-bold">S<sub>A</sub>, S<sub>B</sub> ∈ ℕ</span> are the scores for players A and B, and 
+                                    <span class="text-yellow-400 font-bold">L</span> is the maximum advantage scaling factor.
+                                    <br><span class="text-emerald-400 mt-1 block">When scores are equal → 0, bounded in [0, L]</span>
                                 </p>
                             </div>
 
@@ -349,13 +350,14 @@
                                             <p><strong class="text-cyan-400">Claim:</strong> Higher skill increases win probability, but outcomes remain probabilistic.</p>
                                             
                                             <p><strong class="text-white">Proof:</strong></p>
-                                            <p>Consider two players with skills α<sub>A</sub> &gt; α<sub>B</sub> and equal scores S<sub>A</sub> = S<sub>B</sub> = S.</p>
-                                            <p>Then W<sub>A</sub> = α<sub>A</sub> + A(S) &gt; α<sub>B</sub> + A(S) = W<sub>B</sub></p>
+                                            <p>Consider two players with skills α<sub>A</sub> &gt; α<sub>B</sub> and equal scores S<sub>A</sub> = S<sub>B</sub>.</p>
+                                            <p>Since scores are equal, (S<sub>A</sub> - S<sub>B</sub>) / (S<sub>A</sub> + S<sub>B</sub>) = 0.</p>
+                                            <p>Then W<sub>A</sub> = α<sub>A</sub> + L · 0 = α<sub>A</sub> &gt; α<sub>B</sub> = W<sub>B</sub></p>
                                             <p>Therefore:</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                P(A wins) = W<sub>A</sub>/(W<sub>A</sub> + W<sub>B</sub>) &gt; ½
+                                                P(A wins) = α<sub>A</sub>/(α<sub>A</sub> + α<sub>B</sub>) &gt; ½
                                             </div>
-                                            <p>However, since W<sub>B</sub> &gt; 0, we have P(A wins) &lt; 1.</p>
+                                            <p>However, since α<sub>B</sub> &gt; 0, we have P(A wins) &lt; 1.</p>
                                             <p class="text-emerald-400">∴ The more skilled player wins more often (P &gt; 0.5) but not always (P &lt; 1). ∎</p>
                                         </div>
                                     </div>
@@ -372,15 +374,13 @@
                                             <p><strong class="text-cyan-400">Claim:</strong> Score advantage increases probability of winning subsequent rounds.</p>
                                             
                                             <p><strong class="text-white">Proof:</strong></p>
-                                            <p>The logistic function A(S) is strictly monotonically increasing:</p>
+                                            <p>The score ratio r = (S<sub>A</sub> - S<sub>B</sub>) / (S<sub>A</sub> + S<sub>B</sub>) is strictly increasing in S<sub>A</sub>:</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                dA/dS = k · L · e<sup>-k(S-S₀)</sup> / (1 + e<sup>-k(S-S₀)</sup>)² &gt; 0 for all S
+                                                ∂r/∂S<sub>A</sub> = 2S<sub>B</sub> / (S<sub>A</sub> + S<sub>B</sub>)² &gt; 0
                                             </div>
-                                            <p>Since k, L &gt; 0 and exponentials are always positive.</p>
-                                            <p>Therefore, if S<sub>A</sub> &gt; S<sub>B</sub>, then A(S<sub>A</sub>) &gt; A(S<sub>B</sub>).</p>
-                                            <p>For equal skills (α<sub>A</sub> = α<sub>B</sub> = α):</p>
+                                            <p>For equal skills (α<sub>A</sub> = α<sub>B</sub> = α) with S<sub>A</sub> &gt; S<sub>B</sub>:</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                W<sub>A</sub> = α + A(S<sub>A</sub>) &gt; α + A(S<sub>B</sub>) = W<sub>B</sub>
+                                                W<sub>A</sub> = α + L · r &gt; α + 0 = W<sub>B</sub>
                                             </div>
                                             <p class="text-emerald-400">∴ Score advantage increases round win probability (snowball). ∎</p>
                                         </div>
@@ -393,23 +393,18 @@
                                 <div class="flex items-start">
                                     <div class="bg-amber-500/10 p-2 rounded text-amber-400 text-xl mr-3 font-serif">3</div>
                                     <div class="flex-1">
-                                        <h5 class="text-white font-bold text-sm mb-2">Proof: Advantage Plateau</h5>
+                                        <h5 class="text-white font-bold text-sm mb-2">Proof: Advantage Bounded</h5>
                                         <div class="bg-slate-900/50 p-4 rounded-lg text-sm text-slate-300 space-y-3">
-                                            <p><strong class="text-cyan-400">Claim:</strong> Advantage has a hard ceiling and exhibits diminishing returns.</p>
+                                            <p><strong class="text-cyan-400">Claim:</strong> Advantage contribution is bounded in [0, L].</p>
                                             
-                                            <p><strong class="text-white">Proof (Ceiling):</strong></p>
+                                            <p><strong class="text-white">Proof (Bounds):</strong></p>
+                                            <p>The score ratio r = (S<sub>A</sub> - S<sub>B</sub>) / (S<sub>A</sub> + S<sub>B</sub>) satisfies:</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                lim<sub>S→∞</sub> A(S) = lim<sub>S→∞</sub> L/(1 + e<sup>-k(S-S₀)</sup>) = L/(1 + 0) = L
+                                                -1 &lt; r &lt; 1  ⟹  0 ≤ max(0, r) &lt; 1
                                             </div>
-                                            <p>Since e<sup>-k(S-S₀)</sup> → 0 as S → ∞ (for k &gt; 0).</p>
-                                            
-                                            <p><strong class="text-white mt-4">Proof (Diminishing Returns):</strong></p>
-                                            <p>The second derivative of A(S):</p>
-                                            <div class="text-center my-2 text-white math-block">
-                                                d²A/dS² = k²L · e<sup>-k(S-S₀)</sup> · (e<sup>-k(S-S₀)</sup> - 1) / (1 + e<sup>-k(S-S₀)</sup>)³
-                                            </div>
-                                            <p>For S &gt; S₀: e<sup>-k(S-S₀)</sup> &lt; 1, so d²A/dS² &lt; 0 (concave down = diminishing returns)</p>
-                                            <p class="text-emerald-400">∴ Advantage caps at L and shows diminishing returns after S₀. ∎</p>
+                                            <p>Lower bound: When S<sub>A</sub> ≤ S<sub>B</sub>, r ≤ 0, so max(0, r) = 0.</p>
+                                            <p>Upper bound: r = 1 - 2S<sub>B</sub>/(S<sub>A</sub>+S<sub>B</sub>) &lt; 1 since S<sub>B</sub> &gt; 0.</p>
+                                            <p class="text-emerald-400">∴ Advantage contribution L · max(0, r) is bounded in [0, L). ∎</p>
                                         </div>
                                     </div>
                                 </div>
@@ -425,15 +420,16 @@
                                             <p><strong class="text-cyan-400">Claim:</strong> Greater skill implies greater win probability (∂P/∂α &gt; 0).</p>
                                             
                                             <p><strong class="text-white">Proof:</strong></p>
+                                            <p>Let r = (S<sub>A</sub>-S<sub>B</sub>)/(S<sub>A</sub>+S<sub>B</sub>), r<sub>A</sub> = max(0, r), r<sub>B</sub> = max(0, -r).</p>
                                             <p>The win probability for player A is:</p>
                                             <div class="text-center my-2 text-white math-block">
-                                                P(A) = W<sub>A</sub>/(W<sub>A</sub> + W<sub>B</sub>) = (α<sub>A</sub> + A(S<sub>A</sub>))/(α<sub>A</sub> + A(S<sub>A</sub>) + α<sub>B</sub> + A(S<sub>B</sub>))
+                                                P(A) = W<sub>A</sub>/(W<sub>A</sub> + W<sub>B</sub>) = (α<sub>A</sub> + L·r<sub>A</sub>)/(α<sub>A</sub> + L·r<sub>A</sub> + α<sub>B</sub> + L·r<sub>B</sub>)
                                             </div>
                                             <p>Taking the partial derivative with respect to α<sub>A</sub>:</p>
                                             <div class="text-center my-2 text-white math-block">
                                                 ∂P/∂α<sub>A</sub> = W<sub>B</sub>/(W<sub>A</sub> + W<sub>B</sub>)²
                                             </div>
-                                            <p>Since W<sub>B</sub> = α<sub>B</sub> + A(S<sub>B</sub>) &gt; 0 (skill and advantage are positive),</p>
+                                            <p>Since W<sub>B</sub> = α<sub>B</sub> + L·r<sub>B</sub> &gt; 0 (skill is positive),</p>
                                             <p>we have ∂P/∂α<sub>A</sub> &gt; 0 for all valid inputs.</p>
                                             <p class="text-emerald-400">∴ Increasing skill always increases win probability. ∎</p>
                                         </div>
@@ -445,33 +441,27 @@
 
                     <!-- Corollary -->
                     <div class="bg-slate-900 border border-emerald-500/30 rounded-xl p-6">
-                        <div class="text-xs text-emerald-400 uppercase tracking-widest mb-4 text-center">Corollary: Skill Dominates at Late Game</div>
+                        <div class="text-xs text-emerald-400 uppercase tracking-widest mb-4 text-center">Corollary: Equal Scores → Pure Skill Competition</div>
                         <div class="text-slate-300 text-sm leading-relaxed space-y-3">
                             <p>
-                                When both players approach full build (high scores S<sub>A</sub>, S<sub>B</sub> → large), 
-                                both advantage values approach L:
+                                When both players have equal scores (S<sub>A</sub> = S<sub>B</sub>), 
+                                the score ratio is zero:
                             </p>
                             <div class="text-center my-3 text-white math-block">
-                                A(S<sub>A</sub>) ≈ L and A(S<sub>B</sub>) ≈ L
+                                (S<sub>A</sub> - S<sub>B</sub>) / (S<sub>A</sub> + S<sub>B</sub>) = 0
                             </div>
-                            <p>Therefore, the win probability converges to:</p>
+                            <p>Therefore, the weights reduce to pure skill and the win probability becomes:</p>
                             <div class="text-center my-3 text-white math-block flex justify-center items-center">
-                                P(A wins) ≈ 
+                                P(A wins) = 
                                 <div class="fraction ml-2">
-                                    <span class="fup">α<sub>A</sub> + L</span>
+                                    <span class="fup">α<sub>A</sub></span>
                                     <span class="bar">/</span>
-                                    <span class="fdn">(α<sub>A</sub> + L) + (α<sub>B</sub> + L)</span>
-                                </div>
-                                <span class="mx-2">=</span>
-                                <div class="fraction">
-                                    <span class="fup">α<sub>A</sub> + L</span>
-                                    <span class="bar">/</span>
-                                    <span class="fdn">α<sub>A</sub> + α<sub>B</sub> + 2L</span>
+                                    <span class="fdn">α<sub>A</sub> + α<sub>B</sub></span>
                                 </div>
                             </div>
                             <p class="text-center text-emerald-400 font-medium mt-4">
-                                At late game, the score differential matters less because both advantage terms plateau. 
-                                <br>Skill (α) becomes the deciding factor.
+                                When scores are equal, only skill matters. The advantage contributes nothing.
+                                <br>This ensures skill remains the fundamental deciding factor.
                             </p>
                         </div>
                     </div>
@@ -2068,6 +2058,31 @@
             });
         }
 
+        // --- HELPER: Calculate weights using score ratio model ---
+        // Simple formula: advantage = (S_A - S_B) / (S_A + S_B)
+        // - When equal scores: 0
+        // - Bounded in [-1, 1], scaled by maxAdv (L)
+        function calcWeights(skillA, skillB, scoreA, scoreB, maxAdv = MAX_ADVANTAGE) {
+            // Handle edge case where both scores are 0
+            const totalScore = scoreA + scoreB;
+            if (totalScore === 0) {
+                // No score yet, weights are pure skill
+                return { wA: skillA, wB: skillB, advRatioA: 0, advRatioB: 0 };
+            }
+            
+            // Calculate score ratio advantage: (A-B)/(A+B), bounded in [-1, 1]
+            const scoreDiff = scoreA - scoreB;
+            const rawRatio = scoreDiff / totalScore;
+            const advRatioA = Math.max(0, rawRatio);   // A's advantage when ahead
+            const advRatioB = Math.max(0, -rawRatio);  // B's advantage when ahead
+            
+            // Scale by L (max advantage) and add to skill
+            const wA = skillA + maxAdv * advRatioA;
+            const wB = skillB + maxAdv * advRatioB;
+            
+            return { wA, wB, advRatioA, advRatioB };
+        }
+
         // --- 2. MONTE CARLO ---
         let chartMC;
         const MC_ROUNDS = 50;
@@ -2085,9 +2100,7 @@
                 let sA = 0; let sB = startDeficit;
                 const diffHistory = [sA - sB];
                 for(let r = 1; r < MC_ROUNDS; r++) {
-                    const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                    const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                    const wA = skillA + adA; const wB = skillB + adB;
+                    const { wA, wB } = calcWeights(skillA, skillB, sA, sB);
                     if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
                     diffHistory.push(sA - sB);
                 }
@@ -2131,18 +2144,20 @@
             const startB = parseInt(document.getElementById('inputStartB').value, 10);
             let sA = 0; let sB = startB; const rounds = 50; const labels = ['Start'];
             const dScoreA = [sA]; const dScoreB = [sB]; const dDiff = [sA - sB]; const dPointColors = ['#94a3b8'];
-            let adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE))); let adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-            const dWeightA = [skillA + adA]; const dWeightB = [skillB + adB];
+            // Use the new difference-based weight calculation
+            let { wA, wB } = calcWeights(skillA, skillB, sA, sB);
+            const dWeightA = [wA]; const dWeightB = [wB];
 
             for(let r = 1; r <= rounds; r++) {
                 labels.push(`${r}`);
-                adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE))); adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                const wA = skillA + adA; const wB = skillB + adB; dWeightA.push(wA); dWeightB.push(wB);
+                ({ wA, wB } = calcWeights(skillA, skillB, sA, sB));
+                dWeightA.push(wA); dWeightB.push(wB);
                 if (Math.random() < wA / (wA + wB)) { sA++; dPointColors.push('#4ade80'); } else { sB++; dPointColors.push('#f43f5e'); }
                 dScoreA.push(sA); dScoreB.push(sB); dDiff.push(sA - sB);
             }
             chartIntScore.data.labels = labels; chartIntScore.data.datasets[0].data = dScoreA; chartIntScore.data.datasets[1].data = dScoreB; chartIntScore.update();
             chartIntWeight.data.labels = labels; chartIntWeight.data.datasets[0].data = dWeightA; chartIntWeight.data.datasets[1].data = dWeightB;
+            // Max weight is now skill + MAX_ADVANTAGE (when fully ahead)
             chartIntWeight.options.plugins.annotation.annotations.maxA.yMin = skillA + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxA.yMax = skillA + MAX_ADVANTAGE;
             chartIntWeight.options.plugins.annotation.annotations.maxB.yMin = skillB + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxB.yMax = skillB + MAX_ADVANTAGE;
             chartIntWeight.update();
@@ -2207,10 +2222,8 @@
                 
                 const sA_init = 0; 
                 const sB_init = def;
-                const adA_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA_init - MIDPOINT_SCORE)));
-                const adB_init = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB_init - MIDPOINT_SCORE)));
-                const wA_init = skillA + adA_init;
-                const wB_init = skillB + adB_init;
+                // Use the score ratio weight calculation
+                const { wA: wA_init, wB: wB_init, advRatioA, advRatioB } = calcWeights(skillA, skillB, sA_init, sB_init);
                 
                 const advPercentRaw = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
                 const advPercent = advPercentRaw.toFixed(1) + '%';
@@ -2219,11 +2232,9 @@
                 // Calculate raw score difference (S)
                 const scoreDiff = sA_init - sB_init;
                 
-                // Calculate A(S) advantage as percentage
-                // A(S) is the logistic advantage function value based on score
-                // Showing as percentage relative to total weight for intuition
-                const scoreAdvRaw = adA_init - adB_init;
-                const scoreAdvPercentRaw = (scoreAdvRaw / (wA_init + wB_init) * 100);
+                // Calculate advantage ratio as percentage
+                const scoreAdvRaw = advRatioA - advRatioB;
+                const scoreAdvPercentRaw = scoreAdvRaw * 100;
                 const scoreAdvPercent = scoreAdvPercentRaw.toFixed(1) + '%';
 
                 let wins = 0;
@@ -2232,9 +2243,7 @@
                 for (let game = 0; game < simCount; game++) {
                     let sA = 0; let sB = def;
                     for (let r = 0; r < 50; r++) {
-                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                        const wA = skillA + adA; const wB = skillB + adB;
+                        const { wA, wB } = calcWeights(skillA, skillB, sA, sB);
                         if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
                     }
                     const finalDiff = sA - sB;
@@ -2345,9 +2354,7 @@
                 for(let i=0; i<MOTIVATION_SIM_COUNT; i++) {
                     let sA = 0; let sB = def;
                     for (let r = 0; r < 50; r++) {
-                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                        const wA = baseSkill + adA; const wB = enemySkill + adB;
+                        const { wA, wB } = calcWeights(baseSkill, enemySkill, sA, sB);
                         if (Math.random() < wA / (wA + wB)) sA++; else sB++;
                     }
                     if ((sA - sB) > 0) winsBase++;
@@ -2360,9 +2367,7 @@
                 for(let i=0; i<MOTIVATION_SIM_COUNT; i++) {
                     let sA = 0; let sB = def;
                     for (let r = 0; r < 50; r++) {
-                        const adA = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sA - MIDPOINT_SCORE)));
-                        const adB = MAX_ADVANTAGE / (1 + Math.exp(-STEEPNESS * (sB - MIDPOINT_SCORE)));
-                        const wA = tiltedSkill + adA; const wB = enemySkill + adB;
+                        const { wA, wB } = calcWeights(tiltedSkill, enemySkill, sA, sB);
                         if (Math.random() < wA / (wA + wB)) sA++; else sB++;
                     }
                     if ((sA - sB) > 0) winsTilted++;
@@ -2469,11 +2474,9 @@
                 
                 // Play full game from equal start
                 // Section 8 uses its own parameters to achieve bell-shaped curve
+                // Uses the difference-based weight calculation
                 for (let r = 0; r < TOTAL_ROUNDS; r++) {
-                    const adA = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sA - SEC8_MIDPOINT_SCORE)));
-                    const adB = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sB - SEC8_MIDPOINT_SCORE)));
-                    const wA = skillA + adA;
-                    const wB = skillB + adB;
+                    const { wA, wB } = calcWeights(skillA, skillB, sA, sB, SEC8_MAX_ADVANTAGE, SEC8_STEEPNESS, SEC8_MIDPOINT_SCORE);
                     
                     // Point value scales with round progress (late-game rounds worth more)
                     const pointValue = 1 + Math.floor((SEC8_POINT_SCALING - 1) * r / TOTAL_ROUNDS);
@@ -2534,19 +2537,16 @@
                     
                     if (relativeLeadAtRound >= leadThresholdPercent) {
                         // Calculate actual weight advantage from simulation at this point
-                        const adA_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sA_r - SEC8_MIDPOINT_SCORE)));
-                        const adB_r = SEC8_MAX_ADVANTAGE / (1 + Math.exp(-SEC8_STEEPNESS * (sB_r - SEC8_MIDPOINT_SCORE)));
-                        const wA_r = skillA + adA_r;
-                        const wB_r = skillB + adB_r;
+                        // Using the score ratio model
+                        const { wA: wA_r, wB: wB_r, advRatioA: advRatioA_r, advRatioB: advRatioB_r } = calcWeights(skillA, skillB, sA_r, sB_r, SEC8_MAX_ADVANTAGE);
                         const weightAdvPercent = (wA_r - wB_r) / (wA_r + wB_r) * 100;
                         
-                        // Debug mode: track skill and A(S) contribution to WEIGHT DIFFERENCE (wA - wB)
-                        // Total weight diff = (skillA - skillB) + (adA - adB)
-                        // Skill contribution % = (skillA - skillB) / (wA - wB) * 100
-                        // A(S) contribution % = (adA - adB) / (wA - wB) * 100
+                        // Debug mode: track skill and advantage contributions to weight difference
+                        // Weight diff = (skillA + L*advRatioA) - (skillB + L*advRatioB)
+                        //             = (skillA - skillB) + L*(advRatioA - advRatioB)
                         const weightDiff = wA_r - wB_r;
                         const skillDiff = skillA - skillB;  // Should be 0 for equal skill
-                        const advantageDiff = adA_r - adB_r;
+                        const advantageDiff = SEC8_MAX_ADVANTAGE * (advRatioA_r - advRatioB_r);
                         
                         // Contribution as % of weight difference (when diff != 0)
                         // Handle case when weightDiff is very small to avoid division issues
@@ -2560,7 +2560,7 @@
                         leadsAtRound[r].count++;
                         leadsAtRound[r].weightAdvSum += weightAdvPercent;
                         leadsAtRound[r].skillContribSum += skillContribPercent;       // Skill's % of weight diff
-                        leadsAtRound[r].advantageContribSum += advantageContribPercent; // A(S)'s % of weight diff
+                        leadsAtRound[r].advantageContribSum += advantageContribPercent; // Score ratio's % of weight diff
                         if (aWonGame) leadsAtRound[r].wins++;
                     }
                 }
