@@ -42,7 +42,7 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-extrabold tracking-tight text-gray-900">MOBA <span class="text-[#6200EA]">Economy Model</span></h1>
-                <p class="text-xs text-gray-500 uppercase tracking-wide font-semibold mt-1">Simulation v1.2 // 50 Round Cap</p>
+                <p class="text-xs text-gray-500 uppercase tracking-wide font-semibold mt-1">Simulation v2.0 // 50 Round Cap</p>
             </div>
             <div class="hidden md:block">
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[#00BFA5] text-white">
@@ -166,7 +166,7 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
     </main>
 
     <footer class="bg-white border-t border-gray-200 mt-12 py-8 text-center">
-        <p class="text-gray-500 text-sm">Generated for MOBA Economy Research | v1.0.4</p>
+        <p class="text-gray-500 text-sm">Generated for MOBA Economy Research | v2.0</p>
     </footer>
 
     <script>
@@ -194,12 +194,14 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
             // Achieves:
             // - Lead being 5.8x more significant than time progression
             // - Bell-shaped game length distribution (peak at rounds 26-35)
-            // - ~12% of games reaching round 50 (within 10-20% target)
+            // - ~10-15% of games reaching round 50 (within 10-20% target)
             TRIGGER_LEAD_WEIGHT: 4.0,   // How much lead influences game-end probability (quadratic)
             TRIGGER_TIME_WEIGHT: 0.35,  // How much time/progression influences game-end probability
             TRIGGER_MIDPOINT: 30,       // Round where base time factor is 0.5
             TRIGGER_STEEPNESS: 0.15,    // Steepness of time-based sigmoid
-            TRIGGER_BASE_SCALE: 0.15    // Base scaling factor for overall probability
+            TRIGGER_BASE_SCALE: 0.15,   // Base scaling factor for overall probability
+            TRIGGER_LEAD_BASE: 0.3,     // Base multiplier for lead factor (active even early game)
+            TRIGGER_LEAD_SCALE: 0.7     // Scale factor for lead * time interaction
         };
 
         // ======================================================================
@@ -292,8 +294,9 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
             
             // Combined probability: lead is more significant than pure time
             // The formula ensures bell-shaped distribution with lead dominance
+            // TRIGGER_LEAD_BASE ensures some effect even early, TRIGGER_LEAD_SCALE increases with time
             const combinedProb = MODEL.TRIGGER_BASE_SCALE * timeFactor * MODEL.TRIGGER_TIME_WEIGHT + 
-                                 leadFactor * (0.3 + 0.7 * timeFactor);
+                                 leadFactor * (MODEL.TRIGGER_LEAD_BASE + MODEL.TRIGGER_LEAD_SCALE * timeFactor);
             
             return Math.min(combinedProb, 0.95); // Cap at 95% to allow some games to continue
         };
@@ -376,8 +379,8 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
          * @returns {Object} - Bin labels and game count per bin
          */
         const runMonteCarlo = (numGames = 1000, skillA = 1.0, skillB = 1.0) => {
-            const bins = [0, 0, 0, 0, 0]; 
             const binLabels = ["Early (1-20)", "Mid (21-30)", "Late (31-40)", "End (41-49)", "Cap (50)"];
+            const bins = new Array(binLabels.length).fill(0);
             
             for (let game = 0; game < numGames; game++) {
                 let g1 = 0, g2 = 0;
