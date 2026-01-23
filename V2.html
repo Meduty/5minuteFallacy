@@ -82,11 +82,11 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
                     <div class="flex flex-col md:flex-row gap-6 justify-between items-center px-4">
                         <div class="flow-step flow-arrow w-full bg-[#6200EA] p-4 rounded-lg text-center shadow-md">
                             <div class="font-bold">1. Income</div>
-                            <div class="text-xs text-purple-200 mt-1">Base: 200g</div>
+                            <div class="text-xs text-purple-200 mt-1">Base: 100g</div>
                         </div>
                         <div class="flow-step flow-arrow w-full bg-[#F50057] p-4 rounded-lg text-center shadow-md">
                             <div class="font-bold">2. Event</div>
-                            <div class="text-xs text-pink-200 mt-1">Fight for (E+S)</div>
+                            <div class="text-xs text-pink-200 mt-1">Fight (FP²)</div>
                         </div>
                         <div class="flow-step w-full bg-[#FFD600] p-4 rounded-lg text-center shadow-md">
                             <div class="font-bold text-gray-900">3. Trigger</div>
@@ -178,11 +178,11 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
             MAX_ROUNDS: 50,
             
             // Income phase constants
-            BASE_INCOME: 200,           // Gold both players receive each round
+            BASE_INCOME: 100,           // Gold both players receive each round
             
             // Event phase constants (linear scaling: eventGold = EVENT_BASE + EVENT_SCALE * round)
-            EVENT_BASE: 50,             // Base event gold (e)
-            EVENT_SCALE: 15,            // Linear scaling factor (s)
+            EVENT_BASE: 275,            // Base event gold (e)
+            EVENT_SCALE: 45,            // Linear scaling factor (s)
             
             // Logistic map parameters for Fighting Power: FP(skill, gold) = skill * T(gold)
             // T(gold) = 1 / (1 + e^(-steepness * (gold - midpoint)))
@@ -191,17 +191,18 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
             GOLD_STEEPNESS: 0.00035,    // Steepness factor (tuned for approximately linear early growth)
             
             // Game-end trigger parameters (tuned via Monte Carlo simulation)
-            // Achieves:
-            // - Lead being 5.8x more significant than time progression
-            // - Bell-shaped game length distribution (peak at rounds 26-35)
-            // - ~10-15% of games reaching round 50 (within 10-20% target)
-            TRIGGER_LEAD_WEIGHT: 4.0,   // How much lead influences game-end probability (quadratic)
-            TRIGGER_TIME_WEIGHT: 0.35,  // How much time/progression influences game-end probability
-            TRIGGER_MIDPOINT: 30,       // Round where base time factor is 0.5
-            TRIGGER_STEEPNESS: 0.15,    // Steepness of time-based sigmoid
-            TRIGGER_BASE_SCALE: 0.15,   // Base scaling factor for overall probability
-            TRIGGER_LEAD_BASE: 0.3,     // Base multiplier for lead factor (active even early game)
-            TRIGGER_LEAD_SCALE: 0.7     // Scale factor for lead * time interaction
+            // With SQUARED weights for event winner, achieves:
+            // - Leader reaches 20k cap ~round 28 (mid-game)
+            // - Trailer reaches 20k cap ~round 39 (late-game)
+            // - ~14% of games reaching round 50 (within 10-20% target)
+            // - Bell-shaped game length distribution
+            TRIGGER_LEAD_WEIGHT: 0.45,  // How much lead influences game-end probability (quadratic)
+            TRIGGER_TIME_WEIGHT: 0.15,  // How much time/progression influences game-end probability
+            TRIGGER_MIDPOINT: 36,       // Round where base time factor is 0.5
+            TRIGGER_STEEPNESS: 0.09,    // Steepness of time-based sigmoid
+            TRIGGER_BASE_SCALE: 0.028,  // Base scaling factor for overall probability
+            TRIGGER_LEAD_BASE: 0.08,    // Base multiplier for lead factor (active even early game)
+            TRIGGER_LEAD_SCALE: 0.92    // Scale factor for lead * time interaction
         };
 
         // ======================================================================
@@ -349,9 +350,12 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
                 const fp1 = calculateFightingPower(skillA, g1);
                 const fp2 = calculateFightingPower(skillB, g2);
                 
-                // Weighted random draw: sample([A,B], weights=[FP_A, FP_B])
-                const sum = fp1 + fp2;
-                const winChance = sum === 0 ? 0.5 : fp1 / sum;
+                // SQUARED weighted random draw: sample([A,B], weights=[FP_A², FP_B²])
+                // Using squared weights creates stronger snowball effect
+                const fp1Sq = fp1 * fp1;
+                const fp2Sq = fp2 * fp2;
+                const sumSq = fp1Sq + fp2Sq;
+                const winChance = sumSq === 0 ? 0.5 : fp1Sq / sumSq;
                 
                 if (Math.random() < winChance) {
                     g1 += eventGold;
@@ -395,9 +399,13 @@ CONFIRMATION: NEITHER Mermaid JS NOR SVG were used anywhere in the output.
                     const eventGold = calculateEventIncome(r);
                     const fp1 = calculateFightingPower(skillA, g1);
                     const fp2 = calculateFightingPower(skillB, g2);
-                    const sum = fp1 + fp2;
                     
-                    if (Math.random() < (sum === 0 ? 0.5 : fp1 / sum)) {
+                    // SQUARED weighted random draw
+                    const fp1Sq = fp1 * fp1;
+                    const fp2Sq = fp2 * fp2;
+                    const sumSq = fp1Sq + fp2Sq;
+                    
+                    if (Math.random() < (sumSq === 0 ? 0.5 : fp1Sq / sumSq)) {
                         g1 += eventGold;
                     } else {
                         g2 += eventGold;
