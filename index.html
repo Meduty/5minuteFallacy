@@ -276,6 +276,16 @@
 
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-amber-500/20">
                 <div class="space-y-8">
+                    <!-- Model Framework Note -->
+                    <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            <span class="text-amber-400 font-bold">📋 Note:</span> This section presents the <strong class="text-white">general mathematical framework</strong> 
+                            that validates our model's properties. The V2 parameters (Gold = 20,000 saturation, T(G) utility map) are a specific instantiation 
+                            of this framework. The proofs below use abstract notation (S for score/gold, A(S) for advantage/utility) that applies to both 
+                            the simplified visualizations (Volatility Analysis, Interactive Lab, Big Data) and the full V2 gold-based economy (The Math Model, Advantage Flattening).
+                        </p>
+                    </div>
+
                     <!-- Introduction -->
                     <div class="prose prose-invert max-w-none">
                         <h3 class="text-white text-xl font-bold mb-4">What Should a Good MOBA Model Do?</h3>
@@ -588,7 +598,7 @@
                         </div>
                         <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
                             <div class="flex justify-between mb-2">
-                                <label class="text-yellow-400 text-xs font-bold uppercase">Score Deficit</label>
+                                <label class="text-yellow-400 text-xs font-bold uppercase">Initial Deficit</label>
                                 <span id="mcValDeficit" class="text-white font-mono font-bold text-xs">2</span>
                             </div>
                             <input type="range" id="mcInputDeficit" min="0" max="15" value="2" class="w-full">
@@ -649,7 +659,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Score Trajectories</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Advantage Trajectories</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveScoreChart"></canvas></div>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
@@ -657,7 +667,7 @@
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveWeightChart"></canvas></div>
                     </div>
                     <div class="lg:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 mt-4">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Net Score Difference (Outcome)</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Net Advantage Difference (Outcome)</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveDiffChart"></canvas></div>
                         <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
                             <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> You Won Round</div>
@@ -2293,14 +2303,14 @@
             const ctxIntDiff = document.getElementById('interactiveDiffChart');
 
             chartIntScore = new Chart(ctxIntScore, {
-                type: 'line', data: { labels: [], datasets: [{ label: 'Your Score', borderColor: '#22d3ee', borderWidth: 3, data: [] }, { label: 'Enemy Score', borderColor: '#f472b6', borderWidth: 3, data: [] }] }, options: commonOptions
+                type: 'line', data: { labels: [], datasets: [{ label: 'Your Advantage', borderColor: '#22d3ee', borderWidth: 3, data: [] }, { label: 'Enemy Advantage', borderColor: '#f472b6', borderWidth: 3, data: [] }] }, options: commonOptions
             });
             chartIntWeight = new Chart(ctxIntWeight, {
                 type: 'line', data: { labels: [], datasets: [{ label: 'Your Weight', borderColor: '#22d3ee', borderWidth: 2, data: [] }, { label: 'Enemy Weight', borderColor: '#f472b6', borderWidth: 2, data: [] }] },
                 options: { ...commonOptions, plugins: { ...commonOptions.plugins, annotation: { annotations: { maxA: { type: 'line', yMin: 0, yMax: 0, borderColor: '#22d3ee', borderWidth: 1, borderDash: [6, 6] }, maxB: { type: 'line', yMin: 0, yMax: 0, borderColor: '#f472b6', borderWidth: 1, borderDash: [6, 6] } }}}}
             });
             chartIntDiff = new Chart(ctxIntDiff, {
-                type: 'line', data: { labels: [], datasets: [{ label: 'Net Score Difference', data: [], borderWidth: 2, borderColor: '#fff', tension: 0.2, pointRadius: 4, pointHoverRadius: 6, fill: { target: 'origin', above: 'rgba(74, 222, 128, 0.2)', below: 'rgba(244, 63, 94, 0.2)' } }]},
+                type: 'line', data: { labels: [], datasets: [{ label: 'Net Advantage Difference', data: [], borderWidth: 2, borderColor: '#fff', tension: 0.2, pointRadius: 4, pointHoverRadius: 6, fill: { target: 'origin', above: 'rgba(74, 222, 128, 0.2)', below: 'rgba(244, 63, 94, 0.2)' } }]},
                 options: {
                     ...commonOptions, scales: { ...commonOptions.scales, y: { grid: { color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } } },
                     plugins: { ...commonOptions.plugins, tooltip: { callbacks: { afterLabel: function(context) { const index = context.dataIndex; const dataset = context.dataset; const val = dataset.data[index]; const prev = index > 0 ? dataset.data[index-1] : val; if (index === 0) return 'Start'; return val > prev ? 'Result: You Won Round' : 'Result: Enemy Won Round'; }}}}
