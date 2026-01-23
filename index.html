@@ -82,6 +82,23 @@
         .fraction span.bar {
             display: none;
         }
+
+        /* Details/Spoiler Styling */
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details summary {
+            list-style: none;
+        }
+        details summary::before {
+            content: '▶ ';
+            display: inline-block;
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-cyan-500 selection:text-white pb-20">
@@ -112,18 +129,18 @@
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
-            <!-- Model Evolution Explanation -->
+            <!-- Model Design Explanation -->
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-teal-500/30 mb-8">
                 <div class="flex items-center gap-2 mb-4">
                     <span class="text-teal-400 text-xl">&#x1F4A1;</span>
-                    <h3 class="text-white text-lg font-bold">Why We Redesigned the Model</h3>
+                    <h3 class="text-white text-lg font-bold">How We Designed Our Model</h3>
                 </div>
                 <div class="prose prose-invert max-w-none">
                     <p class="text-slate-400 leading-relaxed mb-4">
-                        Traditional MOBA analysis treats matches as <strong class="text-slate-200">continuous-time</strong> games—gold trickles in passively, kills happen irregularly. Our <strong class="text-teal-400">V2 discrete model</strong> quantizes this into <strong>50 distinct rounds</strong>, where each round represents a significant event: a skirmish, gank, or objective fight.
+                        Our <strong class="text-teal-400">V2 discrete model</strong> quantizes MOBA gameplay into <strong>50 distinct rounds</strong>, where each round represents a significant event: a skirmish, gank, or objective fight. Unlike continuous-time approaches where gold trickles in passively, our model captures the discrete moments that matter.
                     </p>
                     <p class="text-slate-400 leading-relaxed mb-4">
-                        This abstraction retains the strategic core of MOBAs—the <strong class="text-cyan-400">feedback loop of accumulation</strong>—while isolating economic variables for precise tuning. The key insight: the tension between <strong class="text-pink-400">linear resource accumulation</strong> and <strong class="text-purple-400">non-linear utility</strong> creates the "snowball" that eventually flattens.
+                        This design retains the strategic core of MOBAs—the <strong class="text-cyan-400">feedback loop of accumulation</strong>—while isolating economic variables for precise tuning. The key insight: the tension between <strong class="text-pink-400">linear resource accumulation</strong> and <strong class="text-purple-400">non-linear utility</strong> creates the "snowball" that eventually flattens.
                     </p>
                 </div>
             </div>
@@ -266,16 +283,21 @@
             </div>
         </section>
 
-        <!-- SECTION 2: MODEL GRUNT WORK -->
+        <!-- SECTION 2: MODEL MATHEMATICAL FOUNDATION -->
         <section class="space-y-8">
             <div class="flex items-center space-x-4 mb-8">
                 <div class="h-px bg-slate-700 flex-1"></div>
-                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">02. Model Grunt Work (Skip If You Don't Like Maths)</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white uppercase tracking-widest">02. Mathematical Foundation</h2>
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-amber-500/20">
-                <div class="space-y-8">
+                <details>
+                    <summary class="cursor-pointer text-lg font-bold text-amber-400 hover:text-amber-300 transition-colors py-2 px-4 bg-slate-800/50 rounded-lg border border-amber-500/30 select-none">
+                        📐 Click to reveal detailed mathematical proofs and definitions (for those interested in the math)
+                    </summary>
+                    
+                    <div class="space-y-8 mt-6">
                     <!-- Model Framework Note -->
                     <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
                         <p class="text-xs text-slate-400 leading-relaxed">
@@ -566,7 +588,8 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                    </div>
+                </details>
             </div>
         </section>
 
