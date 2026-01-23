@@ -2015,17 +2015,17 @@
             MAX_ROUNDS: 50,
             
             // Income phase constants
-            BASE_INCOME: 100,           // Gold both players receive each round
+            BASE_INCOME: 100,           // 100g base income both players receive each round
             
             // Event phase constants (linear scaling: eventGold = EVENT_BASE + EVENT_SCALE * round)
-            EVENT_BASE: 275,            // Base event gold (e)
-            EVENT_SCALE: 45,            // Linear scaling factor (s)
+            EVENT_BASE: 275,            // Base event gold at round 1
+            EVENT_SCALE: 45,            // Gold increase per round (e.g., round 10 = 275 + 45*10 = 725g)
             
             // Logistic map parameters for Fighting Power: FP(skill, gold) = skill * T(gold)
             // T(gold) = 1 / (1 + e^(-steepness * (gold - midpoint)))
-            GOLD_SATURATION: 20000,     // Gold amount where utility approaches maximum
-            GOLD_MIDPOINT: 8500,        // Gold amount at 50% utility
-            GOLD_STEEPNESS: 0.00035,    // Steepness factor (tuned for approximately linear early growth)
+            GOLD_SATURATION: 20000,     // 20,000g where utility approaches maximum (full build)
+            GOLD_MIDPOINT: 8500,        // 8,500g at 50% utility (T(8500) = 0.5)
+            GOLD_STEEPNESS: 0.00035,    // Steepness factor (tuned for gradual early-game growth)
             
             // Game-end trigger parameters (tuned via Monte Carlo simulation)
             // With SQUARED weights for event winner, achieves:
@@ -2042,10 +2042,15 @@
             TRIGGER_LEAD_SCALE: 0.92    // Scale factor for lead * time interaction
         };
         
-        // Legacy constants for backward compatibility with existing charts
-        const MAX_ADVANTAGE = 10;
-        const STEEPNESS = 0.4;
-        const MIDPOINT_SCORE = 10;
+        // Legacy constants for backward compatibility with existing score-based charts
+        // These are used by sections that haven't been migrated to the gold-based model yet
+        const LEGACY_MAX_ADVANTAGE = 10;
+        const LEGACY_STEEPNESS = 0.4;
+        const LEGACY_MIDPOINT_SCORE = 10;
+        // Aliases for backward compatibility
+        const MAX_ADVANTAGE = LEGACY_MAX_ADVANTAGE;
+        const STEEPNESS = LEGACY_STEEPNESS;
+        const MIDPOINT_SCORE = LEGACY_MIDPOINT_SCORE;
 
         // SAFETY: Only run if element exists helper
         const safeGet = (id) => document.getElementById(id);
