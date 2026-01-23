@@ -1094,13 +1094,13 @@
                                     <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-cyan-500">
                                         <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability (Hazard Function)</div>
                                         <div class="text-center text-white math-block text-lg mb-2">
-                                            h(r, L) = β<sub>t</sub> · σ(r - r₀) · ω<sub>t</sub> + L² · ω<sub>L</sub> · (β<sub>L</sub> + σ(r - r₀) · ω<sub>s</sub>)
+                                            P<sub>end</sub>(r, L) = s<sub>b</sub> · σ(r) · w<sub>t</sub> + L² · w<sub>L</sub> · (b<sub>L</sub> + σ(r) · w<sub>s</sub>)
                                         </div>
                                         <p class="text-xs text-slate-400 mt-2">
-                                            Where <span class="text-cyan-400 font-bold">σ</span> is the sigmoid centered at round 36, 
-                                            <span class="text-yellow-400 font-bold">L</span> is relative gold lead. 
-                                            The lead component is <strong>quadratic</strong> (L²) making large leads trigger games early.
-                                            Achieves ~14% games reaching round 50.
+                                            Where <span class="text-cyan-400 font-bold">σ(r)</span> = sigmoid(r - 36), 
+                                            <span class="text-yellow-400 font-bold">L</span> = relative gold lead, 
+                                            <span class="text-slate-300">s<sub>b</sub>=0.028, w<sub>t</sub>=0.15, w<sub>L</sub>=0.45, b<sub>L</sub>=0.08, w<sub>s</sub>=0.92</span>.
+                                            The lead component is <strong class="text-cyan-400">quadratic</strong> (L²) making large leads trigger games early.
                                         </p>
                                     </div>
 
@@ -2074,7 +2074,7 @@
         
         // Logistic map parameters for Fighting Power: FP(skill, gold) = skill * T(gold)
         // T(gold) = 1 / (1 + e^(-steepness * (gold - midpoint)))
-        const GOLD_SATURATION = 20000;     // Gold amount where utility approaches maximum
+        const GOLD_SATURATION = 20000;     // Gold amount approaching utility saturation (~99%)
         const GOLD_MIDPOINT = 8500;        // Gold amount at 50% utility
         const GOLD_STEEPNESS = 0.00035;    // Steepness factor (tuned for approximately linear early growth)
         
@@ -2170,6 +2170,19 @@
                                  leadFactor * (TRIGGER_LEAD_BASE + TRIGGER_LEAD_SCALE * timeFactor);
             
             return Math.min(combinedProb, 0.95);
+        };
+
+        /**
+         * Helper: Calculate advantage percentage between two values
+         * Returns the normalized difference as a percentage: (a-b)/(a+b) * 100
+         * @param {number} valueA - First value
+         * @param {number} valueB - Second value
+         * @returns {number} - Advantage percentage (-100 to +100)
+         */
+        const calculateAdvantagePercent = (valueA, valueB) => {
+            const sum = valueA + valueB;
+            if (sum < 1e-10) return 0;
+            return ((valueA - valueB) / sum) * 100;
         };
 
         // --- 1. LOGISTIC CHART (V2: Shows T(gold) utility from 0 to 25k) ---
@@ -2642,10 +2655,12 @@
                     const fpB = calculateFightingPower(skillB, gB);
                     
                     // SQUARED weighted random (V2 model uses FP² for stronger differentiation)
+                    // Note: FP is always > 0 since Skill > 0 and T(Gold) > 0 for all gold values
                     const fpA_sq = fpA * fpA;
                     const fpB_sq = fpB * fpB;
                     const sumSq = fpA_sq + fpB_sq;
-                    const winChance = sumSq > 0 ? fpA_sq / sumSq : 0.5;
+                    // Handle edge case where both FPs are extremely small (should not occur with valid skills)
+                    const winChance = sumSq > 1e-10 ? fpA_sq / sumSq : 0.5;
                     
                     if (Math.random() < winChance) {
                         gA += eventGold;
@@ -2700,11 +2715,10 @@
                     const relativeLeadAtRound = totalGold_r > 0 ? goldDiff / totalGold_r : 0;
                     
                     if (relativeLeadAtRound >= leadThresholdPercent) {
-                        // Calculate Fighting Power advantage
+                        // Calculate Fighting Power advantage using helper function
                         const fpA_r = calculateFightingPower(skillA, gA_r);
                         const fpB_r = calculateFightingPower(skillB, gB_r);
-                        const fpAdvPercent = (fpA_r + fpB_r) > 0 ? 
-                            (fpA_r - fpB_r) / (fpA_r + fpB_r) * 100 : 0;
+                        const fpAdvPercent = calculateAdvantagePercent(fpA_r, fpB_r);
                         
                         // Debug mode: track utility contribution
                         const utilA = logisticMap(gA_r);
