@@ -614,6 +614,15 @@
             </div>
 
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-purple-500/20">
+                <!-- V2 Model Note -->
+                <div class="bg-slate-900/50 border border-teal-500/30 rounded-lg p-4 mb-6">
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        <span class="text-teal-400 font-bold">V2 Model:</span> This simulation uses the <strong class="text-white">gold-based economy</strong> described in Section 1. 
+                        Each round: both players receive base income (100g), then fight for event gold using <strong class="text-cyan-400">FP² weighted random</strong>. 
+                        The Y-axis shows <strong class="text-pink-400">gold difference</strong> (your gold minus enemy gold).
+                    </p>
+                </div>
+                
                 <div class="mb-8">
                     <h3 class="text-xl font-bold text-white mb-4">Monte Carlo Configuration</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -633,17 +642,17 @@
                         </div>
                         <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700">
                             <div class="flex justify-between mb-2">
-                                <label class="text-yellow-400 text-xs font-bold uppercase">Initial Deficit</label>
-                                <span id="mcValDeficit" class="text-white font-mono font-bold text-xs">2</span>
+                                <label class="text-yellow-400 text-xs font-bold uppercase">Enemy Gold Head Start</label>
+                                <span id="mcValDeficit" class="text-white font-mono font-bold text-xs">2000g</span>
                             </div>
-                            <input type="range" id="mcInputDeficit" min="0" max="15" value="2" class="w-full">
+                            <input type="range" id="mcInputDeficit" min="0" max="8000" step="500" value="2000" class="w-full">
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 shadow-inner">
                     <div class="mb-4 flex justify-between items-center">
-                        <h4 class="text-sm font-bold text-white">10 Simulated Timelines</h4>
+                        <h4 class="text-sm font-bold text-white">10 Simulated Timelines (Gold Difference)</h4>
                         <button id="rerunMCBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-cyan-500 text-xs text-white font-bold uppercase tracking-wider rounded transition flex items-center gap-2 shadow-lg active:scale-95">
                             Rerun Simulation
                         </button>
@@ -664,6 +673,15 @@
             </div>
 
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-cyan-500/20">
+                <!-- V2 Model Note -->
+                <div class="bg-slate-900/50 border border-teal-500/30 rounded-lg p-4 mb-6">
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        <span class="text-teal-400 font-bold">V2 Model:</span> This lab uses the <strong class="text-white">gold-based economy</strong> with 
+                        <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (100g) + contested event gold (275 + 45×R). 
+                        The <strong class="text-pink-400">Fighting Power chart</strong> shows how gold utility (T) multiplied by skill determines event outcomes.
+                    </p>
+                </div>
+                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                     <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
                         <div class="flex justify-between mb-4">
@@ -681,10 +699,10 @@
                     </div>
                     <div class="bg-slate-900 p-4 rounded-lg border border-slate-700">
                         <div class="flex justify-between mb-4">
-                            <label class="text-yellow-400 font-bold text-xs uppercase tracking-wider">Enemy Head Start</label>
-                            <span id="valStartB" class="text-white font-mono font-bold">2</span>
+                            <label class="text-yellow-400 font-bold text-xs uppercase tracking-wider">Enemy Gold Head Start</label>
+                            <span id="valStartB" class="text-white font-mono font-bold">2000g</span>
                         </div>
-                        <input type="range" id="inputStartB" min="0" max="20" value="2" class="w-full">
+                        <input type="range" id="inputStartB" min="0" max="8000" step="500" value="2000" class="w-full">
                     </div>
                 </div>
 
@@ -694,19 +712,19 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Advantage Trajectories</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Gold Trajectories</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveScoreChart"></canvas></div>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Weight Analysis</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Fighting Power (FP = Skill × T(Gold))</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveWeightChart"></canvas></div>
                     </div>
                     <div class="lg:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 mt-4">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Net Advantage Difference (Outcome)</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Gold Difference (Your Gold − Enemy Gold)</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveDiffChart"></canvas></div>
                         <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> You Won Round</div>
-                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Enemy Won Round</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> You Won Event</div>
+                            <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Enemy Won Event</div>
                         </div>
                     </div>
                 </div>
@@ -2299,7 +2317,7 @@
             return { wA, wB, advRatioA, advRatioB };
         }
 
-        // --- 2. MONTE CARLO ---
+        // --- 2. MONTE CARLO (V2 Gold-Based Model) ---
         let chartMC;
         const MC_ROUNDS = 50;
         const colors = ['#22d3ee', '#f472b6', '#a78bfa', '#fbbf24', '#4ade80', '#ef4444', '#60a5fa', '#fb923c', '#a3e635', '#818cf8'];
@@ -2313,22 +2331,61 @@
             const mcDatasets = [];
             
             for(let t = 0; t < 10; t++) {
-                let sA = 0; let sB = startDeficit;
-                const diffHistory = [sA - sB];
+                // V2 Model: Use gold-based economy
+                let gA = 0;  // Your gold
+                let gB = startDeficit;  // Enemy starts with gold head start
+                const diffHistory = [gA - gB];
+                
                 for(let r = 1; r < MC_ROUNDS; r++) {
-                    const { wA, wB } = calcWeights(skillA, skillB, sA, sB);
-                    if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
-                    diffHistory.push(sA - sB);
+                    // Phase 1: Income Phase - both receive base income
+                    gA += BASE_INCOME;
+                    gB += BASE_INCOME;
+                    
+                    // Phase 2: Event Phase - fight for contested gold
+                    const eventGold = calculateEventIncome(r);
+                    
+                    // V2: Calculate Fighting Power using logistic utility map
+                    const fpA = calculateFightingPower(skillA, gA);
+                    const fpB = calculateFightingPower(skillB, gB);
+                    
+                    // V2: Use FP² weighted random (squared for stronger differentiation)
+                    const fpA_sq = fpA * fpA;
+                    const fpB_sq = fpB * fpB;
+                    const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                    
+                    if (Math.random() < winChance) { 
+                        gA += eventGold; 
+                    } else { 
+                        gB += eventGold; 
+                    }
+                    diffHistory.push(gA - gB);
                 }
                 mcDatasets.push({ label: `G${t+1}`, data: diffHistory, borderColor: colors[t % 10], borderWidth: 1.5, pointRadius: 0, tension: 0.3 });
             }
             mcDatasets.push({ label: 'Even', data: Array(MC_ROUNDS).fill(0), borderColor: '#fff', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 });
 
+            const mcOptions = {
+                ...commonOptions, 
+                animation: { duration: 1000 },
+                scales: {
+                    x: { 
+                        grid: { color: '#1e293b' }, 
+                        ticks: { color: '#64748b' },
+                        title: { display: true, text: 'Round', color: '#64748b', font: { size: 10 } }
+                    },
+                    y: { 
+                        grid: { color: '#1e293b' }, 
+                        ticks: { color: '#64748b' },
+                        title: { display: true, text: 'Gold Difference', color: '#64748b', font: { size: 10 } }
+                    }
+                }
+            };
+
             if (chartMC) { chartMC.data.datasets = mcDatasets; chartMC.update(); }
-            else { chartMC = new Chart(ctxMC, { type: 'line', data: { labels: Array.from({length: MC_ROUNDS}, (_, i) => `${i+1}`), datasets: mcDatasets }, options: { ...commonOptions, animation: { duration: 1000 } } }); }
+            else { chartMC = new Chart(ctxMC, { type: 'line', data: { labels: Array.from({length: MC_ROUNDS}, (_, i) => `${i+1}`), datasets: mcDatasets }, options: mcOptions }); }
         }
 
-        // --- 3. INTERACTIVE LAB ---
+        // --- 3. INTERACTIVE LAB (V2 Gold-Based Model) ---
         let chartIntScore, chartIntWeight, chartIntDiff;
 
         function initInteractiveCharts() {
@@ -2337,18 +2394,102 @@
             const ctxIntWeight = document.getElementById('interactiveWeightChart');
             const ctxIntDiff = document.getElementById('interactiveDiffChart');
 
+            // V2: Gold Trajectories chart
             chartIntScore = new Chart(ctxIntScore, {
-                type: 'line', data: { labels: [], datasets: [{ label: 'Your Advantage', borderColor: '#22d3ee', borderWidth: 3, data: [] }, { label: 'Enemy Advantage', borderColor: '#f472b6', borderWidth: 3, data: [] }] }, options: commonOptions
-            });
-            chartIntWeight = new Chart(ctxIntWeight, {
-                type: 'line', data: { labels: [], datasets: [{ label: 'Your Weight', borderColor: '#22d3ee', borderWidth: 2, data: [] }, { label: 'Enemy Weight', borderColor: '#f472b6', borderWidth: 2, data: [] }] },
-                options: { ...commonOptions, plugins: { ...commonOptions.plugins, annotation: { annotations: { maxA: { type: 'line', yMin: 0, yMax: 0, borderColor: '#22d3ee', borderWidth: 1, borderDash: [6, 6] }, maxB: { type: 'line', yMin: 0, yMax: 0, borderColor: '#f472b6', borderWidth: 1, borderDash: [6, 6] } }}}}
-            });
-            chartIntDiff = new Chart(ctxIntDiff, {
-                type: 'line', data: { labels: [], datasets: [{ label: 'Net Advantage Difference', data: [], borderWidth: 2, borderColor: '#fff', tension: 0.2, pointRadius: 4, pointHoverRadius: 6, fill: { target: 'origin', above: 'rgba(74, 222, 128, 0.2)', below: 'rgba(244, 63, 94, 0.2)' } }]},
+                type: 'line', 
+                data: { 
+                    labels: [], 
+                    datasets: [
+                        { label: 'Your Gold', borderColor: '#22d3ee', borderWidth: 3, data: [], fill: false },
+                        { label: 'Enemy Gold', borderColor: '#f472b6', borderWidth: 3, data: [], fill: false }
+                    ] 
+                }, 
                 options: {
-                    ...commonOptions, scales: { ...commonOptions.scales, y: { grid: { color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } } },
-                    plugins: { ...commonOptions.plugins, tooltip: { callbacks: { afterLabel: function(context) { const index = context.dataIndex; const dataset = context.dataset; const val = dataset.data[index]; const prev = index > 0 ? dataset.data[index-1] : val; if (index === 0) return 'Start'; return val > prev ? 'Result: You Won Round' : 'Result: Enemy Won Round'; }}}}
+                    ...commonOptions,
+                    scales: {
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        y: { 
+                            grid: { color: '#1e293b' }, 
+                            ticks: { color: '#64748b' },
+                            title: { display: true, text: 'Gold', color: '#64748b', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+            
+            // V2: Fighting Power chart (FP = Skill × T(Gold))
+            chartIntWeight = new Chart(ctxIntWeight, {
+                type: 'line', 
+                data: { 
+                    labels: [], 
+                    datasets: [
+                        { label: 'Your FP', borderColor: '#22d3ee', borderWidth: 2, data: [], fill: false },
+                        { label: 'Enemy FP', borderColor: '#f472b6', borderWidth: 2, data: [], fill: false }
+                    ] 
+                },
+                options: { 
+                    ...commonOptions, 
+                    scales: {
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        y: { 
+                            grid: { color: '#1e293b' }, 
+                            ticks: { color: '#64748b' },
+                            title: { display: true, text: 'Fighting Power', color: '#64748b', font: { size: 10 } }
+                        }
+                    },
+                    plugins: { 
+                        ...commonOptions.plugins, 
+                        annotation: { 
+                            annotations: { 
+                                // Max FP = skill × T(20000) ≈ skill × 0.99 (saturation)
+                                maxA: { type: 'line', yMin: 0, yMax: 0, borderColor: '#22d3ee', borderWidth: 1, borderDash: [6, 6] }, 
+                                maxB: { type: 'line', yMin: 0, yMax: 0, borderColor: '#f472b6', borderWidth: 1, borderDash: [6, 6] } 
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // V2: Gold Difference chart
+            chartIntDiff = new Chart(ctxIntDiff, {
+                type: 'line', 
+                data: { 
+                    labels: [], 
+                    datasets: [{ 
+                        label: 'Gold Difference', 
+                        data: [], 
+                        borderWidth: 2, 
+                        borderColor: '#fff', 
+                        tension: 0.2, 
+                        pointRadius: 4, 
+                        pointHoverRadius: 6, 
+                        fill: { target: 'origin', above: 'rgba(74, 222, 128, 0.2)', below: 'rgba(244, 63, 94, 0.2)' } 
+                    }]
+                },
+                options: {
+                    ...commonOptions, 
+                    scales: { 
+                        ...commonOptions.scales, 
+                        y: { 
+                            grid: { color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, 
+                            ticks: { color: '#64748b' },
+                            title: { display: true, text: 'Gold Difference', color: '#64748b', font: { size: 10 } }
+                        } 
+                    },
+                    plugins: { 
+                        ...commonOptions.plugins, 
+                        tooltip: { 
+                            callbacks: { 
+                                afterLabel: function(context) { 
+                                    const index = context.dataIndex; 
+                                    if (index === 0) return 'Start'; 
+                                    // Use point color to determine event winner (set during simulation)
+                                    const pointColor = context.dataset.pointBackgroundColor[index];
+                                    return pointColor === '#4ade80' ? 'Result: You Won Event' : 'Result: Enemy Won Event'; 
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
@@ -2358,26 +2499,82 @@
             const skillA = parseInt(document.getElementById('inputSkillA').value, 10);
             const skillB = parseInt(document.getElementById('inputSkillB').value, 10);
             const startB = parseInt(document.getElementById('inputStartB').value, 10);
-            let sA = 0; let sB = startB; const rounds = 50; const labels = ['Start'];
-            const dScoreA = [sA]; const dScoreB = [sB]; const dDiff = [sA - sB]; const dPointColors = ['#94a3b8'];
-            // Use the new difference-based weight calculation
-            let { wA, wB } = calcWeights(skillA, skillB, sA, sB);
-            const dWeightA = [wA]; const dWeightB = [wB];
+            
+            // V2 Model: Use gold-based economy
+            let gA = 0;      // Your gold
+            let gB = startB; // Enemy starts with gold head start
+            const rounds = 50; 
+            const labels = ['Start'];
+            
+            const dGoldA = [gA]; 
+            const dGoldB = [gB]; 
+            const dDiff = [gA - gB]; 
+            const dPointColors = ['#94a3b8'];
+            
+            // V2: Calculate initial Fighting Power
+            let fpA = calculateFightingPower(skillA, gA);
+            let fpB = calculateFightingPower(skillB, gB);
+            const dFPA = [fpA]; 
+            const dFPB = [fpB];
 
             for(let r = 1; r <= rounds; r++) {
                 labels.push(`${r}`);
-                ({ wA, wB } = calcWeights(skillA, skillB, sA, sB));
-                dWeightA.push(wA); dWeightB.push(wB);
-                if (Math.random() < wA / (wA + wB)) { sA++; dPointColors.push('#4ade80'); } else { sB++; dPointColors.push('#f43f5e'); }
-                dScoreA.push(sA); dScoreB.push(sB); dDiff.push(sA - sB);
+                
+                // Phase 1: Income Phase - both receive base income
+                gA += BASE_INCOME;
+                gB += BASE_INCOME;
+                
+                // Phase 2: Event Phase - fight for contested gold
+                const eventGold = calculateEventIncome(r);
+                
+                // V2: Calculate Fighting Power using logistic utility map
+                fpA = calculateFightingPower(skillA, gA);
+                fpB = calculateFightingPower(skillB, gB);
+                dFPA.push(fpA); 
+                dFPB.push(fpB);
+                
+                // V2: Use FP² weighted random (squared for stronger differentiation)
+                const fpA_sq = fpA * fpA;
+                const fpB_sq = fpB * fpB;
+                const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                
+                if (Math.random() < winChance) { 
+                    gA += eventGold; 
+                    dPointColors.push('#4ade80'); 
+                } else { 
+                    gB += eventGold; 
+                    dPointColors.push('#f43f5e'); 
+                }
+                dGoldA.push(gA); 
+                dGoldB.push(gB); 
+                dDiff.push(gA - gB);
             }
-            chartIntScore.data.labels = labels; chartIntScore.data.datasets[0].data = dScoreA; chartIntScore.data.datasets[1].data = dScoreB; chartIntScore.update();
-            chartIntWeight.data.labels = labels; chartIntWeight.data.datasets[0].data = dWeightA; chartIntWeight.data.datasets[1].data = dWeightB;
-            // Max weight is now skill + MAX_ADVANTAGE (when fully ahead)
-            chartIntWeight.options.plugins.annotation.annotations.maxA.yMin = skillA + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxA.yMax = skillA + MAX_ADVANTAGE;
-            chartIntWeight.options.plugins.annotation.annotations.maxB.yMin = skillB + MAX_ADVANTAGE; chartIntWeight.options.plugins.annotation.annotations.maxB.yMax = skillB + MAX_ADVANTAGE;
+            
+            // Update Gold Trajectories chart
+            chartIntScore.data.labels = labels; 
+            chartIntScore.data.datasets[0].data = dGoldA; 
+            chartIntScore.data.datasets[1].data = dGoldB; 
+            chartIntScore.update();
+            
+            // Update Fighting Power chart
+            chartIntWeight.data.labels = labels; 
+            chartIntWeight.data.datasets[0].data = dFPA; 
+            chartIntWeight.data.datasets[1].data = dFPB;
+            // V2: Max FP = skill × T(GOLD_SATURATION) ≈ skill × 0.99
+            const maxFPA = skillA * logisticMap(GOLD_SATURATION);
+            const maxFPB = skillB * logisticMap(GOLD_SATURATION);
+            chartIntWeight.options.plugins.annotation.annotations.maxA.yMin = maxFPA; 
+            chartIntWeight.options.plugins.annotation.annotations.maxA.yMax = maxFPA;
+            chartIntWeight.options.plugins.annotation.annotations.maxB.yMin = maxFPB; 
+            chartIntWeight.options.plugins.annotation.annotations.maxB.yMax = maxFPB;
             chartIntWeight.update();
-            chartIntDiff.data.labels = labels; chartIntDiff.data.datasets[0].data = dDiff; chartIntDiff.data.datasets[0].pointBackgroundColor = dPointColors; chartIntDiff.data.datasets[0].pointBorderColor = dPointColors; chartIntDiff.update();
+            
+            // Update Gold Difference chart
+            chartIntDiff.data.labels = labels; 
+            chartIntDiff.data.datasets[0].data = dDiff; 
+            chartIntDiff.data.datasets[0].pointBackgroundColor = dPointColors; 
+            chartIntDiff.data.datasets[0].pointBorderColor = dPointColors; 
+            chartIntDiff.update();
         }
 
         // --- 4. BIG DATA SIMULATION ---
@@ -2627,7 +2824,8 @@
         const updateAll = () => {
             document.getElementById('valA').innerText = document.getElementById('inputSkillA').value;
             document.getElementById('valB').innerText = document.getElementById('inputSkillB').value;
-            document.getElementById('valStartB').innerText = document.getElementById('inputStartB').value;
+            // V2: Show gold value with 'g' suffix
+            document.getElementById('valStartB').innerText = document.getElementById('inputStartB').value + 'g';
             
             runUserSim();
             runMotivationAnalysis(); // Update Motivation when lab skills change
@@ -2640,7 +2838,8 @@
         
         document.getElementById('mcInputA').addEventListener('input', (e) => { document.getElementById('mcValA').innerText = e.target.value; });
         document.getElementById('mcInputB').addEventListener('input', (e) => { document.getElementById('mcValB').innerText = e.target.value; });
-        document.getElementById('mcInputDeficit').addEventListener('input', (e) => { document.getElementById('mcValDeficit').innerText = e.target.value; });
+        // V2: Show gold value with 'g' suffix for deficit
+        document.getElementById('mcInputDeficit').addEventListener('input', (e) => { document.getElementById('mcValDeficit').innerText = e.target.value + 'g'; });
         document.getElementById('rerunMCBtn').addEventListener('click', runMonteCarlo);
         
         // Big Data Listeners
