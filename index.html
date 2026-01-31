@@ -2482,11 +2482,10 @@
                             callbacks: { 
                                 afterLabel: function(context) { 
                                     const index = context.dataIndex; 
-                                    const dataset = context.dataset; 
-                                    const val = dataset.data[index]; 
-                                    const prev = index > 0 ? dataset.data[index-1] : val; 
                                     if (index === 0) return 'Start'; 
-                                    return val > prev ? 'Result: You Won Event' : 'Result: Enemy Won Event'; 
+                                    // Use point color to determine event winner (set during simulation)
+                                    const pointColor = context.dataset.pointBackgroundColor[index];
+                                    return pointColor === '#4ade80' ? 'Result: You Won Event' : 'Result: Enemy Won Event'; 
                                 }
                             }
                         }
