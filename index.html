@@ -174,7 +174,7 @@
                             <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3 font-serif">3.</div>
                             <div>
                                 <h4 class="text-white font-bold text-sm">Game-End Trigger</h4>
-                                <p class="text-xs text-slate-500">A probabilistic check that can end the game. Chance increases with <strong>time progression</strong> (Weibull-shaped) and is heavily influenced by <strong>gold lead</strong>. ~15% of games reach round 50.</p>
+                                <p class="text-xs text-slate-500">A probabilistic check that can end the game. Linear combination: <strong>round/50 × 10%</strong> plus <strong>gold lead 1/x function</strong> (midpoint 10% → 25%, asymptote 50%). Max ~60%.</p>
                             </div>
                         </div>
                     </div>
@@ -284,10 +284,10 @@
                         <div class="absolute top-0 right-0 p-2 opacity-10 text-6xl font-serif">H</div>
                         <div class="text-xs text-slate-500 uppercase tracking-widest mb-2">Game-Ending Probability (Hazard Function)</div>
                         <div class="text-2xl text-white math-block text-center">
-                            P<sub class="text-sm">end</sub>(r, L) = s<sub class="text-sm">b</sub> · σ(r) · w<sub class="text-sm">t</sub> + L² · w<sub class="text-sm">L</sub> · (b<sub class="text-sm">L</sub> + σ(r) · w<sub class="text-sm">s</sub>)
+                            P<sub class="text-sm">end</sub>(r, L) = <span class="text-teal-400">r/50 × 0.1</span> + <span class="text-cyan-400">0.5 × (1 − m/(m + L))</span>
                         </div>
                         <div class="text-[10px] text-center text-slate-500 mt-2">
-                            Where <span class="text-cyan-400">σ(r)</span> = sigmoid(r - 36), <span class="text-yellow-400">L</span> = relative gold lead
+                            Where <span class="text-teal-400">r</span> = round, <span class="text-yellow-400">L</span> = relative gold lead, <span class="text-cyan-400">m = 0.1</span> (midpoint). Max ~60%
                         </div>
                     </div>
 
@@ -618,8 +618,9 @@
                 <div class="bg-slate-900/50 border border-teal-500/30 rounded-lg p-4 mb-6">
                     <p class="text-xs text-slate-400 leading-relaxed">
                         <span class="text-teal-400 font-bold">V2 Model:</span> This simulation uses the <strong class="text-white">gold-based economy</strong> described in Section 1. 
-                        Each round: both players receive base income (100g), then fight for event gold using <strong class="text-cyan-400">FP² weighted random</strong>. 
-                        The Y-axis shows <strong class="text-pink-400">gold difference</strong> (your gold minus enemy gold).
+                        Each round: both players receive base income (100g), then fight for event gold using <strong class="text-cyan-400">FP² weighted random</strong>,
+                        then check for <strong class="text-purple-400">game-end trigger</strong> (linear hazard model). 
+                        The Y-axis shows <strong class="text-pink-400">gold difference</strong>. Games may end early when lead + round probability triggers.
                     </p>
                 </div>
                 
@@ -677,8 +678,8 @@
                 <div class="bg-slate-900/50 border border-teal-500/30 rounded-lg p-4 mb-6">
                     <p class="text-xs text-slate-400 leading-relaxed">
                         <span class="text-teal-400 font-bold">V2 Model:</span> This lab uses the <strong class="text-white">gold-based economy</strong> with 
-                        <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (100g) + contested event gold (275 + 45×R). 
-                        The <strong class="text-pink-400">Fighting Power chart</strong> shows how gold utility (T) multiplied by skill determines event outcomes.
+                        <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (100g) + contested event gold (275 + 45×R) + 
+                        <strong class="text-purple-400">game-end trigger check</strong> (linear hazard model). Games may end early based on round + lead probability.
                     </p>
                 </div>
                 
@@ -1086,34 +1087,34 @@
 
                             <!-- Game-End Trigger Parameters -->
                             <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
-                                <div class="text-[10px] text-cyan-400 uppercase tracking-widest mb-3 text-center">Game-End Trigger (Bell-Shaped Distribution)</div>
+                                <div class="text-[10px] text-cyan-400 uppercase tracking-widest mb-3 text-center">Game-End Trigger (Linear Hazard Model)</div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="bg-slate-800/50 p-3 rounded border-l-4 border-teal-500">
-                                        <div class="text-xs text-teal-400 font-bold mb-2">Time Component</div>
+                                        <div class="text-xs text-teal-400 font-bold mb-2">Round Component (Linear)</div>
                                         <div class="text-[10px] text-slate-300 space-y-1">
                                             <div class="flex justify-between items-center">
-                                                <span class="text-slate-500">Midpoint Round:</span>
-                                                <span class="font-mono text-teal-400">36</span>
+                                                <span class="text-slate-500">Max at Round 50:</span>
+                                                <span class="font-mono text-teal-400">10%</span>
                                             </div>
                                             <div class="flex justify-between items-center">
-                                                <span class="text-slate-500">Steepness:</span>
-                                                <span class="font-mono text-teal-400">0.09</span>
+                                                <span class="text-slate-500">Formula:</span>
+                                                <span class="font-mono text-teal-400">r/50 × 0.1</span>
                                             </div>
-                                            <p class="text-slate-400 mt-1">Sigmoid time factor creates Weibull-like distribution of game lengths.</p>
+                                            <p class="text-slate-400 mt-1">Linear scaling from 0% at round 0 to 10% at round 50.</p>
                                         </div>
                                     </div>
                                     <div class="bg-slate-800/50 p-3 rounded border-l-4 border-cyan-500">
-                                        <div class="text-xs text-cyan-400 font-bold mb-2">Lead Component (Dominant)</div>
+                                        <div class="text-xs text-cyan-400 font-bold mb-2">Lead Component (1/x Hyperbola)</div>
                                         <div class="text-[10px] text-slate-300 space-y-1">
                                             <div class="flex justify-between items-center">
-                                                <span class="text-slate-500">Lead Weight:</span>
-                                                <span class="font-mono text-cyan-400">0.45</span>
+                                                <span class="text-slate-500">Midpoint (25%):</span>
+                                                <span class="font-mono text-cyan-400">10% lead</span>
                                             </div>
                                             <div class="flex justify-between items-center">
-                                                <span class="text-slate-500">Lead Scale:</span>
-                                                <span class="font-mono text-cyan-400">0.92</span>
+                                                <span class="text-slate-500">Asymptote:</span>
+                                                <span class="font-mono text-cyan-400">50%</span>
                                             </div>
-                                            <p class="text-slate-400 mt-1">Lead is more significant than time - quadratic scaling emphasizes large leads.</p>
+                                            <p class="text-slate-400 mt-1">1/x function: 0.5 × (1 − m/(m + L)) where m = 0.1</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1155,15 +1156,16 @@
 
                                     <!-- Equation 3: Game-End Trigger -->
                                     <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-cyan-500">
-                                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability (Hazard Function)</div>
+                                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability (Linear Hazard Function)</div>
                                         <div class="text-center text-white math-block text-lg mb-2">
-                                            P<sub>end</sub>(r, L) = s<sub>b</sub> · σ(r) · w<sub>t</sub> + L² · w<sub>L</sub> · (b<sub>L</sub> + σ(r) · w<sub>s</sub>)
+                                            P<sub>end</sub>(r, L) = <span class="text-teal-400">r/50 × 0.1</span> + <span class="text-cyan-400">0.5 × (1 − m/(m + L))</span>
                                         </div>
                                         <p class="text-xs text-slate-400 mt-2">
-                                            Where <span class="text-cyan-400 font-bold">σ(r)</span> = sigmoid(r - 36), 
+                                            Where <span class="text-teal-400 font-bold">r</span> = round number,
                                             <span class="text-yellow-400 font-bold">L</span> = relative gold lead, 
-                                            <span class="text-slate-300">s<sub>b</sub>=0.028, w<sub>t</sub>=0.15, w<sub>L</sub>=0.45, b<sub>L</sub>=0.08, w<sub>s</sub>=0.92</span>.
-                                            The lead component is <strong class="text-cyan-400">quadratic</strong> (L²) making large leads trigger games early.
+                                            <span class="text-cyan-400 font-bold">m = 0.1</span> (lead midpoint).
+                                            Round contributes up to <strong class="text-teal-400">10%</strong> at round 50,
+                                            lead contributes up to <strong class="text-cyan-400">50%</strong> asymptotically. Max total ~60%.
                                         </p>
                                     </div>
 
@@ -1231,8 +1233,8 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Bell Curve Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
-                                Game-ending triggers scale with time² and relative lead. Winner decided by total weights.
+                                <strong class="text-white">Linear Hazard Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
+                                Game-ending triggers: linear round component (up to 10%) + 1/x lead component (up to 50%). Max ~60%.
                             </p>
                         </div>
                         <button id="rerunFlatteningBtn" class="mt-4 w-full py-2 px-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-cyan-500/20 text-sm">
@@ -1278,7 +1280,7 @@
                                         <h5 class="text-white font-bold text-sm">Early Game (~60% Win Rate)</h5>
                                         <p class="text-xs text-slate-400 mt-1">
                                             Early leads show <strong class="text-white">moderate win rates</strong> because 
-                                            game-ending chances are low (time² scaling) and advantage hasn't built up yet.
+                                            game-ending chances are low (linear scaling) and advantage hasn't built up yet.
                                         </p>
                                     </div>
                                 </div>
@@ -2141,15 +2143,14 @@
         const GOLD_MIDPOINT = 8500;        // Gold amount at 50% utility
         const GOLD_STEEPNESS = 0.00035;    // Steepness factor (tuned for approximately linear early growth)
         
-        // Game-end trigger parameters (tuned via Monte Carlo simulation)
-        // Achieves: ~14% of games reaching round 50 (within 10-20% target), bell-shaped distribution
-        const TRIGGER_LEAD_WEIGHT = 0.45;  // How much lead influences game-end probability (quadratic)
-        const TRIGGER_TIME_WEIGHT = 0.15;  // How much time/progression influences game-end probability
-        const TRIGGER_MIDPOINT = 36;       // Round where base time factor is 0.5
-        const TRIGGER_STEEPNESS = 0.09;    // Steepness of time-based sigmoid
-        const TRIGGER_BASE_SCALE = 0.028;  // Base scaling factor for overall probability
-        const TRIGGER_LEAD_BASE = 0.08;    // Base multiplier for lead factor (active even early game)
-        const TRIGGER_LEAD_SCALE = 0.92;   // Scale factor for lead * time interaction
+        // Game-end trigger parameters (simplified linear hazard model)
+        // Uses linear combination: P_end = P_round(r) + P_lead(L)
+        // - Round component: linear scaling, 0% at r=0, 10% at r=50
+        // - Lead component: 1/x function with midpoint at 10% lead (25% chance), asymptote at 50%
+        // - Maximum game end chance: ~60% (10% + 50%)
+        const HAZARD_ROUND_MAX = 0.10;     // Maximum contribution from round (10% at round 50)
+        const HAZARD_LEAD_MIDPOINT = 0.10; // Lead at which game end chance is 25% (halfway to asymptote)
+        const HAZARD_LEAD_ASYMPTOTE = 0.50; // Maximum contribution from lead (50% asymptote)
         
         // Legacy constants for backward compatibility with existing visualizations
         const MAX_ADVANTAGE = 10;          // For simple score-based visualizations
@@ -2213,26 +2214,30 @@
         const calculateEventIncome = (round) => EVENT_BASE + (EVENT_SCALE * round);
 
         /**
-         * Calculate game-end trigger probability
-         * Designed for:
-         * - Lead being more significant than game progression
-         * - Bell-shaped game length distribution
-         * - 10-20% of games reaching round 50
+         * Calculate game-end trigger probability (simplified linear hazard model)
+         * Uses linear combination: P_end = P_round(r) + P_lead(L)
+         * - Round component: linear scaling from 0% at r=0 to 10% at r=50
+         * - Lead component: 1/x function with midpoint at 10% lead (25%), asymptote at 50%
+         * - Maximum total: ~60% (never exceeds 10% + 50%)
+         * @param {number} round - Current round number (0 to MAX_ROUNDS)
+         * @param {number} lead - Relative gold lead as decimal (0 to 1)
+         * @returns {number} - Game end probability (0 to ~0.60)
          */
         const calculateEndProb = (round, lead) => {
             if (round >= MAX_ROUNDS) return 1.0;
             
-            // Time-based component: sigmoid centered at TRIGGER_MIDPOINT
-            const timeFactor = 1 / (1 + Math.exp(-TRIGGER_STEEPNESS * (round - TRIGGER_MIDPOINT)));
+            // Round component: linear scaling, 0% at r=0, 10% at r=50
+            const roundProb = (round / MAX_ROUNDS) * HAZARD_ROUND_MAX;
             
-            // Lead-based component: quadratic to emphasize large leads
-            const leadFactor = lead * lead * TRIGGER_LEAD_WEIGHT;
+            // Lead component: 1/x function with midpoint behavior
+            // Formula: asymptote * (1 - midpoint / (midpoint + lead))
+            // At lead=0: prob=0, at lead=midpoint: prob=asymptote/2, as lead→∞: prob→asymptote
+            const leadProb = lead > 0 
+                ? HAZARD_LEAD_ASYMPTOTE * (1 - HAZARD_LEAD_MIDPOINT / (HAZARD_LEAD_MIDPOINT + lead))
+                : 0;
             
-            // Combined probability: lead is more significant than pure time
-            const combinedProb = TRIGGER_BASE_SCALE * timeFactor * TRIGGER_TIME_WEIGHT + 
-                                 leadFactor * (TRIGGER_LEAD_BASE + TRIGGER_LEAD_SCALE * timeFactor);
-            
-            return Math.min(combinedProb, 0.95);
+            // Combined probability: simple linear sum
+            return roundProb + leadProb;
         };
 
         /**
@@ -2335,8 +2340,9 @@
                 let gA = 0;  // Your gold
                 let gB = startDeficit;  // Enemy starts with gold head start
                 const diffHistory = [gA - gB];
+                let gameEnded = false;
                 
-                for(let r = 1; r < MC_ROUNDS; r++) {
+                for(let r = 1; r < MC_ROUNDS && !gameEnded; r++) {
                     // Phase 1: Income Phase - both receive base income
                     gA += BASE_INCOME;
                     gB += BASE_INCOME;
@@ -2359,6 +2365,14 @@
                         gB += eventGold; 
                     }
                     diffHistory.push(gA - gB);
+                    
+                    // Phase 3: Game-End Trigger (new hazard model)
+                    const totalGold = gA + gB;
+                    const lead = totalGold > 0 ? Math.abs(gA - gB) / totalGold : 0;
+                    const endProb = calculateEndProb(r, lead);
+                    if (Math.random() < endProb) {
+                        gameEnded = true;
+                    }
                 }
                 mcDatasets.push({ label: `G${t+1}`, data: diffHistory, borderColor: colors[t % 10], borderWidth: 1.5, pointRadius: 0, tension: 0.3 });
             }
@@ -2516,8 +2530,11 @@
             let fpB = calculateFightingPower(skillB, gB);
             const dFPA = [fpA]; 
             const dFPB = [fpB];
+            
+            let gameEnded = false;
+            let gameEndRound = rounds;
 
-            for(let r = 1; r <= rounds; r++) {
+            for(let r = 1; r <= rounds && !gameEnded; r++) {
                 labels.push(`${r}`);
                 
                 // Phase 1: Income Phase - both receive base income
@@ -2548,6 +2565,15 @@
                 dGoldA.push(gA); 
                 dGoldB.push(gB); 
                 dDiff.push(gA - gB);
+                
+                // Phase 3: Game-End Trigger (new hazard model)
+                const totalGold = gA + gB;
+                const lead = totalGold > 0 ? Math.abs(gA - gB) / totalGold : 0;
+                const endProb = calculateEndProb(r, lead);
+                if (Math.random() < endProb) {
+                    gameEnded = true;
+                    gameEndRound = r;
+                }
             }
             
             // Update Gold Trajectories chart
