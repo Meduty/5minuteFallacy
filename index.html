@@ -174,7 +174,7 @@
                             <div class="bg-purple-500/10 p-2 rounded text-purple-400 text-xl mr-3 font-serif">3.</div>
                             <div>
                                 <h4 class="text-white font-bold text-sm">Game-End Trigger</h4>
-                                <p class="text-xs text-slate-500">A probabilistic check that can end the game. Linear combination: <strong>round/50 × 10%</strong> plus <strong>gold lead 1/x function</strong> (midpoint 10% → 25%, asymptote 50%). Max ~60%.</p>
+                                <p class="text-xs text-slate-500">A probabilistic check that can end the game. Linear combination: <strong>round/50 × 10%</strong> plus <strong>gold lead 1/x function</strong> (midpoint 10% → 25%, asymptote 50%). Max ~60%. When triggered, a final <strong class="text-amber-400">FP² weighted random event</strong> determines the winner.</p>
                             </div>
                         </div>
                     </div>
@@ -310,6 +310,7 @@
                         <span class="text-teal-400 font-bold">V2 Model:</span> This simulation uses the <strong class="text-white">gold-based economy</strong> described in Section 1. 
                         Each round: both players receive base income (100g), then fight for event gold using <strong class="text-cyan-400">FP² weighted random</strong>,
                         then check for <strong class="text-purple-400">game-end trigger</strong> (tuned hazard model: most games end midgame, ~10% reach round 50). 
+                        When the game ends, a final <strong class="text-amber-400">FP² random event</strong> determines the winner.
                         The Y-axis shows <strong class="text-pink-400">gold difference</strong>. Game winner is shown in legend via <strong class="text-green-400">✓</strong> / <strong class="text-red-400">✗</strong>.
                     </p>
                 </div>
@@ -385,6 +386,7 @@
                         <span class="text-teal-400 font-bold">V2 Model:</span> This lab uses the <strong class="text-white">gold-based economy</strong> with 
                         <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (100g) + contested event gold (275 + 45×R) + 
                         <strong class="text-purple-400">game-end trigger check</strong> (tuned hazard: most games end midgame, ~10% reach round 50). 
+                        When the game ends, a final <strong class="text-amber-400">FP² random event</strong> determines the winner.
                         <strong class="text-yellow-400">FP Distribution</strong> shows the ratio of fighting power between players each round.
                     </p>
                 </div>
@@ -2061,6 +2063,7 @@
                 const diffHistory = [gA - gB];
                 const fpRatioHistory = []; // Track FP ratio for each round
                 let gameEnded = false;
+                let lastWinChance = 0.5; // Track last FP² win probability for final event
                 
                 // Calculate initial FP ratio
                 const initFpA = calculateFightingPower(skillA, gA);
@@ -2088,6 +2091,7 @@
                     const fpA_sq = fpA * fpA;
                     const fpB_sq = fpB * fpB;
                     const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                    lastWinChance = winChance;
                     
                     if (Math.random() < winChance) { 
                         gA += eventGold; 
@@ -2105,9 +2109,8 @@
                     }
                 }
                 
-                // Determine winner: positive final diff = You win, negative = Enemy wins
-                const finalDiff = diffHistory[diffHistory.length - 1];
-                const won = finalDiff > 0;
+                // Determine winner: a final FP² random event decides the game
+                const won = Math.random() < lastWinChance;
                 const winSymbol = won ? '✓' : '✗';
                 const labelColor = won ? '#4ade80' : '#f43f5e';
                 
@@ -2394,6 +2397,7 @@
             
             let gameEnded = false;
             let gameEndRound = rounds;
+            let lastWinChance = 0.5; // Track last FP² win probability for final event
 
             for(let r = 1; r <= rounds && !gameEnded; r++) {
                 labels.push(`${r}`);
@@ -2419,6 +2423,7 @@
                 const fpA_sq = fpA * fpA;
                 const fpB_sq = fpB * fpB;
                 const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                lastWinChance = winChance;
                 
                 if (Math.random() < winChance) { 
                     gA += eventGold; 
@@ -2441,18 +2446,18 @@
                 }
             }
             
-            // Determine game winner and display result
+            // Determine game winner: a final FP² random event decides the game
             const finalDiff = dDiff[dDiff.length - 1];
-            const won = finalDiff > 0;
+            const won = Math.random() < lastWinChance;
             const resultBox = document.getElementById('gameResultBox');
             if (resultBox) {
                 resultBox.classList.remove('hidden');
                 if (won) {
                     resultBox.className = 'mb-6 p-4 rounded-lg text-center font-bold text-lg bg-green-900/50 border border-green-500/50 text-green-400';
-                    resultBox.innerHTML = `🏆 YOU WON! Game ended at round ${gameEndRound} with +${Math.abs(finalDiff).toLocaleString()}g lead`;
+                    resultBox.innerHTML = `🏆 YOU WON the final event! Game ended at round ${gameEndRound}. Gold diff: ${finalDiff > 0 ? '+' : ''}${finalDiff.toLocaleString()}g`;
                 } else {
                     resultBox.className = 'mb-6 p-4 rounded-lg text-center font-bold text-lg bg-red-900/50 border border-red-500/50 text-red-400';
-                    resultBox.innerHTML = `💀 YOU LOST! Game ended at round ${gameEndRound} with -${Math.abs(finalDiff).toLocaleString()}g deficit`;
+                    resultBox.innerHTML = `💀 YOU LOST the final event! Game ended at round ${gameEndRound}. Gold diff: ${finalDiff > 0 ? '+' : ''}${finalDiff.toLocaleString()}g`;
                 }
             }
             
