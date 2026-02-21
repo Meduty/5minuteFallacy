@@ -363,12 +363,24 @@
                 </div>
                 
                 <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 shadow-inner mt-4">
-                    <h4 class="text-sm font-bold text-white mb-4">FP Distribution (Your share of total Fighting Power)</h4>
+                    <h4 class="text-sm font-bold text-white mb-4">Relative Gold Lead Over Rounds</h4>
+                    <div class="chart-box" style="height: 200px;">
+                        <canvas id="monteCarloGoldLeadChart"></canvas>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
+                        <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white"></span> Won (solid)</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white/50 border-dashed"></span> Lost (dashed)</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white/30"></span> 0% (Even)</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 shadow-inner mt-4">
+                    <h4 class="text-sm font-bold text-white mb-4">FP² Distribution (Your squared FP share — used by random events)</h4>
                     <div class="chart-box" style="height: 200px;">
                         <canvas id="monteCarloFPChart"></canvas>
                     </div>
                     <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
-                        <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-yellow-400"></span> Your FP %</div>
+                        <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-yellow-400"></span> Your FP² %</div>
                         <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white/50"></span> 50% (Even)</div>
                     </div>
                 </div>
@@ -2185,7 +2197,7 @@
         }
 
         // --- 2. MONTE CARLO (V2 Gold-Based Model) ---
-        let chartMC, chartMCFP;
+        let chartMC, chartMCFP, chartMCGoldLead;
         const MC_ROUNDS = 50;
         const colors = ['#22d3ee', '#f472b6', '#a78bfa', '#fbbf24', '#4ade80', '#ef4444', '#60a5fa', '#fb923c', '#a3e635', '#818cf8'];
 
@@ -2193,26 +2205,33 @@
             if(!safeGet('monteCarloChart')) return;
             const ctxMC = document.getElementById('monteCarloChart');
             const ctxMCFP = document.getElementById('monteCarloFPChart');
+            const ctxMCGoldLead = document.getElementById('monteCarloGoldLeadChart');
             const skillA = parseInt(document.getElementById('mcInputA').value, 10);
             const skillB = parseInt(document.getElementById('mcInputB').value, 10);
             const startDeficit = parseInt(document.getElementById('mcInputDeficit').value, 10);
             const mcDatasets = [];
-            const mcFPDatasets = []; // FP distribution datasets
+            const mcFPDatasets = []; // FP² distribution datasets
+            const mcGoldLeadDatasets = []; // Relative gold lead datasets
             
             for(let t = 0; t < 10; t++) {
                 // V2 Model: Use gold-based economy
                 let gA = STARTING_GOLD;  // Your gold
                 let gB = STARTING_GOLD + startDeficit;  // Enemy starts with gold head start
                 const diffHistory = [gA - gB];
-                const fpRatioHistory = []; // Track FP ratio for each round
+                const fpRatioHistory = []; // Track FP² ratio for each round
+                const goldLeadHistory = []; // Track relative gold lead
                 let gameEnded = false;
                 let lastWinChance = 0.5; // Track last FP² win probability for final event
                 
-                // Calculate initial FP ratio
+                // Calculate initial FP² ratio and gold lead
                 const initFpA = calculateFightingPower(skillA, gA);
                 const initFpB = calculateFightingPower(skillB, gB);
-                const initFpTotal = initFpA + initFpB;
-                fpRatioHistory.push(initFpTotal > 0 ? (initFpA / initFpTotal) * 100 : 50);
+                const initFpA_sq = initFpA * initFpA;
+                const initFpB_sq = initFpB * initFpB;
+                const initFpSqTotal = initFpA_sq + initFpB_sq;
+                fpRatioHistory.push(initFpSqTotal > 0 ? (initFpA_sq / initFpSqTotal) * 100 : 50);
+                const initTotalGold = gA + gB;
+                goldLeadHistory.push(initTotalGold > 0 ? ((gA - gB) / initTotalGold) * 100 : 0);
                 
                 for(let r = 1; r < MC_ROUNDS && !gameEnded; r++) {
                     // Phase 1: Income Phase - both receive base income
@@ -2226,14 +2245,14 @@
                     const fpA = calculateFightingPower(skillA, gA);
                     const fpB = calculateFightingPower(skillB, gB);
                     
-                    // Track FP ratio (Your FP as % of total)
-                    const fpTotal = fpA + fpB;
-                    fpRatioHistory.push(fpTotal > 0 ? (fpA / fpTotal) * 100 : 50);
-                    
-                    // V2: Use FP² weighted random (squared for stronger differentiation)
+                    // Track FP² ratio (Your squared FP share)
                     const fpA_sq = fpA * fpA;
                     const fpB_sq = fpB * fpB;
-                    const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                    const fpSqTotal = fpA_sq + fpB_sq;
+                    fpRatioHistory.push(fpSqTotal > 0 ? (fpA_sq / fpSqTotal) * 100 : 50);
+                    
+                    // V2: Use FP² weighted random (squared for stronger differentiation)
+                    const winChance = fpSqTotal > 1e-10 ? fpA_sq / fpSqTotal : 0.5;
                     lastWinChance = winChance;
                     
                     if (Math.random() < winChance) { 
@@ -2242,6 +2261,10 @@
                         gB += eventGold; 
                     }
                     diffHistory.push(gA - gB);
+                    
+                    // Track relative gold lead
+                    const roundTotalGold = gA + gB;
+                    goldLeadHistory.push(roundTotalGold > 0 ? ((gA - gB) / roundTotalGold) * 100 : 0);
                     
                     // Phase 3: Game-End Trigger (new hazard model)
                     const totalGold = gA + gB;
@@ -2276,9 +2299,21 @@
                     pointRadius: 0,
                     tension: 0.3
                 });
+                
+                // Relative gold lead dataset
+                mcGoldLeadDatasets.push({
+                    label: `G${t+1} ${winSymbol}`,
+                    data: goldLeadHistory,
+                    borderColor: colors[t % 10],
+                    borderWidth: won ? 2.5 : 1.5,
+                    pointRadius: 0,
+                    tension: 0.3,
+                    borderDash: won ? [] : [3, 3]
+                });
             }
             mcDatasets.push({ label: 'Even', data: Array(MC_ROUNDS).fill(0), borderColor: '#fff', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 });
             mcFPDatasets.push({ label: '50%', data: Array(MC_ROUNDS).fill(50), borderColor: '#fff', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 });
+            mcGoldLeadDatasets.push({ label: '0% (Even)', data: Array(MC_ROUNDS).fill(0), borderColor: '#fff', borderWidth: 1, borderDash: [4, 4], pointRadius: 0 });
 
             const mcOptions = {
                 ...commonOptions, 
@@ -2317,7 +2352,7 @@
                             color: '#64748b',
                             callback: function(value) { return value + '%'; }
                         },
-                        title: { display: true, text: 'Your FP Share %', color: '#64748b', font: { size: 10 } }
+                        title: { display: true, text: 'Your FP² Share %', color: '#64748b', font: { size: 10 } }
                     }
                 },
                 plugins: {
@@ -2332,6 +2367,34 @@
             if (ctxMCFP) {
                 if (chartMCFP) { chartMCFP.data.datasets = mcFPDatasets; chartMCFP.update(); }
                 else { chartMCFP = new Chart(ctxMCFP, { type: 'line', data: { labels: Array.from({length: MC_ROUNDS}, (_, i) => `${i+1}`), datasets: mcFPDatasets }, options: mcFPOptions }); }
+            }
+            
+            const mcGoldLeadOptions = {
+                ...commonOptions, 
+                animation: { duration: 1000 },
+                scales: {
+                    x: { 
+                        grid: { color: '#1e293b' }, 
+                        ticks: { color: '#64748b' },
+                        title: { display: true, text: 'Round', color: '#64748b', font: { size: 10 } }
+                    },
+                    y: { 
+                        grid: { 
+                            color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', 
+                            lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 
+                        }, 
+                        ticks: { 
+                            color: '#64748b',
+                            callback: function(value) { return value.toFixed(1) + '%'; }
+                        },
+                        title: { display: true, text: 'Relative Gold Lead %', color: '#64748b', font: { size: 10 } }
+                    }
+                }
+            };
+            
+            if (ctxMCGoldLead) {
+                if (chartMCGoldLead) { chartMCGoldLead.data.datasets = mcGoldLeadDatasets; chartMCGoldLead.update(); }
+                else { chartMCGoldLead = new Chart(ctxMCGoldLead, { type: 'line', data: { labels: Array.from({length: MC_ROUNDS}, (_, i) => `${i+1}`), datasets: mcGoldLeadDatasets }, options: mcGoldLeadOptions }); }
             }
         }
 
