@@ -403,7 +403,7 @@
                         <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (300g) + contested event gold (200 + 15×R) + 
                         <strong class="text-purple-400">game-end trigger check</strong> (shifted hazard: no games end before round 15, bell curve peaking ~round 30). 
                         When the game ends, a final <strong class="text-amber-400">FP² random event</strong> determines the winner.
-                        <strong class="text-yellow-400">FP Distribution</strong> shows the ratio of fighting power between players each round.
+                        <strong class="text-yellow-400">FP² Distribution</strong> shows the squared fighting power ratio between players each round.
                     </p>
                 </div>
                 
@@ -444,14 +444,14 @@
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveScoreChart"></canvas></div>
                     </div>
                     <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Fighting Power (FP = Skill × T(Gold))</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Fighting Power² (FP² = [Skill × T(Gold)]²)</h4>
                         <div class="chart-box" style="height: 300px;"><canvas id="interactiveWeightChart"></canvas></div>
                     </div>
                     <div class="lg:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 mt-4">
-                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">FP Distribution (Your share of total Fighting Power)</h4>
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">FP² Distribution (Your squared FP share — used by random events)</h4>
                         <div class="chart-box" style="height: 200px;"><canvas id="interactiveFPRatioChart"></canvas></div>
                         <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
-                            <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-yellow-400"></span> Your FP %</div>
+                            <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-yellow-400"></span> Your FP² %</div>
                             <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white/50 border-dashed"></span> 50% (Even)</div>
                         </div>
                     </div>
@@ -461,6 +461,14 @@
                         <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
                             <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400"></span> You Won Event</div>
                             <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500"></span> Enemy Won Event</div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-2 bg-slate-900 p-4 rounded-xl border border-slate-800 mt-4">
+                        <h4 class="text-center text-slate-300 font-bold text-sm mb-4">Relative Gold Lead Over Rounds</h4>
+                        <div class="chart-box" style="height: 200px;"><canvas id="interactiveGoldLeadChart"></canvas></div>
+                        <div class="flex justify-center gap-4 mt-2 text-[10px] text-slate-500 uppercase font-bold">
+                            <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-amber-400"></span> Your Relative Lead %</div>
+                            <div class="flex items-center gap-1"><span class="w-3 h-0.5 bg-white/50 border-dashed"></span> 0% (Even)</div>
                         </div>
                     </div>
                 </div>
@@ -2399,7 +2407,7 @@
         }
 
         // --- 3. INTERACTIVE LAB (V2 Gold-Based Model) ---
-        let chartIntScore, chartIntWeight, chartIntDiff, chartIntFPRatio;
+        let chartIntScore, chartIntWeight, chartIntDiff, chartIntFPRatio, chartIntGoldLead;
 
         function initInteractiveCharts() {
             if(!safeGet('interactiveScoreChart')) return;
@@ -2407,6 +2415,7 @@
             const ctxIntWeight = document.getElementById('interactiveWeightChart');
             const ctxIntDiff = document.getElementById('interactiveDiffChart');
             const ctxIntFPRatio = document.getElementById('interactiveFPRatioChart');
+            const ctxIntGoldLead = document.getElementById('interactiveGoldLeadChart');
 
             // V2: Gold Trajectories chart
             chartIntScore = new Chart(ctxIntScore, {
@@ -2431,14 +2440,14 @@
                 }
             });
             
-            // V2: Fighting Power chart (FP = Skill × T(Gold))
+            // V2: Fighting Power² chart (FP² = [Skill × T(Gold)]²)
             chartIntWeight = new Chart(ctxIntWeight, {
                 type: 'line', 
                 data: { 
                     labels: [], 
                     datasets: [
-                        { label: 'Your FP', borderColor: '#22d3ee', borderWidth: 2, data: [], fill: false },
-                        { label: 'Enemy FP', borderColor: '#f472b6', borderWidth: 2, data: [], fill: false }
+                        { label: 'Your FP²', borderColor: '#22d3ee', borderWidth: 2, data: [], fill: false },
+                        { label: 'Enemy FP²', borderColor: '#f472b6', borderWidth: 2, data: [], fill: false }
                     ] 
                 },
                 options: { 
@@ -2448,14 +2457,14 @@
                         y: { 
                             grid: { color: '#1e293b' }, 
                             ticks: { color: '#64748b' },
-                            title: { display: true, text: 'Fighting Power', color: '#64748b', font: { size: 10 } }
+                            title: { display: true, text: 'Fighting Power²', color: '#64748b', font: { size: 10 } }
                         }
                     },
                     plugins: { 
                         ...commonOptions.plugins, 
                         annotation: { 
                             annotations: { 
-                                // Max FP = skill × T(20000) ≈ skill × 0.99 (saturation)
+                                // Max FP² = (skill × T(20000))² ≈ (skill × 0.99)² (saturation)
                                 maxA: { type: 'line', yMin: 0, yMax: 0, borderColor: '#22d3ee', borderWidth: 1, borderDash: [6, 6] }, 
                                 maxB: { type: 'line', yMin: 0, yMax: 0, borderColor: '#f472b6', borderWidth: 1, borderDash: [6, 6] } 
                             }
@@ -2464,13 +2473,13 @@
                 }
             });
             
-            // V2: FP Distribution chart (Your FP as % of total)
+            // V2: FP² Distribution chart (Your FP² as % of total)
             chartIntFPRatio = new Chart(ctxIntFPRatio, {
                 type: 'line',
                 data: {
                     labels: [],
                     datasets: [{
-                        label: 'Your FP %',
+                        label: 'Your FP² %',
                         data: [],
                         borderColor: '#fbbf24',
                         borderWidth: 2,
@@ -2498,7 +2507,7 @@
                                 color: '#64748b',
                                 callback: function(value) { return value + '%'; }
                             },
-                            title: { display: true, text: 'Your FP Share', color: '#64748b', font: { size: 10 } }
+                            title: { display: true, text: 'Your FP² Share', color: '#64748b', font: { size: 10 } }
                         }
                     },
                     plugins: {
@@ -2521,7 +2530,7 @@
                                 label: function(context) {
                                     const fpPercent = context.raw.toFixed(1);
                                     const advantage = context.raw > 50 ? 'Advantage' : context.raw < 50 ? 'Disadvantage' : 'Even';
-                                    return `Your FP: ${fpPercent}% (${advantage})`;
+                                    return `Your FP²: ${fpPercent}% (${advantage})`;
                                 }
                             }
                         }
@@ -2571,6 +2580,69 @@
                     }
                 }
             });
+
+            // V2: Relative Gold Lead chart
+            chartIntGoldLead = new Chart(ctxIntGoldLead, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Relative Gold Lead %',
+                        data: [],
+                        borderColor: '#fbbf24',
+                        borderWidth: 2,
+                        fill: {
+                            target: { value: 0 },
+                            above: 'rgba(74, 222, 128, 0.2)',
+                            below: 'rgba(244, 63, 94, 0.2)'
+                        },
+                        tension: 0.2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    ...commonOptions,
+                    scales: {
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        y: {
+                            grid: { 
+                                color: (ctx) => ctx.tick.value === 0 ? '#fff' : '#1e293b', 
+                                lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 
+                            },
+                            ticks: { 
+                                color: '#64748b',
+                                callback: function(value) { return value.toFixed(1) + '%'; }
+                            },
+                            title: { display: true, text: 'Relative Gold Lead %', color: '#64748b', font: { size: 10 } }
+                        }
+                    },
+                    plugins: {
+                        ...commonOptions.plugins,
+                        annotation: {
+                            annotations: {
+                                evenLine: { 
+                                    type: 'line', 
+                                    yMin: 0, 
+                                    yMax: 0, 
+                                    borderColor: '#fff', 
+                                    borderWidth: 1, 
+                                    borderDash: [4, 4],
+                                    label: { display: true, content: '0% Even', position: 'end', color: '#94a3b8', font: { size: 9 } }
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const leadPercent = context.raw.toFixed(1);
+                                    const status = context.raw > 0 ? 'Ahead' : context.raw < 0 ? 'Behind' : 'Even';
+                                    return `Relative Lead: ${leadPercent}% (${status})`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function runUserSim() {
@@ -2589,17 +2661,24 @@
             const dGoldB = [gB]; 
             const dDiff = [gA - gB]; 
             const dPointColors = ['#94a3b8'];
-            const dFPRatio = []; // FP Distribution (Your FP as % of total)
+            const dFPRatio = []; // FP² Distribution (Your FP² as % of total)
+            const dGoldLead = []; // Relative gold lead
             
-            // V2: Calculate initial Fighting Power
+            // V2: Calculate initial Fighting Power (squared)
             let fpA = calculateFightingPower(skillA, gA);
             let fpB = calculateFightingPower(skillB, gB);
-            const dFPA = [fpA]; 
-            const dFPB = [fpB];
+            const dFPA = [fpA * fpA]; 
+            const dFPB = [fpB * fpB];
             
-            // Calculate initial FP ratio
-            const initFpTotal = fpA + fpB;
-            dFPRatio.push(initFpTotal > 0 ? (fpA / initFpTotal) * 100 : 50);
+            // Calculate initial FP² ratio
+            const initFpA_sq = fpA * fpA;
+            const initFpB_sq = fpB * fpB;
+            const initFpSqTotal = initFpA_sq + initFpB_sq;
+            dFPRatio.push(initFpSqTotal > 0 ? (initFpA_sq / initFpSqTotal) * 100 : 50);
+            
+            // Calculate initial relative gold lead
+            const initTotalGold = gA + gB;
+            dGoldLead.push(initTotalGold > 0 ? ((gA - gB) / initTotalGold) * 100 : 0);
             
             let gameEnded = false;
             let gameEndRound = rounds;
@@ -2618,17 +2697,17 @@
                 // V2: Calculate Fighting Power using logistic utility map
                 fpA = calculateFightingPower(skillA, gA);
                 fpB = calculateFightingPower(skillB, gB);
-                dFPA.push(fpA); 
-                dFPB.push(fpB);
+                dFPA.push(fpA * fpA); 
+                dFPB.push(fpB * fpB);
                 
-                // Track FP ratio (Your FP as % of total)
-                const fpTotal = fpA + fpB;
-                dFPRatio.push(fpTotal > 0 ? (fpA / fpTotal) * 100 : 50);
-                
-                // V2: Use FP² weighted random (squared for stronger differentiation)
+                // Track FP² ratio (Your squared FP share)
                 const fpA_sq = fpA * fpA;
                 const fpB_sq = fpB * fpB;
-                const winChance = (fpA_sq + fpB_sq) > 1e-10 ? fpA_sq / (fpA_sq + fpB_sq) : 0.5;
+                const fpSqTotal = fpA_sq + fpB_sq;
+                dFPRatio.push(fpSqTotal > 0 ? (fpA_sq / fpSqTotal) * 100 : 50);
+                
+                // V2: Use FP² weighted random (squared for stronger differentiation)
+                const winChance = fpSqTotal > 1e-10 ? fpA_sq / fpSqTotal : 0.5;
                 lastWinChance = winChance;
                 
                 if (Math.random() < winChance) { 
@@ -2641,6 +2720,10 @@
                 dGoldA.push(gA); 
                 dGoldB.push(gB); 
                 dDiff.push(gA - gB);
+                
+                // Track relative gold lead
+                const roundTotalGold = gA + gB;
+                dGoldLead.push(roundTotalGold > 0 ? ((gA - gB) / roundTotalGold) * 100 : 0);
                 
                 // Phase 3: Game-End Trigger (new hazard model)
                 const totalGold = gA + gB;
@@ -2673,20 +2756,20 @@
             chartIntScore.data.datasets[1].data = dGoldB; 
             chartIntScore.update();
             
-            // Update Fighting Power chart
+            // Update Fighting Power² chart
             chartIntWeight.data.labels = labels; 
             chartIntWeight.data.datasets[0].data = dFPA; 
             chartIntWeight.data.datasets[1].data = dFPB;
-            // V2: Max FP = skill × T(GOLD_SATURATION) ≈ skill × 0.99
-            const maxFPA = skillA * logisticMap(GOLD_SATURATION);
-            const maxFPB = skillB * logisticMap(GOLD_SATURATION);
+            // V2: Max FP² = (skill × T(GOLD_SATURATION))² ≈ (skill × 0.99)²
+            const maxFPA = Math.pow(skillA * logisticMap(GOLD_SATURATION), 2);
+            const maxFPB = Math.pow(skillB * logisticMap(GOLD_SATURATION), 2);
             chartIntWeight.options.plugins.annotation.annotations.maxA.yMin = maxFPA; 
             chartIntWeight.options.plugins.annotation.annotations.maxA.yMax = maxFPA;
             chartIntWeight.options.plugins.annotation.annotations.maxB.yMin = maxFPB; 
             chartIntWeight.options.plugins.annotation.annotations.maxB.yMax = maxFPB;
             chartIntWeight.update();
             
-            // Update FP Distribution chart
+            // Update FP² Distribution chart
             chartIntFPRatio.data.labels = labels;
             chartIntFPRatio.data.datasets[0].data = dFPRatio;
             chartIntFPRatio.update();
@@ -2697,6 +2780,11 @@
             chartIntDiff.data.datasets[0].pointBackgroundColor = dPointColors; 
             chartIntDiff.data.datasets[0].pointBorderColor = dPointColors; 
             chartIntDiff.update();
+            
+            // Update Relative Gold Lead chart
+            chartIntGoldLead.data.labels = labels;
+            chartIntGoldLead.data.datasets[0].data = dGoldLead;
+            chartIntGoldLead.update();
         }
 
         // --- 4. BIG DATA SIMULATION ---
