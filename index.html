@@ -483,6 +483,18 @@
                 <div class="h-px bg-slate-700 flex-1"></div>
             </div>
 
+            <div class="glass-panel rounded-2xl p-6 md:p-8 border-l-4 border-teal-500 mb-8">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-teal-400 text-xl">&#x1F4CA;</span>
+                    <h3 class="text-white text-lg font-bold">V2 Gold-Based Economy</h3>
+                </div>
+                <p class="text-slate-400 text-xs leading-relaxed">
+                    <strong class="text-teal-400">V2 Model:</strong> This simulation uses the <strong class="text-white">gold-based economy</strong> described in Section 1. 
+                    Each game runs the full three-phase model (Income → Event → Game-End Trigger) with <strong class="text-cyan-400">FP²</strong> weighted random events and the <strong class="text-pink-400">logistic utility map T(G)</strong>.
+                    The initial gold deficit represents the enemy's starting gold advantage.
+                </p>
+            </div>
+
             <div class="glass-panel rounded-2xl p-6 md:p-8 border-t border-green-500/20">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     <!-- Controls -->
@@ -490,7 +502,7 @@
                         <div>
                             <h3 class="text-xl font-bold text-white mb-2">Outcome Distribution</h3>
                             <p class="text-xs text-slate-400 leading-relaxed">
-                                Range of results based on <strong class="text-white">1,500 games</strong> per point.
+                                Range of results using the <strong class="text-teal-400">V2 gold-based model</strong> across varying initial gold deficits.
                             </p>
                         </div>
                         
@@ -525,10 +537,10 @@
                         <!-- Dynamic Stats Grid -->
                         <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
                             <div class="stat-card p-2 rounded text-center" id="card0"></div>
-                            <div class="stat-card p-2 rounded text-center" id="card2"></div>
-                            <div class="stat-card p-2 rounded text-center" id="card5"></div>
-                            <div class="stat-card p-2 rounded text-center" id="card8"></div>
-                            <div class="stat-card p-2 rounded text-center" id="card10"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card2000"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card4000"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card6000"></div>
+                            <div class="stat-card p-2 rounded text-center" id="card8000"></div>
                         </div>
                     </div>
 
@@ -2787,7 +2799,7 @@
             chartIntGoldLead.update();
         }
 
-        // --- 4. BIG DATA SIMULATION ---
+        // --- 4. BIG DATA SIMULATION (V2 Gold-Based Model) ---
         let chartBigData;
 
         // HELPER: Sort numeric array
@@ -2804,21 +2816,16 @@
             return { min, q1, median, q3, max };
         };
 
-        function updateStatCard(id, deficit, winRate, advPercent, scoreAdvPercent, scoreDiff) {
+        function updateStatCard(id, deficit, winRate, fpAdvPercent) {
             const card = document.getElementById(id);
             if(!card) return;
-            const advColor = parseFloat(advPercent) >= 0 ? 'text-green-400' : 'text-red-400';
-            const sign = parseFloat(advPercent) > 0 ? '+' : '';
-            const scoreAdvColor = parseFloat(scoreAdvPercent) >= 0 ? 'text-green-400' : 'text-red-400';
-            const scoreSign = parseFloat(scoreAdvPercent) > 0 ? '+' : '';
-            const scoreDiffColor = parseInt(scoreDiff) >= 0 ? 'text-green-400' : 'text-red-400';
-            const scoreDiffSign = parseInt(scoreDiff) > 0 ? '+' : '';
+            const advColor = parseFloat(fpAdvPercent) >= 0 ? 'text-green-400' : 'text-red-400';
+            const sign = parseFloat(fpAdvPercent) > 0 ? '+' : '';
+            const deficitLabel = deficit >= 1000 ? (deficit / 1000) + 'k' : deficit;
             card.innerHTML = `
-                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Deficit ${deficit}</div>
+                <div class="text-[10px] text-slate-500 uppercase font-bold tracking-wider mb-1">Deficit ${deficitLabel}g</div>
                 <div class="text-xl font-black text-white mb-1">${winRate}% <span class="text-[10px] font-normal text-slate-400">Win Rate</span></div>
-                <div class="text-xs ${advColor} font-bold">${sign}${advPercent} <span class="text-[9px] text-slate-500">Weight Adv.</span></div>
-                <div class="text-xs ${scoreDiffColor} font-bold">${scoreDiffSign}${scoreDiff} <span class="text-[9px] text-slate-500">Score (S)</span></div>
-                <div class="text-xs ${scoreAdvColor} font-bold">${scoreSign}${scoreAdvPercent} <span class="text-[9px] text-slate-500">Adv. A(S)</span></div>
+                <div class="text-xs ${advColor} font-bold">${sign}${fpAdvPercent} <span class="text-[9px] text-slate-500">FP² Adv.</span></div>
             `;
         }
 
@@ -2833,51 +2840,86 @@
             if (scenario === 'equal') { skillA = 10; skillB = 10; }
             if (scenario === 'disadvantage') { skillA = 10; skillB = 11; }
 
+            // V2 Gold-Based Model: Use gold deficits from 0 to 8000 in steps of 500
+            const deficitSteps = [];
+            for (let d = 0; d <= 8000; d += 500) { deficitSteps.push(d); }
+            const deficitCount = deficitSteps.length;
+
             const boxplotData = [];
             const winRateData = [];
             const scatterWins = [];
             const scatterLosses = [];
-            const advantageLabels = [];
+            const fpAdvLabels = [];
             
-            let absoluteMaxScore = 0;
+            let absoluteMaxGoldDiff = 0;
 
-            for (let def = 0; def <= 15; def++) {
+            for (let di = 0; di < deficitCount; di++) {
+                const def = deficitSteps[di];
                 
-                const sA_init = 0; 
-                const sB_init = def;
-                // Use the score ratio weight calculation
-                const { wA: wA_init, wB: wB_init, advRatioA, advRatioB } = calcWeights(skillA, skillB, sA_init, sB_init);
-                
-                const advPercentRaw = ((wA_init - wB_init) / (wA_init + wB_init) * 100);
-                const advPercent = advPercentRaw.toFixed(1) + '%';
-                advantageLabels.push(advPercent);
-                
-                // Calculate raw score difference (S)
-                const scoreDiff = sA_init - sB_init;
-                
-                // Calculate advantage ratio as percentage
-                const scoreAdvRaw = advRatioA - advRatioB;
-                const scoreAdvPercentRaw = scoreAdvRaw * 100;
-                const scoreAdvPercent = scoreAdvPercentRaw.toFixed(1) + '%';
+                // Calculate initial FP² advantage for this deficit
+                const initFpA = calculateFightingPower(skillA, STARTING_GOLD);
+                const initFpB = calculateFightingPower(skillB, STARTING_GOLD + def);
+                const fpAdvPercentRaw = calculateAdvantagePercent(initFpA * initFpA, initFpB * initFpB);
+                const fpAdvPercent = fpAdvPercentRaw.toFixed(1) + '%';
+                fpAdvLabels.push(fpAdvPercent);
 
                 let wins = 0;
                 const finalDiffs = [];
                 
                 for (let game = 0; game < simCount; game++) {
-                    let sA = 0; let sB = def;
-                    for (let r = 0; r < 50; r++) {
-                        const { wA, wB } = calcWeights(skillA, skillB, sA, sB);
-                        if (Math.random() < wA / (wA + wB)) { sA++; } else { sB++; }
+                    // V2 Model: Use gold-based economy
+                    let gA = STARTING_GOLD;
+                    let gB = STARTING_GOLD + def;
+                    let lastWinChance = 0.5;
+                    let gameEnded = false;
+                    
+                    for (let r = 1; r <= MAX_ROUNDS && !gameEnded; r++) {
+                        // Phase 1: Income Phase - both receive base income
+                        gA += BASE_INCOME;
+                        gB += BASE_INCOME;
+                        
+                        // Phase 2: Event Phase - fight for contested gold
+                        const eventGold = calculateEventIncome(r);
+                        
+                        // V2: Calculate Fighting Power using logistic utility map
+                        const fpA = calculateFightingPower(skillA, gA);
+                        const fpB = calculateFightingPower(skillB, gB);
+                        
+                        // V2: Use FP² weighted random (squared for stronger differentiation)
+                        const fpA_sq = fpA * fpA;
+                        const fpB_sq = fpB * fpB;
+                        const fpSqTotal = fpA_sq + fpB_sq;
+                        const winChance = fpSqTotal > 1e-10 ? fpA_sq / fpSqTotal : 0.5;
+                        lastWinChance = winChance;
+                        
+                        if (Math.random() < winChance) {
+                            gA += eventGold;
+                        } else {
+                            gB += eventGold;
+                        }
+                        
+                        // Phase 3: Game-End Trigger
+                        if (r < MAX_ROUNDS) {
+                            const totalGold = gA + gB;
+                            const lead = totalGold > 0 ? Math.abs(gA - gB) / totalGold : 0;
+                            const endProb = calculateEndProb(r, lead);
+                            if (Math.random() < endProb) {
+                                gameEnded = true;
+                            }
+                        }
                     }
-                    const finalDiff = sA - sB;
-                    finalDiffs.push(finalDiff);
-                    if (finalDiff > 0) wins++;
-                    if (Math.abs(finalDiff) > absoluteMaxScore) absoluteMaxScore = Math.abs(finalDiff);
+                    
+                    // Determine winner: a final FP² random event decides the game
+                    const won = Math.random() < lastWinChance;
+                    const finalGoldDiff = gA - gB;
+                    finalDiffs.push(finalGoldDiff);
+                    if (won) wins++;
+                    if (Math.abs(finalGoldDiff) > absoluteMaxGoldDiff) absoluteMaxGoldDiff = Math.abs(finalGoldDiff);
 
-                    const jitterX = def + (Math.random() * 0.7 - 0.35); 
-                    const jitterY = finalDiff + (Math.random() * 1.2 - 0.6); 
+                    const jitterX = def + (Math.random() * 350 - 175);
+                    const jitterY = finalGoldDiff + (Math.random() * 200 - 100);
                     const point = { x: jitterX, y: jitterY };
-                    if (finalDiff > 0) scatterWins.push(point); else scatterLosses.push(point);
+                    if (won) scatterWins.push(point); else scatterLosses.push(point);
                 }
                 
                 const wr = Math.round((wins / simCount) * 100);
@@ -2886,12 +2928,12 @@
                 const stats = calcStats(finalDiffs);
                 boxplotData.push({ x: def, ...stats });
 
-                if ([0, 2, 5, 8, 10].includes(def)) {
-                    updateStatCard(`card${def}`, def, wr, advPercent, scoreAdvPercent, scoreDiff);
+                if ([0, 2000, 4000, 6000, 8000].includes(def)) {
+                    updateStatCard(`card${def}`, def, wr, fpAdvPercent);
                 }
             }
 
-            const symmetricLimit = Math.ceil(absoluteMaxScore * 1.1);
+            const symmetricLimit = Math.ceil(absoluteMaxGoldDiff * 1.1);
 
             const config = {
                 data: {
@@ -2900,31 +2942,31 @@
                             type: 'line', label: 'Win Probability %', data: winRateData, borderColor: '#fbbf24', borderWidth: 3, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#fbbf24', yAxisID: 'yWinRate', order: 0
                         },
                         { 
-                            type: 'boxplot', label: 'Score Spread', data: boxplotData, backgroundColor: 'rgba(34, 211, 238, 0.2)', borderColor: '#22d3ee', borderWidth: 2, outlierColor: 'transparent', itemRadius: 0, yAxisID: 'yScore', order: 1
+                            type: 'boxplot', label: 'Gold Diff Spread', data: boxplotData, backgroundColor: 'rgba(34, 211, 238, 0.2)', borderColor: '#22d3ee', borderWidth: 2, outlierColor: 'transparent', itemRadius: 0, yAxisID: 'yGoldDiff', order: 1
                         },
                         {
                             type: 'scatter', label: 'Raw Wins', data: scatterWins, hidden: !showScatter, backgroundColor: 'rgba(74, 222, 128, 0.15)', 
                             pointRadius: 1.5, borderWidth: 0, 
-                            yAxisID: 'yScore', order: 2,
-                            pointHoverRadius: 0, pointHitRadius: 0 // Disable interaction
+                            yAxisID: 'yGoldDiff', order: 2,
+                            pointHoverRadius: 0, pointHitRadius: 0
                         },
                         {
                             type: 'scatter', label: 'Raw Losses', data: scatterLosses, hidden: !showScatter, backgroundColor: 'rgba(244, 63, 94, 0.15)', 
                             pointRadius: 1.5, borderWidth: 0, 
-                            yAxisID: 'yScore', order: 2,
-                            pointHoverRadius: 0, pointHitRadius: 0 // Disable interaction
+                            yAxisID: 'yGoldDiff', order: 2,
+                            pointHoverRadius: 0, pointHitRadius: 0
                         }
                     ]
                 },
                 options: {
                     ...commonOptions,
                     scales: {
-                        x: { type: 'linear', title: { display: true, text: 'Initial Score Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, min: 0, max: 15, ticks: { color: '#64748b', stepSize: 1 } },
+                        x: { type: 'linear', title: { display: true, text: 'Initial Gold Deficit', color: '#94a3b8' }, grid: { color: '#1e293b' }, min: 0, max: 8000, ticks: { color: '#64748b', stepSize: 1000, callback: (v) => v >= 1000 ? (v/1000) + 'k' : v } },
                         xAdvantage: {
-                            type: 'linear', position: 'top', title: { display: true, text: 'Relative Weight Advantage (You - Enemy) %', color: '#c084fc' }, grid: { display: false }, min: 0, max: 15,
-                            ticks: { stepSize: 1, color: (ctx) => parseFloat(advantageLabels[ctx.index]) >= 0 ? '#4ade80' : '#f43f5e', callback: (value, index) => advantageLabels[value] || '' }
+                            type: 'linear', position: 'top', title: { display: true, text: 'Initial FP² Advantage %', color: '#c084fc' }, grid: { display: false }, min: 0, max: 8000,
+                            ticks: { stepSize: 500, color: (ctx) => { const idx = deficitSteps.indexOf(ctx.tick.value); return idx >= 0 && parseFloat(fpAdvLabels[idx]) >= 0 ? '#4ade80' : '#f43f5e'; }, callback: (value) => { const idx = deficitSteps.indexOf(value); return idx >= 0 ? fpAdvLabels[idx] : ''; } }
                         },
-                        yScore: { type: 'linear', position: 'left', min: -symmetricLimit, max: symmetricLimit, title: { display: true, text: 'Final Score Difference', color: '#22d3ee' }, grid: { color: (ctx) => ctx.tick.value === 0 ? '#475569' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b' } },
+                        yGoldDiff: { type: 'linear', position: 'left', min: -symmetricLimit, max: symmetricLimit, title: { display: true, text: 'Final Gold Difference', color: '#22d3ee' }, grid: { color: (ctx) => ctx.tick.value === 0 ? '#475569' : '#1e293b', lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1 }, ticks: { color: '#64748b', callback: (v) => v >= 1000 || v <= -1000 ? (v/1000).toFixed(1) + 'k' : v } },
                         yWinRate: { type: 'linear', position: 'right', min: 0, max: 100, title: { display: true, text: 'Win Probability %', color: '#fbbf24' }, grid: { display: false }, ticks: { color: '#fbbf24' } }
                     },
                     plugins: {
@@ -2936,8 +2978,8 @@
                                     if (context.dataset.type === 'line') return `Win Probability: ${context.raw.y}%`;
                                     if (context.dataset.type === 'boxplot') {
                                         const stats = context.raw;
-                                        if (!stats.median) return '';
-                                        return [`Median Diff: ${stats.median}`, `Range: ${stats.min} to ${stats.max}`];
+                                        if (stats.median === undefined) return '';
+                                        return [`Median Gold Diff: ${stats.median.toLocaleString()}g`, `Range: ${stats.min.toLocaleString()}g to ${stats.max.toLocaleString()}g`];
                                     }
                                     return '';
                                 }
