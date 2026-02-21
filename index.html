@@ -1945,7 +1945,7 @@
          * - The linear time ramp on lead prevents mode shift to round 15 while preserving strong late-game lead pressure
          * @param {number} round - Current round number (0 to MAX_ROUNDS)
          * @param {number} lead - Relative gold lead as decimal (0 to 1)
-         * @returns {number} - Game end probability (0 to ~1.05)
+         * @returns {number} - Game end probability (0 to ~0.78)
          */
         const calculateEndProb = (round, lead) => {
             if (round >= MAX_ROUNDS) return 1.0;
@@ -2036,7 +2036,7 @@
                 return { x: r, y: (t * t * HAZARD_ROUND_MAX) * 100 };
             });
 
-            // Lead component data: P_lead(L) = asymptote × L/(m+L) at t=1 (round 50), plotted vs lead% 0-100
+            // Lead component data: P_lead(L) = asymptote × L/(m+L) at t=1 (round 50, fully ramped), plotted vs lead% 0-100
             const leadPoints = Array.from({length: 51}, (_, i) => {
                 const pct = i * 2; // 0% to 100%
                 const L = pct / 100;
