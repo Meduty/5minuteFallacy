@@ -313,7 +313,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed">
                         <span class="text-teal-400 font-bold">V2 Model:</span> This simulation uses the <strong class="text-white">gold-based economy</strong> described in Section 1. 
                         Each round: both players receive base income (100g), then fight for event gold using <strong class="text-cyan-400">FP² weighted random</strong>,
-                        then check for <strong class="text-purple-400">game-end trigger</strong> (tuned hazard model: most games end midgame, ~10% reach round 50). 
+                        then check for <strong class="text-purple-400">game-end trigger</strong> (shifted hazard model: no games end before round 15, bell curve peaking ~round 30). 
                         When the game ends, a final <strong class="text-amber-400">FP² random event</strong> determines the winner.
                         The Y-axis shows <strong class="text-pink-400">gold difference</strong>. Game winner is shown in legend via <strong class="text-green-400">✓</strong> / <strong class="text-red-400">✗</strong>.
                     </p>
@@ -389,7 +389,7 @@
                     <p class="text-xs text-slate-400 leading-relaxed">
                         <span class="text-teal-400 font-bold">V2 Model:</span> This lab uses the <strong class="text-white">gold-based economy</strong> with 
                         <strong class="text-cyan-400">Fighting Power = Skill × T(Gold)</strong>. Each round: base income (100g) + contested event gold (275 + 45×R) + 
-                        <strong class="text-purple-400">game-end trigger check</strong> (tuned hazard: most games end midgame, ~10% reach round 50). 
+                        <strong class="text-purple-400">game-end trigger check</strong> (shifted hazard: no games end before round 15, bell curve peaking ~round 30). 
                         When the game ends, a final <strong class="text-amber-400">FP² random event</strong> determines the winner.
                         <strong class="text-yellow-400">FP Distribution</strong> shows the ratio of fighting power between players each round.
                     </p>
@@ -745,7 +745,7 @@
                             and <strong class="text-cyan-400">game-winning opportunities</strong> that increase with time and lead size.
                         </p>
                         <p class="text-slate-400 leading-relaxed">
-                            We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 0.
+                            We simulate <strong class="text-white">thousands of complete games</strong> where both players start at 1,250g.
                             The result is a <strong class="text-yellow-400">bell-shaped curve</strong>: early leads (~60% win rate), 
                             mid-game leads (~85% peak), late-game leads (~60% - diluted by scaled points).
                         </p>
@@ -758,9 +758,9 @@
                         <div class="prose prose-invert max-w-none mb-6">
                             <p class="text-sm text-slate-300 leading-relaxed">
                                 <strong class="text-white">V2 Model:</strong> This section uses the <strong class="text-teal-400">discrete gold-based economy model</strong> 
-                                with three phases per round (Income, Event, Game-End Trigger). Players accumulate gold which translates to 
+                                with three phases per round (Income, Event, Game-End Trigger). Both players start with 1,250g. Players accumulate gold which translates to 
                                 <strong class="text-cyan-400">Fighting Power</strong> via a logistic utility map. The model achieves realistic MOBA pacing:
-                                leader reaches 20k gold cap around round 28, trailer around round 39, with ~14% of games reaching round 50.
+                                no games end before round 15, bell-shaped game length distribution peaking at ~round 30.
                             </p>
                         </div>
 
@@ -810,20 +810,20 @@
 
                             <!-- Game-End Trigger Parameters -->
                             <div class="bg-slate-900/50 border border-slate-700 rounded-lg p-4">
-                                <div class="text-[10px] text-cyan-400 uppercase tracking-widest mb-3 text-center">Game-End Trigger (Linear Hazard Model)</div>
+                                <div class="text-[10px] text-cyan-400 uppercase tracking-widest mb-3 text-center">Game-End Trigger (Shifted Quadratic Hazard Model)</div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="bg-slate-800/50 p-3 rounded border-l-4 border-teal-500">
-                                        <div class="text-xs text-teal-400 font-bold mb-2">Round Component (Linear)</div>
+                                        <div class="text-xs text-teal-400 font-bold mb-2">Round Component (Quadratic, shifted)</div>
                                         <div class="text-[10px] text-slate-300 space-y-1">
                                             <div class="flex justify-between items-center">
                                                 <span class="text-slate-500">Max at Round 50:</span>
-                                                <span class="font-mono text-teal-400">10%</span>
+                                                <span class="font-mono text-teal-400">25%</span>
                                             </div>
                                             <div class="flex justify-between items-center">
                                                 <span class="text-slate-500">Formula:</span>
-                                                <span class="font-mono text-teal-400">r/50 × 0.1</span>
+                                                <span class="font-mono text-teal-400">((r−15)/35)² × 0.25</span>
                                             </div>
-                                            <p class="text-slate-400 mt-1">Linear scaling from 0% at round 0 to 10% at round 50.</p>
+                                            <p class="text-slate-400 mt-1">0% before round 15, quadratic scaling from 0% at round 15 to 25% at round 50.</p>
                                         </div>
                                     </div>
                                     <div class="bg-slate-800/50 p-3 rounded border-l-4 border-cyan-500">
@@ -879,16 +879,16 @@
 
                                     <!-- Equation 3: Game-End Trigger -->
                                     <div class="bg-slate-800/50 p-4 rounded-lg border-l-4 border-cyan-500">
-                                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability (Linear Hazard Function)</div>
+                                        <div class="text-xs text-cyan-400 uppercase tracking-widest mb-2">Game-Ending Probability (Shifted Quadratic Hazard Function)</div>
                                         <div class="text-center text-white math-block text-lg mb-2">
-                                            P<sub>end</sub>(r, L) = <span class="text-teal-400">r/50 × 0.1</span> + <span class="text-cyan-400">0.5 × (1 − m/(m + L))</span>
+                                            P<sub>end</sub>(r, L) = <span class="text-teal-400">((r−15)/35)² × 0.25</span> + <span class="text-cyan-400">0.05 × (1 − m/(m + L))</span>
                                         </div>
                                         <p class="text-xs text-slate-400 mt-2">
-                                            Where <span class="text-teal-400 font-bold">r</span> = round number,
+                                            Where <span class="text-teal-400 font-bold">r</span> = round number (0 before round 15),
                                             <span class="text-yellow-400 font-bold">L</span> = relative gold lead, 
-                                            <span class="text-cyan-400 font-bold">m = 0.1</span> (lead midpoint).
-                                            Round contributes up to <strong class="text-teal-400">10%</strong> at round 50,
-                                            lead contributes up to <strong class="text-cyan-400">50%</strong> asymptotically. Max total ~60%.
+                                            <span class="text-cyan-400 font-bold">m = 0.25</span> (lead midpoint).
+                                            Round contributes up to <strong class="text-teal-400">25%</strong> at round 50,
+                                            lead contributes up to <strong class="text-cyan-400">5%</strong> asymptotically. Max total ~30%.
                                         </p>
                                     </div>
 
@@ -914,9 +914,8 @@
                             <!-- Disclaimer -->
                             <div class="text-center p-3 bg-slate-900/50 rounded border border-slate-800">
                                 <p class="text-[9px] text-slate-400 italic leading-relaxed">
-                                    <strong class="text-teal-400">V2 Model:</strong> Parameters (G<sub>0</sub>=8500, k=0.00035, e=275, s=45) are tuned to produce realistic MOBA pacing:
-                                    leader reaches full build around round 28, trailer around round 39, with bell-shaped game length distribution
-                                    and ~14% of games reaching the round 50 cap.
+                                    <strong class="text-teal-400">V2 Model:</strong> Parameters (G<sub>0</sub>=8500, k=0.00035, e=275, s=45, starting gold=1250) are tuned to produce realistic MOBA pacing:
+                                    no games end before round 15, bell-shaped game length distribution peaking at ~round 30.
                                 </p>
                             </div>
                         </div>
@@ -956,8 +955,8 @@
                         </div>
                         <div class="mt-4 p-3 bg-slate-900/50 rounded border border-slate-800">
                             <p class="text-xs text-slate-400">
-                                <strong class="text-white">Linear Hazard Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
-                                Game-ending triggers: linear round component (up to 10%) + 1/x lead component (up to 50%). Max ~60%.
+                                <strong class="text-white">Shifted Quadratic Hazard Mechanics:</strong> Late-game rounds worth up to 30x more points (dilutes early leads). 
+                                Game-ending triggers: shifted quadratic round component (0% before round 15, up to 25% at round 50) + 1/x lead component (up to 5%). Max ~30%.
                             </p>
                         </div>
                         <button id="rerunFlatteningBtn" class="mt-4 w-full py-2 px-4 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all duration-200 shadow-lg shadow-cyan-500/20 text-sm">
@@ -1852,6 +1851,8 @@
         
         // Game structure
         const MAX_ROUNDS = 50;
+        const STARTING_GOLD = 1250;        // Both players start with this much gold
+        const MIN_END_ROUND = 15;          // No game can end before this round
         
         // Income phase constants
         const BASE_INCOME = 100;           // Gold both players receive each round
@@ -1866,12 +1867,12 @@
         const GOLD_MIDPOINT = 8500;        // Gold amount at 50% utility
         const GOLD_STEEPNESS = 0.00035;    // Steepness factor (tuned for approximately linear early growth)
         
-        // Game-end trigger parameters (simplified linear hazard model)
-        // Uses linear combination: P_end = P_round(r) + P_lead(L)
-        // - Round component: linear scaling, 0% at r=0, 4% at r=50
+        // Game-end trigger parameters (shifted quadratic hazard model)
+        // Uses linear combination: P_end = P_round(r) + P_lead(L), with P=0 for r < MIN_END_ROUND
+        // - Round component: quadratic scaling from 0% at r=MIN_END_ROUND to 25% at r=50
         // - Lead component: 1/x function with midpoint at 25% lead, asymptote at 5%
-        // - Tuned so most games end midgame (median ~25), ~10% reach round 50
-        const HAZARD_ROUND_MAX = 0.04;     // Maximum contribution from round (4% at round 50)
+        // - Tuned so game-end distribution peaks at ~round 30, ~2% reach round 50
+        const HAZARD_ROUND_MAX = 0.25;     // Maximum contribution from round (25% at round 50)
         const HAZARD_LEAD_MIDPOINT = 0.25; // Lead at which game end chance is ~2.5% (halfway to asymptote)
         const HAZARD_LEAD_ASYMPTOTE = 0.05; // Maximum contribution from lead (5% asymptote)
         
@@ -1937,20 +1938,22 @@
         const calculateEventIncome = (round) => EVENT_BASE + (EVENT_SCALE * round);
 
         /**
-         * Calculate game-end trigger probability (simplified linear hazard model)
-         * Uses linear combination: P_end = P_round(r) + P_lead(L)
-         * - Round component: linear scaling from 0% at r=0 to 10% at r=50
-         * - Lead component: 1/x function with midpoint at 10% lead (25%), asymptote at 50%
-         * - Maximum total: ~60% (never exceeds 10% + 50%)
+         * Calculate game-end trigger probability (shifted quadratic hazard model)
+         * Uses linear combination: P_end = P_round(r) + P_lead(L), with P=0 for r < MIN_END_ROUND
+         * - Round component: quadratic scaling from 0% at r=MIN_END_ROUND to 25% at r=50
+         * - Lead component: 1/x function with midpoint at 25% lead, asymptote at 5%
+         * - Tuned so game-end distribution peaks at ~round 30, ~2% reach round 50
          * @param {number} round - Current round number (0 to MAX_ROUNDS)
          * @param {number} lead - Relative gold lead as decimal (0 to 1)
-         * @returns {number} - Game end probability (0 to ~0.60)
+         * @returns {number} - Game end probability (0 to ~0.30)
          */
         const calculateEndProb = (round, lead) => {
             if (round >= MAX_ROUNDS) return 1.0;
+            if (round < MIN_END_ROUND) return 0;
             
-            // Round component: linear scaling, 0% at r=0, 10% at r=50
-            const roundProb = (round / MAX_ROUNDS) * HAZARD_ROUND_MAX;
+            // Round component: quadratic scaling from 0% at MIN_END_ROUND to HAZARD_ROUND_MAX at MAX_ROUNDS
+            const t = (round - MIN_END_ROUND) / (MAX_ROUNDS - MIN_END_ROUND);
+            const roundProb = t * t * HAZARD_ROUND_MAX;
             
             // Lead component: 1/x function with midpoint behavior
             // Formula: asymptote * (1 - midpoint / (midpoint + lead))
@@ -2024,11 +2027,12 @@
         if(safeGet('hazardChart')) {
             const ctxHazard = document.getElementById('hazardChart');
 
-            // Round component data: P_round(r) = (r / 50) * HAZARD_ROUND_MAX, plotted vs round 0-50
-            const roundPoints = Array.from({length: 51}, (_, r) => ({
-                x: r,
-                y: ((r / MAX_ROUNDS) * HAZARD_ROUND_MAX) * 100
-            }));
+            // Round component data: P_round(r) = ((r - MIN_END_ROUND) / (MAX_ROUNDS - MIN_END_ROUND))² * HAZARD_ROUND_MAX, plotted vs round 0-50
+            const roundPoints = Array.from({length: 51}, (_, r) => {
+                if (r < MIN_END_ROUND) return { x: r, y: 0 };
+                const t = (r - MIN_END_ROUND) / (MAX_ROUNDS - MIN_END_ROUND);
+                return { x: r, y: (t * t * HAZARD_ROUND_MAX) * 100 };
+            });
 
             // Lead component data: P_lead(L) = asymptote * (1 - m/(m+L)), plotted vs lead% 0-100
             const leadPoints = Array.from({length: 51}, (_, i) => {
@@ -2195,8 +2199,8 @@
             
             for(let t = 0; t < 10; t++) {
                 // V2 Model: Use gold-based economy
-                let gA = 0;  // Your gold
-                let gB = startDeficit;  // Enemy starts with gold head start
+                let gA = STARTING_GOLD;  // Your gold
+                let gB = STARTING_GOLD + startDeficit;  // Enemy starts with gold head start
                 const diffHistory = [gA - gB];
                 const fpRatioHistory = []; // Track FP ratio for each round
                 let gameEnded = false;
@@ -2511,8 +2515,8 @@
             const startB = parseInt(document.getElementById('inputStartB').value, 10);
             
             // V2 Model: Use gold-based economy
-            let gA = 0;      // Your gold
-            let gB = startB; // Enemy starts with gold head start
+            let gA = STARTING_GOLD;      // Your gold
+            let gB = STARTING_GOLD + startB; // Enemy starts with gold head start
             const rounds = 50; 
             const labels = ['Start'];
             
@@ -2933,9 +2937,9 @@
             
             // Run V2 gold-based economy simulations
             for (let game = 0; game < FLATTEN_SIM_COUNT; game++) {
-                let gA = 0;  // Gold for player A
-                let gB = 0;  // Gold for player B
-                const goldHistory = [{ gA: 0, gB: 0 }];
+                let gA = STARTING_GOLD;  // Gold for player A
+                let gB = STARTING_GOLD;  // Gold for player B
+                const goldHistory = [{ gA: STARTING_GOLD, gB: STARTING_GOLD }];
                 let gameWinner = null;
                 
                 // Play full game using V2 three-phase model
