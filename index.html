@@ -217,6 +217,34 @@
                         </div>
                     </div>
 
+                    <!-- Formula 4: Score Difference (ΔG / ΔFP) — Core of the Fallacy Proof -->
+                    <div class="bg-slate-900 border border-emerald-500/40 rounded-xl p-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-2 opacity-10 text-6xl font-serif">&Delta;</div>
+                        <div class="text-xs text-emerald-400 uppercase tracking-widest mb-3">Score Difference Model — The Fallacy Exposed</div>
+                        <div class="space-y-3">
+                            <div class="text-lg text-white math-block text-center">
+                                <span class="text-emerald-400">&Delta;G</span> = gold<sub class="text-sm">A</sub> &minus; gold<sub class="text-sm">B</sub>
+                            </div>
+                            <div class="text-lg text-white math-block text-center">
+                                <span class="text-yellow-400">&Delta;FP</span> = &alpha;<sub class="text-sm">A</sub>&middot;T(g<sub class="text-sm">A</sub>) &minus; &alpha;<sub class="text-sm">B</sub>&middot;T(g<sub class="text-sm">B</sub>)
+                            </div>
+                            <div class="border-t border-slate-700 pt-3 mt-2">
+                                <p class="text-[10px] text-slate-400 leading-relaxed text-center">
+                                    As both players approach the 20,000g cap, T(g<sub>A</sub>) &rarr; 1 and T(g<sub>B</sub>) &rarr; 1.<br>
+                                    Therefore <span class="text-yellow-400 font-bold">&Delta;FP &rarr; &alpha;<sub>A</sub> &minus; &alpha;<sub>B</sub></span> &mdash; only <em>skill</em> remains.
+                                    A gold lead becomes irrelevant. <strong class="text-emerald-400">This is the Fallacy.</strong>
+                                </p>
+                            </div>
+                            <!-- ΔFP Decay Chart -->
+                            <div class="h-36 w-full border-t border-slate-800 pt-3 relative">
+                                <canvas id="deltaFPDecayChart"></canvas>
+                            </div>
+                            <div class="text-[9px] text-slate-500 text-center">
+                                &Delta;FP over time for a 3,000g lead (skill-equal players). Even with constant &Delta;G the power gap shrinks.
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -462,6 +490,42 @@
                             <p class="text-center text-emerald-400 font-medium mt-4">
                                 When scores are equal, only skill matters. The advantage contributes nothing.
                                 <br>This ensures skill remains the fundamental deciding factor.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Advantage Flattening Theorem -->
+                    <div class="bg-slate-900 border border-yellow-500/40 rounded-xl p-6">
+                        <div class="text-xs text-yellow-400 uppercase tracking-widest mb-4 text-center">Theorem: Advantage Flattening Over Time (Core Proof)</div>
+                        <div class="text-slate-300 text-sm leading-relaxed space-y-4">
+                            <p>
+                                Let α<sub>A</sub> = α<sub>B</sub> = α (skill-equal players). Suppose player A holds a constant gold lead:
+                                g<sub>A</sub>(t) = g<sub>B</sub>(t) + ΔG for all rounds t, where ΔG &gt; 0.
+                            </p>
+                            <p>The Fighting Power differential is:</p>
+                            <div class="text-center my-3 text-white math-block">
+                                ΔFP(t) = α·T(g<sub>A</sub>) − α·T(g<sub>B</sub>) = α·[T(g<sub>A</sub>) − T(g<sub>B</sub>)]
+                            </div>
+                            <p>
+                                As both players accumulate gold toward the 20,000g saturation cap (g<sub>A</sub>, g<sub>B</sub> → G<sub>sat</sub>),
+                                the logistic function approaches its limit:
+                            </p>
+                            <div class="text-center my-3 text-white math-block">
+                                lim<sub>g → G<sub>sat</sub></sub> T(g) = 1
+                            </div>
+                            <p>Therefore:</p>
+                            <div class="text-center my-3 text-white math-block">
+                                lim<sub>t → late game</sub> ΔFP(t) = α·[1 − 1] = <span class="text-yellow-400 font-bold">0</span>
+                            </div>
+                            <div class="bg-slate-800/60 border-l-4 border-yellow-400 p-4 rounded mt-3">
+                                <p class="text-yellow-300 font-semibold text-sm">
+                                    ∴ <strong>Advantage Flattening Theorem:</strong> Even with a constant gold lead ΔG throughout the game,
+                                    the Fighting Power differential ΔFP approaches zero as both players approach full build.
+                                    The early gold advantage becomes <em>mathematically negligible</em> by the late game. ∎
+                                </p>
+                            </div>
+                            <p class="text-slate-500 text-xs mt-2">
+                                Note: In practice, ΔG does not remain constant — it shrinks further as catch-up mechanics (kill bounties, objectives) reduce the gap. This theorem proves the fallacy even in the <em>worst-case</em> scenario of a perfectly maintained lead.
                             </p>
                         </div>
                     </div>
